@@ -19,7 +19,7 @@ export function PdfMergerResult({ mergedPdfUrl }: PdfMergerResultProps) {
   const [filename, setFilename] = useState("Merged_Document");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <Alert variant="success">
         <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
         <AlertTitle>Merger Complete!</AlertTitle>
@@ -28,7 +28,7 @@ export function PdfMergerResult({ mergedPdfUrl }: PdfMergerResultProps) {
         </AlertDescription>
       </Alert>
 
-      <div className="flex flex-col sm:flex-row items-end justify-between gap-4 pt-4 border-t border-border">
+      <div className="flex flex-col sm:flex-row items-end justify-between gap-4 pt-6 border-t border-border">
         <div className="space-y-2 w-full sm:w-auto flex-1 max-w-sm">
           <Label htmlFor="filename">Output File Name</Label>
           <div className="flex items-center space-x-2">

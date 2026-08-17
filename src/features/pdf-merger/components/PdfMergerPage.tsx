@@ -97,7 +97,7 @@ export function PdfMergerPage() {
           <CardTitle>Add PDF Files</CardTitle>
           <CardDescription>Select and arrange multiple PDFs to merge them into a single document.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-8">
           <PdfUploader onFilesSelect={handleFilesSelect} />
 
           <DragDropProvider
@@ -138,7 +138,7 @@ export function PdfMergerPage() {
               <PdfMergerResult mergedPdfUrl={mergedPdfUrl} />
             </div>
           ) : items.length > 0 ? (
-            <div className="flex justify-end gap-4 pt-4 border-t border-border">
+            <div className="flex justify-end gap-4 pt-6 border-t border-border">
               <Button
                 onClick={handleMerge}
                 disabled={isMerging || items.length < 2}

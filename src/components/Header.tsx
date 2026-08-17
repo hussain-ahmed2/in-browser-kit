@@ -41,7 +41,7 @@ export function Header() {
 
             <div className="container mx-auto flex h-14 max-w-screen-2xl items-center px-6">
                 <Link href="/" className="mr-8 flex items-center gap-2.5 group">
-                    <span className="relative flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-brand to-[color-mix(in_oklab,var(--brand)_55%,var(--glow))] text-brand-foreground shadow-[0_0_16px_-2px] shadow-brand/50 group-hover:shadow-brand/80 transition-shadow duration-300">
+                    <span className="relative flex items-center justify-center w-7 h-7 rounded-lg bg-linear-to-br from-brand to-[color-mix(in_oklab,var(--brand)_55%,var(--glow))] text-brand-foreground shadow-[0_0_16px_-2px] shadow-brand/50 group-hover:shadow-brand/80 transition-shadow duration-300">
                         <svg
                             viewBox="0 0 24 24"
                             fill="none"

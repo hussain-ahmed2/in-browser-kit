@@ -38,7 +38,7 @@ export function CompressedResult({ originalFile, compressedFile }: CompressedRes
   const compressedUrl = URL.createObjectURL(compressedFile);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <Alert variant="success">
         <ArrowDownToLine className="h-4 w-4" aria-hidden="true" />
         <AlertTitle>Compression Complete!</AlertTitle>
@@ -107,7 +107,7 @@ export function CompressedResult({ originalFile, compressedFile }: CompressedRes
         </button>
       )}
 
-      <div className="flex justify-end gap-4 pt-4 border-t border-border">
+      <div className="flex justify-end gap-4 pt-6 border-t border-border">
         <Button
           onClick={handleDownload}
           className="w-full sm:w-auto"

@@ -55,7 +55,7 @@ export function PdfUploader({ onFilesSelect }: PdfUploaderProps) {
   return (
     <div
       className={cn(
-        "group relative rounded-xl p-8 text-center cursor-pointer bg-secondary/30 transition-all duration-200",
+        "group relative rounded-xl p-10 text-center cursor-pointer bg-secondary/30 transition-all duration-200",
         isDragOver
           ? "bg-brand/10 scale-[1.02] shadow-[0_0_40px_-12px] shadow-brand/50"
           : "hover:bg-secondary/50"
