@@ -23,7 +23,7 @@ const CHARSETS = {
     symbols: '!@#$%^&*()-_=+[]{}|;:,.<>?/~'
 } as const
 
-const AMBIGUOUS_CHARS = /[il1LoO0|]/
+const AMBIGUOUS_CHARS = /[il1LoO0|]/g
 
 function randomInt(maxExclusive: number): number {
     const limit = Math.floor(0x100000000 / maxExclusive) * maxExclusive
@@ -90,14 +90,13 @@ export function generatePassword(options: PasswordOptions): string {
 export function estimateEntropy(password: string): number {
     if (!password) return 0
 
-    let classes = 0
-    if (/[a-z]/.test(password)) classes += 1
-    if (/[A-Z]/.test(password)) classes += 1
-    if (/[0-9]/.test(password)) classes += 1
-    if (/[^a-zA-Z0-9]/.test(password)) classes += 1
+    let poolSize = 0
+    if (/[a-z]/.test(password)) poolSize += 26
+    if (/[A-Z]/.test(password)) poolSize += 26
+    if (/[0-9]/.test(password)) poolSize += 10
+    if (/[^a-zA-Z0-9]/.test(password)) poolSize += 32
 
-    const poolSizes = [0, 10, 36, 62, 94]
-    return password.length * Math.log2(poolSizes[classes])
+    return password.length * Math.log2(poolSize)
 }
 
 export interface StrengthResult {

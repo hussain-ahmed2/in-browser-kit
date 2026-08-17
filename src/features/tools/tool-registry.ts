@@ -82,7 +82,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Rotate pages by 90° increments, individually or all at once.",
     icon: RotateCw,
     category: "PDF",
-    planned: true,
   },
   {
     slug: "pdf-remove-pages",
@@ -90,7 +89,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Remove unwanted pages from your PDF.",
     icon: FileX2,
     category: "PDF",
-    planned: true,
   },
   {
     slug: "pdf-lock",
