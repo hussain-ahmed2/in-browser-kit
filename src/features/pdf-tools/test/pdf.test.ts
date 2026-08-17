@@ -1,15 +1,6 @@
 import { afterAll, describe, expect, it } from 'vitest'
-import {
-    createObjectUrlRegistry,
-    makePdfFile
-} from '@/test/fixtures'
+import { makePdfFile, readPdf } from '@/test/fixtures'
 import { loadPdf, parsePageRanges, pdfToBlobUrl } from '../lib/pdf'
-
-const registry = createObjectUrlRegistry()
-
-afterAll(() => {
-    registry.restore()
-})
 
 describe('parsePageRanges', () => {
     it('parses a single page', () => {
@@ -79,7 +70,7 @@ describe('pdfToBlobUrl', () => {
         const url = await pdfToBlobUrl(pdf)
         expect(url).toMatch(/^blob:/)
 
-        const reloaded = await registry.readPdf(url)
+        const reloaded = await readPdf(url)
         expect(reloaded.getPageCount()).toBe(2)
     })
 })

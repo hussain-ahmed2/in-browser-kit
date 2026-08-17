@@ -4,6 +4,7 @@ import {
     type Reducer,
     type ReducersMapObject
 } from '@reduxjs/toolkit'
+import { readPdfBlob } from '../test/setup'
 
 /**
  * Creates an in-memory PDF file with the given page count and returns it as a
@@ -41,34 +42,8 @@ export function createTestStore(reducer: Reducer | ReducersMapObject) {
 }
 
 /**
- * Stubs `URL.createObjectURL`/`URL.revokeObjectURL` and tracks every blob so
- * tests can read the produced bytes back out of a result URL.
+ * Reads a PDF blob from the global test registry by URL.
  */
-export function createObjectUrlRegistry() {
-    const blobs = new Map<string, Blob>()
-    let next = 0
-
-    const originalCreate = URL.createObjectURL
-    const originalRevoke = URL.revokeObjectURL
-
-    URL.createObjectURL = (blob: Blob) => {
-        const url = `blob:mock-${next++}`
-        blobs.set(url, blob)
-        return url
-    }
-    URL.revokeObjectURL = (url: string) => {
-        blobs.delete(url)
-    }
-
-    return {
-        async readPdf(url: string): Promise<PDFDocument> {
-            const blob = blobs.get(url)
-            if (!blob) throw new Error(`Unknown blob URL: ${url}`)
-            return PDFDocument.load(await blob.arrayBuffer())
-        },
-        restore() {
-            URL.createObjectURL = originalCreate
-            URL.revokeObjectURL = originalRevoke
-        }
-    }
+export async function readPdf(url: string): Promise<PDFDocument> {
+    return PDFDocument.load(await readPdfBlob(url).arrayBuffer())
 }

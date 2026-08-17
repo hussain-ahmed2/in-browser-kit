@@ -1,9 +1,5 @@
 import { afterAll, describe, expect, it } from 'vitest'
-import {
-    createObjectUrlRegistry,
-    createTestStore,
-    makePdfFile
-} from '@/test/fixtures'
+import { createTestStore, makePdfFile, readPdf } from '@/test/fixtures'
 import {
     clearAll,
     fileSelected,
@@ -12,12 +8,6 @@ import {
     removePages
 } from '../pdfRemovePagesSlice'
 import pdfRemovePagesReducer from '../pdfRemovePagesSlice'
-
-const registry = createObjectUrlRegistry()
-
-afterAll(() => {
-    registry.restore()
-})
 
 describe('pdfRemovePagesSlice reducers', () => {
     it('marks a page for removal via pageToggled', () => {
@@ -104,7 +94,7 @@ describe('removePages thunk', () => {
 
         const url = store.getState().pdfRemovePages.resultUrl
         expect(url).not.toBeNull()
-        const output = await registry.readPdf(url!)
+        const output = await readPdf(url!)
         expect(output.getPageCount()).toBe(2)
     })
 
@@ -115,7 +105,7 @@ describe('removePages thunk', () => {
 
         await store.dispatch(removePages())
 
-        const output = await registry.readPdf(store.getState().pdfRemovePages.resultUrl!)
+        const output = await readPdf(store.getState().pdfRemovePages.resultUrl!)
         expect(output.getPageCount()).toBe(3)
     })
 

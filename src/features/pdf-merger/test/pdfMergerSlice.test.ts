@@ -1,27 +1,16 @@
 import { afterAll, describe, expect, it } from 'vitest'
-import {
-    createObjectUrlRegistry,
-    createTestStore,
-    makePdfFile
-} from '@/test/fixtures'
+import { createTestStore, makePdfFile, readPdf } from '@/test/fixtures'
 import {
     clearItems,
     fileRemoved,
     filesAdded,
     itemsReplaced,
-    mergePdfs,
-    type PdfItem
+    mergePdfs
 } from '../pdfMergerSlice'
 import pdfMergerReducer from '../pdfMergerSlice'
 
-const registry = createObjectUrlRegistry()
-
-afterAll(() => {
-    registry.restore()
-})
-
 describe('pdfMergerSlice reducers', () => {
-    const item = (id: string, file: File): PdfItem => ({ id, file })
+    const item = (id: string, file: File) => ({ id, file })
 
     it('appends items via filesAdded and clears the result url', () => {
         const file = new File(['x'], 'a.pdf', { type: 'application/pdf' })
@@ -105,7 +94,7 @@ describe('mergePdfs thunk', () => {
 
         const url = store.getState().pdfMerger.mergedPdfUrl
         expect(url).not.toBeNull()
-        const merged = await registry.readPdf(url!)
+        const merged = await readPdf(url!)
         expect(merged.getPageCount()).toBe(5)
     })
 

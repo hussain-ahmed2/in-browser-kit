@@ -74,7 +74,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Split a PDF by page ranges or extract individual pages.",
     icon: Scissors,
     category: "PDF",
-    planned: true,
   },
   {
     slug: "pdf-rotate",
