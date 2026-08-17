@@ -10,7 +10,7 @@ import {
     CardHeader,
     CardTitle
 } from '@/components/ui/card'
-import { Image as ImageIcon, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ImageUploader } from './ImageUploader'
 import { ImagePreview } from './ImagePreview'
@@ -103,20 +103,7 @@ export function ImageCompressorPage() {
     }
 
     return (
-        <main className="max-w-3xl mx-auto space-y-8">
-            <header className="text-center space-y-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-brand/25 to-glow/15 text-brand ring-1 ring-brand/25 shadow-[0_0_32px_-8px] shadow-brand/50 mb-4 animate-fade-in-up stagger-1">
-                    <ImageIcon size={32} aria-hidden="true" />
-                </div>
-                <h1 className="text-4xl font-bold tracking-tight animate-fade-in-up stagger-2">
-                    Image Compressor
-                </h1>
-                <p className="text-muted-foreground text-lg animate-fade-in-up stagger-3">
-                    Reduce image file size without losing quality. 100%
-                    processed securely in your browser.
-                </p>
-            </header>
-
+        <>
             <StepIndicator steps={steps} currentStep={currentStep} />
 
             <Card className="animate-fade-in-up stagger-4 backdrop-blur-md ring-border">
@@ -239,6 +226,6 @@ export function ImageCompressorPage() {
                     )}
                 </CardContent>
             </Card>
-        </main>
+        </>
     )
 }

@@ -1,8 +1,10 @@
-import Link from 'next/link';
-import { FileDown, Image as ImageIcon, Sparkles, Zap, ShieldCheck, ArrowRight, Upload, Download } from 'lucide-react';
-import { SpotlightCard } from '@/components/SpotlightCard';
+import { Sparkles, Zap, ShieldCheck, Upload, Download } from 'lucide-react';
+import { ToolCard } from '@/features/tools/components/ToolCard';
+import { tools } from '@/features/tools/tool-registry';
 
 export default function Home() {
+  const availableTools = tools.filter((tool) => !tool.planned);
+
   return (
     <div className="relative min-h-[calc(100vh-3.5rem)] bg-background overflow-hidden flex flex-col items-center justify-center p-6">
       {/* Layered backdrop: blueprint grid */}
@@ -48,35 +50,9 @@ export default function Home() {
 
         {/* Tool cards */}
         <div className="grid md:grid-cols-2 gap-6 w-full max-w-3xl mt-8 animate-fade-in-up stagger-4">
-          <Link href="/tools/image-compressor" className="group text-left">
-            <SpotlightCard className="h-full p-6">
-              <div className="flex items-start justify-between mb-5">
-                <div className="relative flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-brand/25 to-glow/15 text-brand ring-1 ring-brand/25 group-hover:shadow-[0_0_24px_-4px] group-hover:shadow-brand/50 transition-shadow duration-300">
-                  <ImageIcon size={24} />
-                </div>
-                <ArrowRight className="size-5 text-muted-foreground/40 group-hover:text-brand group-hover:translate-x-1 transition-all duration-300" />
-              </div>
-              <h3 className="font-heading text-xl font-semibold mb-1.5">Image Compressor</h3>
-              <p className="text-sm text-muted-foreground/85 leading-relaxed">
-                Reduce image file sizes instantly without losing visible quality. Perfect for web uploads.
-              </p>
-            </SpotlightCard>
-          </Link>
-
-          <Link href="/tools/pdf-merger" className="group text-left">
-            <SpotlightCard className="h-full p-6">
-              <div className="flex items-start justify-between mb-5">
-                <div className="relative flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-brand/25 to-glow/15 text-brand ring-1 ring-brand/25 group-hover:shadow-[0_0_24px_-4px] group-hover:shadow-brand/50 transition-shadow duration-300">
-                  <FileDown size={24} />
-                </div>
-                <ArrowRight className="size-5 text-muted-foreground/40 group-hover:text-brand group-hover:translate-x-1 transition-all duration-300" />
-              </div>
-              <h3 className="font-heading text-xl font-semibold mb-1.5">PDF Merger</h3>
-              <p className="text-sm text-muted-foreground/85 leading-relaxed">
-                Combine multiple PDF documents into a single file securely in your browser.
-              </p>
-            </SpotlightCard>
-          </Link>
+          {availableTools.map((tool) => (
+            <ToolCard key={tool.slug} tool={tool} />
+          ))}
         </div>
 
         {/* How It Works */}

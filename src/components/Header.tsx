@@ -1,23 +1,18 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useSyncExternalStore } from 'react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
-import { Moon, Sun, Monitor, Image, FileDown } from 'lucide-react'
-import { useSyncExternalStore } from 'react'
-import { cn } from '@/lib/utils'
+import { Moon, Sun, Monitor } from 'lucide-react'
+import { CategoryDropdown } from '@/features/tools/components/CategoryDropdown'
+import { MobileMenu } from '@/features/tools/components/MobileMenu'
+import { CATEGORIES } from '@/features/tools/tool-registry'
 
 const emptySubscribe = () => () => {}
 
-const navLinks = [
-    { href: '/tools/image-compressor', label: 'Image Compressor', icon: Image },
-    { href: '/tools/pdf-merger', label: 'PDF Merger', icon: FileDown }
-]
-
 export function Header() {
     const { theme, setTheme } = useTheme()
-    const pathname = usePathname()
     // True only after hydration, without setState-in-effect
     const mounted = useSyncExternalStore(
         emptySubscribe,
@@ -55,61 +50,18 @@ export function Header() {
                             <path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z" />
                         </svg>
                     </span>
-                    <span className="font-bold text-foreground tracking-tight">
+                    <span className="hidden sm:inline font-bold text-foreground tracking-tight">
                         Ad-Pass<span className="text-brand"> Toolkit</span>
                     </span>
                 </Link>
 
-                <nav className="hidden sm:flex items-center gap-1.5">
-                    {navLinks.map(({ href, label, icon: Icon }) => {
-                        const isActive = pathname === href
-                        return (
-                            <Link
-                                key={href}
-                                href={href}
-                                className="rounded-full"
-                            >
-                                <Button
-                                    variant={isActive ? 'secondary' : 'ghost'}
-                                    size="sm"
-                                    className={cn(
-                                        'gap-2 text-sm rounded-full',
-                                        isActive &&
-                                            'font-medium ring-1 ring-brand/30 bg-brand/10 text-brand hover:bg-brand/15'
-                                    )}
-                                >
-                                    <Icon className="h-3.5 w-3.5" />
-                                    {label}
-                                </Button>
-                            </Link>
-                        )
-                    })}
+                <nav className="hidden sm:flex items-center gap-1.5" aria-label="Tools">
+                    {CATEGORIES.map((category) => (
+                        <CategoryDropdown key={category} category={category} />
+                    ))}
                 </nav>
 
                 <div className="flex flex-1 items-center justify-end gap-1">
-                    <nav className="flex items-center gap-1 sm:hidden">
-                        {navLinks.map(({ href, label, icon: Icon }) => {
-                            const isActive = pathname === href
-                            return (
-                                <Link key={href} href={href}>
-                                    <Button
-                                        variant={
-                                            isActive ? 'secondary' : 'ghost'
-                                        }
-                                        size="icon-sm"
-                                        aria-label={label}
-                                        className={cn(
-                                            'rounded-full',
-                                            isActive &&
-                                                'ring-1 ring-brand/30 bg-brand/10 text-brand'
-                                        )}
-                                    >
-                                        <Icon className="h-4 w-4" />
-                                    </Button>
-                                </Link>
-                            )
-                        })}
-                    </nav>
                     {mounted && (
                         <Button
                             variant="ghost"
@@ -127,6 +79,9 @@ export function Header() {
                             )}
                         </Button>
                     )}
+                    <div className="sm:hidden">
+                        <MobileMenu />
+                    </div>
                 </div>
             </div>
         </header>
