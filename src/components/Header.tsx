@@ -51,7 +51,7 @@ export function Header() {
                         </svg>
                     </span>
                     <span className="hidden sm:inline font-bold text-foreground tracking-tight">
-                        Ad-Pass<span className="text-brand"> Toolkit</span>
+                        InBrowser
                     </span>
                 </Link>
 

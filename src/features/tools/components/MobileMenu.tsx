@@ -32,7 +32,7 @@ export function MobileMenu() {
       </SheetTrigger>
       <SheetContent side="right" className="w-[85vw] max-w-sm overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Ad-Pass Toolkit</SheetTitle>
+          <SheetTitle>InBrowser</SheetTitle>
           <SheetDescription>All tools — processed locally in your browser.</SheetDescription>
         </SheetHeader>
         <div className="flex flex-col gap-6 px-4 pb-6">

@@ -1,6 +1,13 @@
+import type { Metadata } from 'next';
 import { Sparkles, Zap, ShieldCheck, Upload, Download } from 'lucide-react';
 import { ToolCard } from '@/features/tools/components/ToolCard';
 import { tools } from '@/features/tools/tool-registry';
+import { SITE_NAME, SITE_TAGLINE } from '@/lib/site';
+
+export const metadata: Metadata = {
+  title: { absolute: SITE_NAME },
+  description: SITE_TAGLINE,
+};
 
 export default function Home() {
   const availableTools = tools.filter((tool) => !tool.planned);
