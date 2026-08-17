@@ -12,6 +12,9 @@ import pdfRemovePagesReducer, {
 import pdfSplitReducer, {
   fileSelected as pdfSplitFileSelected,
 } from "@/features/pdf-split/pdfSplitSlice";
+import pdfLockReducer, {
+  fileSelected as pdfLockFileSelected,
+} from "@/features/pdf-lock/pdfLockSlice";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +22,7 @@ export const store = configureStore({
     pdfRotate: pdfRotateReducer,
     pdfRemovePages: pdfRemovePagesReducer,
     pdfSplit: pdfSplitReducer,
+    pdfLock: pdfLockReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -29,12 +33,14 @@ export const store = configureStore({
           pdfRotateFileSelected.type,
           pdfRemovePagesFileSelected.type,
           pdfSplitFileSelected.type,
+          pdfLockFileSelected.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",
           "pdfRotate.item",
           "pdfRemovePages.item",
           "pdfSplit.item",
+          "pdfLock.item",
         ],
       },
     }),

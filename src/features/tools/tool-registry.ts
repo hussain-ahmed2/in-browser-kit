@@ -95,7 +95,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Protect a PDF with a password or remove its protection.",
     icon: LockKeyhole,
     category: "PDF",
-    planned: true,
   },
   {
     slug: "image-resize",

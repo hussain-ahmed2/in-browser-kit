@@ -4,7 +4,7 @@ import {
     type Reducer,
     type ReducersMapObject
 } from '@reduxjs/toolkit'
-import { readPdfBlob } from '../test/setup'
+import { readPdfBlob } from './setup'
 
 /**
  * Creates an in-memory PDF file with the given page count and returns it as a
