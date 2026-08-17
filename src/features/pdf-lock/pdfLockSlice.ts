@@ -16,6 +16,7 @@ export interface LockConfig {
     mode: LockMode
     userPassword: string
     ownerPassword: string
+    unlockPassword: string
     originalFileWasEncrypted: boolean
     permissions: {
         printing: boolean
@@ -35,6 +36,7 @@ const initialConfig: LockConfig = {
     mode: 'lock',
     userPassword: '',
     ownerPassword: '',
+    unlockPassword: '',
     originalFileWasEncrypted: false,
     permissions: {
         printing: true,
@@ -116,7 +118,7 @@ export const unlockPdf = createAsyncThunk<string, void, { state: RootState }>(
         const { item, config } = getState().pdfLock
         if (!item) return rejectWithValue('No file selected.')
 
-        const password = config.userPassword
+        const password = config.unlockPassword || config.userPassword
         if (!password) return rejectWithValue('Password required.')
 
         try {
@@ -171,6 +173,9 @@ const pdfLockSlice = createSlice({
         ownerPasswordSet(state, action: PayloadAction<string>) {
             state.config.ownerPassword = action.payload
         },
+        unlockPasswordSet(state, action: PayloadAction<string>) {
+            state.config.unlockPassword = action.payload
+        },
         permissionsSet(
             state,
             action: PayloadAction<{
@@ -213,6 +218,7 @@ export const {
     modeSet,
     userPasswordSet,
     ownerPasswordSet,
+    unlockPasswordSet,
     permissionsSet,
     encryptionDetected,
     clearAll

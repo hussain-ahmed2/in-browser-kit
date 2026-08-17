@@ -19,6 +19,7 @@ import {
     fileReplaced,
     userPasswordSet,
     ownerPasswordSet,
+    unlockPasswordSet,
     permissionsSet,
     encryptionDetected,
     modeSet,
@@ -63,6 +64,10 @@ export function PdfLockPage() {
         dispatch(ownerPasswordSet(password))
     }
 
+    const handleUnlockPasswordChange = (password: string) => {
+        dispatch(unlockPasswordSet(password))
+    }
+
     const handlePermissionsChange = (permissions: Partial<{
         printing: boolean
         modifying: boolean
@@ -91,12 +96,17 @@ export function PdfLockPage() {
 
         dispatch(fileReplaced({ id: genId(), file: new File([blob], item.file.name, { type: 'application/pdf' }) }))
         dispatch(encryptionDetected(false))
+        dispatch(unlockPasswordSet(password))
     }
 
     const handleSubmit = async () => {
         if (!item) return
 
-        if (config.userPassword.length === 0) {
+        const hasPassword = config.mode === 'unlock'
+            ? config.unlockPassword.length > 0
+            : config.userPassword.length > 0
+
+        if (!hasPassword) {
             toast.error('Please enter a password.')
             return
         }
@@ -166,6 +176,7 @@ export function PdfLockPage() {
                             onModeChange={handleModeChange}
                             onUserPasswordChange={handleUserPasswordChange}
                             onOwnerPasswordChange={handleOwnerPasswordChange}
+                            onUnlockPasswordChange={handleUnlockPasswordChange}
                             onPermissionsChange={handlePermissionsChange}
                             onClear={() => dispatch(clearAll())}
                             onSubmit={handleSubmit}

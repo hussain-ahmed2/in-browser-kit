@@ -18,7 +18,15 @@ interface LockUnlockWorkspaceProps {
     onModeChange: (mode: 'lock' | 'unlock') => void
     onUserPasswordChange: (password: string) => void
     onOwnerPasswordChange: (password: string) => void
-    onPermissionsChange: (permissions: Partial<Pick<LockConfig['permissions'], 'printing' | 'modifying' | 'copying'>>) => void
+    onUnlockPasswordChange: (password: string) => void
+    onPermissionsChange: (
+        permissions: Partial<
+            Pick<
+                LockConfig['permissions'],
+                'printing' | 'modifying' | 'copying'
+            >
+        >
+    ) => void
     onClear: () => void
     onSubmit: () => void
     onUnlockAndPreview: (password: string) => Promise<void>
@@ -32,6 +40,7 @@ export function LockUnlockWorkspace({
     onModeChange,
     onUserPasswordChange,
     onOwnerPasswordChange,
+    onUnlockPasswordChange,
     onPermissionsChange,
     onClear,
     onSubmit,
@@ -41,7 +50,7 @@ export function LockUnlockWorkspace({
     const [userPassword, setUserPassword] = useState(config.userPassword)
     const [ownerPassword, setOwnerPassword] = useState(config.ownerPassword)
     const [permissions, setPermissions] = useState(config.permissions)
-    const [unlockPassword, setUnlockPassword] = useState('')
+    const [unlockPassword, setUnlockPassword] = useState(config.unlockPassword)
     const [isUnlocking, setIsUnlocking] = useState(false)
 
     const { pdf, error, isEncrypted } = usePdfDocument(item.file)
@@ -53,7 +62,10 @@ export function LockUnlockWorkspace({
     if (!pdf && !error && !isEncrypted) {
         return (
             <div className="flex justify-center py-12">
-                <Loader2 className="animate-spin text-brand" aria-hidden="true" />
+                <Loader2
+                    className="animate-spin text-brand"
+                    aria-hidden="true"
+                />
             </div>
         )
     }
@@ -68,7 +80,15 @@ export function LockUnlockWorkspace({
         onOwnerPasswordChange(value)
     }
 
-    const handlePermissionChange = (key: keyof LockConfig['permissions'], checked: boolean) => {
+    const handleUnlockPasswordChange = (value: string) => {
+        setUnlockPassword(value)
+        onUnlockPasswordChange(value)
+    }
+
+    const handlePermissionChange = (
+        key: keyof LockConfig['permissions'],
+        checked: boolean
+    ) => {
         const newPermissions = { ...permissions, [key]: checked }
         setPermissions(newPermissions)
         onPermissionsChange({ [key]: checked })
@@ -117,7 +137,8 @@ export function LockUnlockWorkspace({
 
             {error && (
                 <p className="text-xs text-muted-foreground">
-                    Preview unavailable — this PDF may be password-protected or corrupt.
+                    Preview unavailable — this PDF may be password-protected or
+                    corrupt.
                 </p>
             )}
 
@@ -131,7 +152,10 @@ export function LockUnlockWorkspace({
                         <Lock aria-hidden="true" className="mr-2 h-4 w-4" />
                         Lock
                         {isEncrypted && (
-                            <Shield className="ml-1 h-3 w-3" aria-hidden="true" />
+                            <Shield
+                                className="ml-1 h-3 w-3"
+                                aria-hidden="true"
+                            />
                         )}
                     </TabsTrigger>
                     <TabsTrigger value="unlock">
@@ -143,30 +167,42 @@ export function LockUnlockWorkspace({
                 <TabsContent value="lock" className="space-y-4">
                     {isEncrypted ? (
                         <div className="space-y-4 p-4 rounded-lg border border-amber-200 bg-amber-50 text-center">
-                            <AlertCircle className="h-8 w-8 text-amber-600 mx-auto" aria-hidden="true" />
+                            <AlertCircle
+                                className="h-8 w-8 text-amber-600 mx-auto"
+                                aria-hidden="true"
+                            />
                             <p className="text-sm font-medium text-amber-900">
                                 This PDF is password protected.
                             </p>
                             <p className="text-xs text-amber-700">
-                                Switch to <strong>Unlock</strong> tab to remove protection first.
+                                Switch to <strong>Unlock</strong> tab to remove
+                                protection first.
                             </p>
                         </div>
                     ) : (
                         <div className="space-y-4 p-4 rounded-lg border border-border bg-secondary/20">
                             <div className="flex items-center gap-2 text-sm font-medium text-green-700">
-                                <Shield className="h-4 w-4" aria-hidden="true" />
+                                <Shield
+                                    className="h-4 w-4"
+                                    aria-hidden="true"
+                                />
                                 <span>PDF is not encrypted</span>
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="userPassword" className="text-sm font-medium">
+                                <Label
+                                    htmlFor="userPassword"
+                                    className="text-sm font-medium"
+                                >
                                     User Password (required)
                                 </Label>
                                 <Input
                                     id="userPassword"
                                     type="password"
                                     value={userPassword}
-                                    onChange={(e) => handleUserPasswordChange(e.target.value)}
+                                    onChange={(e) =>
+                                        handleUserPasswordChange(e.target.value)
+                                    }
                                     placeholder="Enter user password"
                                     className="w-full"
                                     autoComplete="new-password"
@@ -174,52 +210,77 @@ export function LockUnlockWorkspace({
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="ownerPassword" className="text-sm font-medium">
+                                <Label
+                                    htmlFor="ownerPassword"
+                                    className="text-sm font-medium"
+                                >
                                     Owner Password (optional)
                                 </Label>
                                 <Input
                                     id="ownerPassword"
                                     type="password"
                                     value={ownerPassword}
-                                    onChange={(e) => handleOwnerPasswordChange(e.target.value)}
+                                    onChange={(e) =>
+                                        handleOwnerPasswordChange(
+                                            e.target.value
+                                        )
+                                    }
                                     placeholder="Leave empty to use user password"
                                     className="w-full"
                                     autoComplete="new-password"
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    If left empty, the user password will be used as the owner password.
+                                    If left empty, the user password will be
+                                    used as the owner password.
                                 </p>
                             </div>
 
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium">Permissions</Label>
+                                <Label className="text-sm font-medium">
+                                    Permissions
+                                </Label>
                                 <div className="grid grid-cols-2 gap-4">
                                     <label className="flex items-center gap-2">
                                         <Checkbox
                                             checked={permissions.printing}
                                             onCheckedChange={(c: boolean) =>
-                                                handlePermissionChange('printing', c)
+                                                handlePermissionChange(
+                                                    'printing',
+                                                    c
+                                                )
                                             }
                                         />
-                                        <span className="text-sm">Printing (high quality)</span>
+                                        <span className="text-sm">
+                                            Printing (high quality)
+                                        </span>
                                     </label>
                                     <label className="flex items-center gap-2">
                                         <Checkbox
                                             checked={permissions.modifying}
                                             onCheckedChange={(c: boolean) =>
-                                                handlePermissionChange('modifying', c)
+                                                handlePermissionChange(
+                                                    'modifying',
+                                                    c
+                                                )
                                             }
                                         />
-                                        <span className="text-sm">Modifying content</span>
+                                        <span className="text-sm">
+                                            Modifying content
+                                        </span>
                                     </label>
                                     <label className="flex items-center gap-2">
                                         <Checkbox
                                             checked={permissions.copying}
                                             onCheckedChange={(c: boolean) =>
-                                                handlePermissionChange('copying', c)
+                                                handlePermissionChange(
+                                                    'copying',
+                                                    c
+                                                )
                                             }
                                         />
-                                        <span className="text-sm">Copying content</span>
+                                        <span className="text-sm">
+                                            Copying content
+                                        </span>
                                     </label>
                                 </div>
                             </div>
@@ -231,27 +292,39 @@ export function LockUnlockWorkspace({
                     {isEncrypted ? (
                         <div className="space-y-4 p-4 rounded-lg border border-amber-200 bg-amber-50">
                             <div className="flex items-start gap-3">
-                                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" aria-hidden="true" />
+                                <AlertCircle
+                                    className="h-5 w-5 text-amber-600 mt-0.5 shrink-0"
+                                    aria-hidden="true"
+                                />
                                 <div>
                                     <p className="text-sm font-medium text-amber-900">
                                         This PDF is password protected.
                                     </p>
                                     <p className="text-xs text-amber-700 mt-1">
-                                        Enter the password to unlock and preview, then remove protection.
+                                        Enter the password to unlock and
+                                        preview, then remove protection.
                                     </p>
                                 </div>
                             </div>
 
-                            <form onSubmit={handleUnlockSubmit} className="space-y-3">
+                            <form
+                                onSubmit={handleUnlockSubmit}
+                                className="space-y-3"
+                            >
                                 <div className="space-y-2">
-                                    <Label htmlFor="unlockPassword" className="text-sm font-medium">
+                                    <Label
+                                        htmlFor="unlockPassword"
+                                        className="text-sm font-medium"
+                                    >
                                         Password
                                     </Label>
                                     <Input
                                         id="unlockPassword"
                                         type="password"
                                         value={unlockPassword}
-                                        onChange={(e) => setUnlockPassword(e.target.value)}
+                                        onChange={(e) =>
+                                            handleUnlockPasswordChange(e.target.value)
+                                        }
                                         placeholder="Enter the PDF password"
                                         className="w-full"
                                         autoComplete="current-password"
@@ -266,12 +339,18 @@ export function LockUnlockWorkspace({
                                 >
                                     {isUnlocking ? (
                                         <>
-                                            <Loader2 className="animate-spin mr-2" aria-hidden="true" />
+                                            <Loader2
+                                                className="animate-spin mr-2"
+                                                aria-hidden="true"
+                                            />
                                             Unlocking...
                                         </>
                                     ) : (
                                         <>
-                                            <Unlock className="mr-2 h-4 w-4" aria-hidden="true" />
+                                            <Unlock
+                                                className="mr-2 h-4 w-4"
+                                                aria-hidden="true"
+                                            />
                                             Unlock & Preview
                                         </>
                                     )}
@@ -280,12 +359,16 @@ export function LockUnlockWorkspace({
                         </div>
                     ) : (
                         <div className="space-y-4 p-4 rounded-lg border border-border bg-secondary/20 text-center">
-                            <Shield className="h-8 w-8 text-green-600 mx-auto" aria-hidden="true" />
+                            <Shield
+                                className="h-8 w-8 text-green-600 mx-auto"
+                                aria-hidden="true"
+                            />
                             <p className="text-sm font-medium text-green-900">
                                 This PDF is not encrypted.
                             </p>
                             <p className="text-xs text-green-700">
-                                No password needed. Switch to <strong>Lock</strong> tab to add protection.
+                                No password needed. Switch to{' '}
+                                <strong>Lock</strong> tab to add protection.
                             </p>
                         </div>
                     )}
@@ -294,11 +377,16 @@ export function LockUnlockWorkspace({
                     {!isEncrypted && config.mode === 'unlock' && pdf && (
                         <div className="space-y-4 p-4 rounded-lg border border-green-200 bg-green-50">
                             <div className="flex items-center gap-2 text-sm font-medium text-green-900">
-                                <Unlock className="h-4 w-4" aria-hidden="true" />
+                                <Unlock
+                                    className="h-4 w-4"
+                                    aria-hidden="true"
+                                />
                                 <span>PDF unlocked successfully!</span>
                             </div>
                             <p className="text-xs text-green-700">
-                                Preview below. Click <strong>Unlock & Download</strong> to save the unprotected PDF.
+                                Preview below. Click{' '}
+                                <strong>Unlock & Download</strong> to save the
+                                unprotected PDF.
                             </p>
                         </div>
                     )}
@@ -320,13 +408,23 @@ export function LockUnlockWorkspace({
                 <Button
                     type="button"
                     onClick={onSubmit}
-                    disabled={isProcessing || (config.mode === 'unlock' ? !hasUnlockConfig : !hasLockConfig)}
+                    disabled={
+                        isProcessing ||
+                        (config.mode === 'unlock'
+                            ? !hasUnlockConfig
+                            : !hasLockConfig)
+                    }
                     className="w-full sm:w-auto bg-linear-to-r from-brand to-[color-mix(in_oklab,var(--brand)_60%,var(--glow))] text-brand-foreground hover:shadow-[0_0_28px_-6px] hover:shadow-brand/60"
                 >
                     {isProcessing ? (
                         <>
-                            <Loader2 className="animate-spin" aria-hidden="true" />
-                            {config.mode === 'unlock' ? 'Unlocking...' : 'Locking...'}
+                            <Loader2
+                                className="animate-spin"
+                                aria-hidden="true"
+                            />
+                            {config.mode === 'unlock'
+                                ? 'Unlocking...'
+                                : 'Locking...'}
                         </>
                     ) : config.mode === 'unlock' ? (
                         <>
