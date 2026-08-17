@@ -60,7 +60,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Generate strong passwords and check their strength.",
     icon: KeyRound,
     category: "Security",
-    planned: true,
   },
   {
     slug: "hash-generator",
@@ -68,7 +67,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Hash text with SHA-1, SHA-256, SHA-384, or SHA-512.",
     icon: Fingerprint,
     category: "Security",
-    planned: true,
   },
   {
     slug: "pdf-split",
