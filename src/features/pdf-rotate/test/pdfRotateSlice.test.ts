@@ -141,6 +141,49 @@ describe('rotatePdf thunk', () => {
         expect(rotated.getPage(1).getRotation().angle).toBe(270)
     })
 
+    it('keeps an already-rotated page when no live rotation is set', async () => {
+        const store = createTestStore({ pdfRotate: pdfRotateReducer })
+        const file = await makePdfFile('rotate.pdf', 1, [90])
+        store.dispatch(fileSelected({ id: '1', file }))
+
+        await store.dispatch(rotatePdf())
+
+        const rotated = await registry.readPdf(
+            store.getState().pdfRotate.resultUrl!
+        )
+        expect(rotated.getPage(0).getRotation().angle).toBe(90)
+    })
+
+    it('applies the live rotation on top of the inherent rotation', async () => {
+        const store = createTestStore({ pdfRotate: pdfRotateReducer })
+        const file = await makePdfFile('rotate.pdf', 1, [90])
+        store.dispatch(fileSelected({ id: '1', file }))
+        store.dispatch(rotationSet({ page: 1, degrees: 90 }))
+
+        const result = await store.dispatch(rotatePdf())
+        expect(result.type).toBe('pdfRotate/rotatePdf/fulfilled')
+
+        const rotated = await registry.readPdf(
+            store.getState().pdfRotate.resultUrl!
+        )
+        expect(rotated.getPage(0).getRotation().angle).toBe(180)
+    })
+
+    it('rotates an already-rotated page back to its original (regression)', async () => {
+        const store = createTestStore({ pdfRotate: pdfRotateReducer })
+        const file = await makePdfFile('rotate.pdf', 1, [90])
+        store.dispatch(fileSelected({ id: '1', file }))
+        store.dispatch(rotationSet({ page: 1, degrees: 270 }))
+
+        const result = await store.dispatch(rotatePdf())
+        expect(result.type).toBe('pdfRotate/rotatePdf/fulfilled')
+
+        const rotated = await registry.readPdf(
+            store.getState().pdfRotate.resultUrl!
+        )
+        expect(rotated.getPage(0).getRotation().angle).toBe(0)
+    })
+
     it('rejects when no file is selected', async () => {
         const store = createTestStore({ pdfRotate: pdfRotateReducer })
         const result = await store.dispatch(rotatePdf())

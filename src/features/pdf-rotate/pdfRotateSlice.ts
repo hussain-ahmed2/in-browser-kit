@@ -43,7 +43,11 @@ export const rotatePdf = createAsyncThunk<string, void, { state: RootState }>(
         const pdf = await loadPdf(item.file)
         for (const [pageKey, rotationAngle] of Object.entries(rotations)) {
             // `rotations` keys are 1-based page numbers; pdf-lib is 0-based.
-            pdf.getPage(Number(pageKey) - 1).setRotation(degrees(rotationAngle))
+            const page = pdf.getPage(Number(pageKey) - 1)
+            // Apply on top of the page's inherent rotation so the result
+            // matches the preview (which folds `page.rotate` in too).
+            const current = page.getRotation().angle
+            page.setRotation(degrees((current + rotationAngle) % 360))
         }
         return pdfToBlobUrl(pdf)
     }

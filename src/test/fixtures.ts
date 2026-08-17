@@ -1,4 +1,4 @@
-import { PDFDocument } from 'pdf-lib'
+import { PDFDocument, degrees } from 'pdf-lib'
 import {
     configureStore,
     type Reducer,
@@ -7,15 +7,19 @@ import {
 
 /**
  * Creates an in-memory PDF file with the given page count and returns it as a
- * File, ready to feed into the pdf-tools helpers or feature slices.
+ * File, ready to feed into the pdf-tools helpers or feature slices. When
+ * `pageRotations` is provided, the i-th page is given that inherent rotation.
  */
 export async function makePdfFile(
     name: string,
-    pageCount: number
+    pageCount: number,
+    pageRotations: number[] = []
 ): Promise<File> {
     const pdf = await PDFDocument.create()
     for (let i = 0; i < pageCount; i++) {
-        pdf.addPage()
+        const page = pdf.addPage()
+        const rotation = pageRotations[i]
+        if (rotation) page.setRotation(degrees(rotation))
     }
     const bytes = await pdf.save()
     return new File([bytes.buffer as ArrayBuffer], name, {
