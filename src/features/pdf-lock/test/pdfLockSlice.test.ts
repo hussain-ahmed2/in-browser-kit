@@ -105,6 +105,7 @@ describe('buildEncryptArgs', () => {
             mode: 'lock',
             userPassword: 'user123',
             ownerPassword: 'owner456',
+            originalFileWasEncrypted: false,
             permissions: { printing: true, modifying: true, copying: true }
         })
         expect(args).toEqual([
@@ -126,6 +127,7 @@ describe('buildEncryptArgs', () => {
             mode: 'lock',
             userPassword: 'user123',
             ownerPassword: '',
+            originalFileWasEncrypted: false,
             permissions: { printing: false, modifying: false, copying: false }
         })
         // Empty owner password falls back to the user password.

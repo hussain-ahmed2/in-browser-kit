@@ -14,6 +14,7 @@ import pdfSplitReducer, {
 } from "@/features/pdf-split/pdfSplitSlice";
 import pdfLockReducer, {
   fileSelected as pdfLockFileSelected,
+  fileReplaced as pdfLockFileReplaced,
 } from "@/features/pdf-lock/pdfLockSlice";
 
 export const store = configureStore({
@@ -34,6 +35,7 @@ export const store = configureStore({
           pdfRemovePagesFileSelected.type,
           pdfSplitFileSelected.type,
           pdfLockFileSelected.type,
+          pdfLockFileReplaced.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",

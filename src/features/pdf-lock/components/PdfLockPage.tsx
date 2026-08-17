@@ -16,9 +16,12 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import {
     clearAll,
     fileSelected,
+    fileReplaced,
     userPasswordSet,
     ownerPasswordSet,
     permissionsSet,
+    encryptionDetected,
+    modeSet,
     selectLockConfig,
     selectLockIsProcessing,
     selectLockItem,
@@ -46,6 +49,10 @@ export function PdfLockPage() {
 
     const handleFileSelect = (file: File) => {
         dispatch(fileSelected({ id: genId(), file }))
+    }
+
+    const handleModeChange = (mode: 'lock' | 'unlock') => {
+        dispatch(modeSet(mode))
     }
 
     const handleUserPasswordChange = (password: string) => {
@@ -82,25 +89,37 @@ export function PdfLockPage() {
         const blob = new Blob([new Uint8Array(result)], { type: 'application/pdf' })
         const decryptedUrl = URL.createObjectURL(blob)
 
-        dispatch(fileSelected({ id: genId(), file: new File([blob], item.file.name, { type: 'application/pdf' }) }))
+        dispatch(fileReplaced({ id: genId(), file: new File([blob], item.file.name, { type: 'application/pdf' }) }))
+        dispatch(encryptionDetected(false))
     }
 
     const handleSubmit = async () => {
         if (!item) return
 
         if (config.userPassword.length === 0) {
-            toast.error('Please enter a user password.')
+            toast.error('Please enter a password.')
             return
         }
 
         try {
-            await dispatch(lockPdf()).unwrap()
-            toast.success('PDF locked successfully!')
+            if (config.mode === 'unlock') {
+                await dispatch(unlockPdf()).unwrap()
+                toast.success('PDF unlocked successfully!')
+            } else {
+                await dispatch(lockPdf()).unwrap()
+                toast.success('PDF locked successfully!')
+            }
         } catch (error: unknown) {
-            console.error('Lock failed:', error)
-            toast.error('Error locking the PDF. It might be corrupt.')
+            console.error('Lock/Unlock failed:', error)
+            toast.error(
+                config.mode === 'lock'
+                    ? 'Error locking the PDF. It might be corrupt.'
+                    : 'Error unlocking the PDF. The password might be incorrect.'
+            )
         }
     }
+
+    const isUnlock = config.mode === 'unlock'
 
     return (
         <>
@@ -123,17 +142,17 @@ export function PdfLockPage() {
                     ) : resultUrl ? (
                         <PdfResult
                             url={resultUrl}
-                            title={config.userPassword ? 'Unlock Complete!' : 'Lock Complete!'}
+                            title={isUnlock ? 'Unlock Complete!' : 'Lock Complete!'}
                             description={
-                                config.userPassword
+                                isUnlock
                                     ? 'Your unlocked PDF is ready to download.'
                                     : 'Your protected PDF is ready to download.'
                             }
                             defaultFilename={
-                                config.userPassword ? 'Unlocked_PDF' : 'Locked_PDF'
+                                isUnlock ? 'Unlocked_PDF' : 'Locked_PDF'
                             }
                             buttonLabel={
-                                config.userPassword
+                                isUnlock
                                     ? 'Download Unlocked PDF'
                                     : 'Download Locked PDF'
                             }
@@ -144,12 +163,14 @@ export function PdfLockPage() {
                             item={item}
                             config={config}
                             isProcessing={isProcessing}
+                            onModeChange={handleModeChange}
                             onUserPasswordChange={handleUserPasswordChange}
                             onOwnerPasswordChange={handleOwnerPasswordChange}
                             onPermissionsChange={handlePermissionsChange}
                             onClear={() => dispatch(clearAll())}
                             onSubmit={handleSubmit}
                             onUnlockAndPreview={handleUnlockAndPreview}
+                            onEncryptionDetected={(encrypted: boolean) => dispatch(encryptionDetected(encrypted))}
                         />
                     )}
                 </CardContent>

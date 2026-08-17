@@ -16,6 +16,7 @@ export interface LockConfig {
     mode: LockMode
     userPassword: string
     ownerPassword: string
+    originalFileWasEncrypted: boolean
     permissions: {
         printing: boolean
         modifying: boolean
@@ -34,6 +35,7 @@ const initialConfig: LockConfig = {
     mode: 'lock',
     userPassword: '',
     ownerPassword: '',
+    originalFileWasEncrypted: false,
     permissions: {
         printing: true,
         modifying: false,
@@ -149,6 +151,17 @@ const pdfLockSlice = createSlice({
             state.config = { ...initialConfig }
             state.resultUrl = null
         },
+        fileReplaced(state, action: PayloadAction<PdfLockItem>) {
+            state.item = action.payload
+            state.resultUrl = null
+        },
+        encryptionDetected(state, action: PayloadAction<boolean>) {
+            state.config.originalFileWasEncrypted = action.payload
+            // Only set mode on initial detection, don't change mode after decrypt-for-preview
+            if (state.config.mode === 'lock') {
+                state.config.mode = action.payload ? 'unlock' : 'lock'
+            }
+        },
         modeSet(state, action: PayloadAction<LockMode>) {
             state.config.mode = action.payload
         },
@@ -196,10 +209,12 @@ const pdfLockSlice = createSlice({
 
 export const {
     fileSelected,
+    fileReplaced,
     modeSet,
     userPasswordSet,
     ownerPasswordSet,
     permissionsSet,
+    encryptionDetected,
     clearAll
 } = pdfLockSlice.actions
 
