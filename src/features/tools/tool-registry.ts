@@ -10,6 +10,7 @@ import {
   Crop,
   FileImage,
   QrCode,
+  Code,
   type LucideIcon,
 } from "lucide-react";
 
@@ -115,6 +116,13 @@ export const tools: ToolDefinition[] = [
     name: "QR Code Generator",
     tagline: "Create QR codes from any text or URL and download them.",
     icon: QrCode,
+    category: "Utilities",
+  },
+  {
+    slug: "base64",
+    name: "Base64 Encode/Decode",
+    tagline: "Convert between text/files and Base64 encoding.",
+    icon: Code,
     category: "Utilities",
   },
 ];
