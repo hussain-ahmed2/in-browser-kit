@@ -6,8 +6,7 @@ import {
     FileText,
     Image as ImageIcon,
     ShieldCheck,
-    Wrench,
-    type LucideIcon
+    Wrench
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -24,8 +23,9 @@ import {
     type ToolCategory,
     type ToolDefinition
 } from '@/features/tools/tool-registry'
+import { ToolIcon } from '@/components/ToolIcon'
 
-const CATEGORY_ICONS: Record<ToolCategory, LucideIcon> = {
+const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string; size?: number | string }>> = {
     PDF: FileText,
     Images: ImageIcon,
     Security: ShieldCheck,
@@ -43,7 +43,7 @@ interface CategoryDropdownProps {
 export function CategoryDropdown({ category }: CategoryDropdownProps) {
     const pathname = usePathname()
     const categoryTools = getToolsByCategory(category)
-    const Icon = CATEGORY_ICONS[category]
+    const CategoryIcon = CATEGORY_ICONS[category]
     const isActive = categoryTools.some(
         (tool) => pathname === `/tools/${tool.slug}`
     )
@@ -61,7 +61,7 @@ export function CategoryDropdown({ category }: CategoryDropdownProps) {
                                 'bg-brand/10 text-brand hover:bg-brand/15 focus:bg-brand/15'
                         )}
                     >
-                        <Icon className="size-3.5" aria-hidden="true" />
+                        <CategoryIcon className="size-3.5" aria-hidden="true" />
                         <span className="hidden md:inline">
                             {CATEGORY_LABELS[category]}
                         </span>
@@ -69,7 +69,6 @@ export function CategoryDropdown({ category }: CategoryDropdownProps) {
                     <NavigationMenuContent className="p-1.5 w-80 gap-2 md:w-100">
                         <ul className="flex flex-col gap-0.5">
                             {categoryTools.map((tool) => {
-                                const ToolIcon = tool.icon
                                 const href = `/tools/${tool.slug}`
 
                                 if (tool.planned) {
@@ -78,10 +77,7 @@ export function CategoryDropdown({ category }: CategoryDropdownProps) {
                                             key={tool.slug}
                                             className="flex items-center gap-2.5 rounded-md p-2 text-sm text-muted-foreground/60"
                                         >
-                                            <ToolIcon
-                                                className="size-4 shrink-0"
-                                                aria-hidden="true"
-                                            />
+                                            <ToolIcon name={tool.icon} className="size-4 shrink-0" aria-hidden="true" />
                                             <span className="flex-1 truncate">
                                                 {tool.name}
                                             </span>
@@ -114,8 +110,6 @@ interface CategoryListItemProps {
 }
 
 function CategoryListItem({ tool, isActive }: CategoryListItemProps) {
-    const ToolIcon = tool.icon
-
     return (
         <li>
             <NavigationMenuLink
@@ -126,10 +120,7 @@ function CategoryListItem({ tool, isActive }: CategoryListItemProps) {
                 )}
             >
                 <Link href={`/tools/${tool.slug}`}>
-                    <ToolIcon
-                        className="size-4 shrink-0 text-muted-foreground"
-                        aria-hidden="true"
-                    />
+                    <ToolIcon name={tool.icon} className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
                     <span className="flex min-w-0 flex-1 flex-col gap-1">
                         <span className="leading-none font-medium">
                             {tool.name}

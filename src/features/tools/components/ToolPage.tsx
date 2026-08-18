@@ -1,5 +1,6 @@
 import { Breadcrumbs } from '@/components/Breadcrumbs'
 import { getToolBySlug } from '../tool-registry'
+import { ToolIcon } from '@/components/ToolIcon'
 import { cn } from '@/lib/utils'
 
 interface ToolPageProps {
@@ -23,7 +24,6 @@ export function ToolPage({
     maxWidth = '3xl'
 }: ToolPageProps) {
     const tool = getToolBySlug(slug)
-    const Icon = tool?.icon
 
     return (
         <div className="p-6">
@@ -37,9 +37,9 @@ export function ToolPage({
                 )}
             >
                 <header className="text-center space-y-4">
-                    {Icon && (
+                    {tool && (
                         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-linear-to-br from-brand/25 to-glow/15 text-brand ring-1 ring-brand/25 shadow-[0_0_32px_-8px] shadow-brand/50 mb-4 animate-fade-in-up stagger-1">
-                            <Icon size={32} aria-hidden="true" />
+                            <ToolIcon name={tool.icon} size={32} aria-hidden="true" />
                         </div>
                     )}
                     <h1 className="text-4xl font-bold tracking-tight animate-fade-in-up stagger-2">

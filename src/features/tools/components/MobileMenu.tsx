@@ -14,6 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { tools, CATEGORIES, CATEGORY_LABELS } from "@/features/tools/tool-registry";
+import { ToolIcon } from "@/components/ToolIcon";
 import { cn } from "@/lib/utils";
 
 /**
@@ -46,7 +47,6 @@ export function MobileMenu() {
                 </p>
                 <div className="flex flex-col gap-1">
                   {categoryTools.map((tool) => {
-                    const Icon = tool.icon;
                     const href = `/tools/${tool.slug}`;
                     const isActive = pathname === href;
 
@@ -56,7 +56,7 @@ export function MobileMenu() {
                           key={tool.slug}
                           className="flex items-center gap-3 rounded-lg p-2.5 text-sm text-muted-foreground/60"
                         >
-                          <Icon className="size-4 shrink-0" aria-hidden="true" />
+                          <ToolIcon name={tool.icon} className="size-4 shrink-0" aria-hidden="true" />
                           <span className="flex-1 truncate">{tool.name}</span>
                           <span className="text-[10px] font-medium uppercase tracking-wide">
                             Soon
@@ -74,7 +74,7 @@ export function MobileMenu() {
                             isActive && "bg-brand/10 font-medium text-brand hover:bg-brand/15"
                           )}
                         >
-                          <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                          <ToolIcon name={tool.icon} className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
                           <span className="flex-1 truncate">{tool.name}</span>
                         </Link>
                       </SheetClose>
