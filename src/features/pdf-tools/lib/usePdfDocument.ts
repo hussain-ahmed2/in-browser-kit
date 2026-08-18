@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react'
 import type {
     PDFDocumentLoadingTask,
-    PDFDocumentProxy,
-    PasswordException
+    PDFDocumentProxy
 } from 'pdfjs-dist'
 import { createPdfLoadingTask } from './preview'
 

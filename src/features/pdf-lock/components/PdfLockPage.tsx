@@ -92,7 +92,6 @@ export function PdfLockPage() {
         await runner.destroy()
 
         const blob = new Blob([new Uint8Array(result)], { type: 'application/pdf' })
-        const decryptedUrl = URL.createObjectURL(blob)
 
         dispatch(fileReplaced({ id: genId(), file: new File([blob], item.file.name, { type: 'application/pdf' }) }))
         dispatch(encryptionDetected(false))

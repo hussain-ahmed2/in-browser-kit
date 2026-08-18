@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# InBrowser
+
+Privacy-first file tools. Compress images, merge PDFs, and more — all in your browser.
+
+Every tool runs entirely client-side. Your files are never uploaded, stored, or sent to a server. Anything you process stays on your device.
+
+## Tools
+
+### PDF
+- **PDF Merger** — combine multiple PDFs into one, with drag-and-drop reordering.
+- **PDF Split** — split a PDF by pages or ranges into separate files.
+- **PDF Rotate** — rotate all or selected pages of a PDF.
+- **PDF Page Remover** — remove unwanted pages and download the cleaned file.
+- **PDF Lock / Unlock** — encrypt a PDF with a password, or remove an existing password.
+- **Image to PDF** — turn images (JPG/PNG) into a single PDF, with page size and fit control.
+
+### Images
+- **Image Compressor** — shrink JPG/PNG/WebP files with quality and dimension controls.
+- **Resize & Convert** — resize images by max dimension and convert between JPG, PNG, and WebP.
+
+### Security
+- **Password Toolkit** — generate strong passwords and check their strength.
+- **Hash Generator** — compute hashes (MD5, SHA-1, SHA-256, ...) of any text or file.
+
+### Utilities
+- **QR Code Generator** — create QR codes for URLs, Wi-Fi, contact info, and more, with ready-made templates.
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org) (App Router) + TypeScript
+- [Tailwind CSS v4](https://tailwindcss.com) + shadcn/ui components
+- Redux Toolkit (RTK) for client-side state
+- [pdf-lib](https://pdf-lib.js.org), [pdfjs-dist](https://mozilla.github.io/pdf.js/), and [qpdf](https://qpdf.sourceforge.io/) (compiled to WebAssembly) for PDF work
+- [browser-image-compression](https://github.com/Donaldcwl/browser-image-compression) for image processing
+- [vitest](https://vitest.dev) for testing
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to use the tools.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Production build |
+| `pnpm start` | Run the production build |
+| `pnpm lint` | ESLint (must pass with zero errors/warnings) |
+| `pnpm test` | Run the vitest suite |
+| `pnpm icons` | Regenerate favicon/app icons from source |
 
-## Learn More
+## Project Layout
 
-To learn more about Next.js, take a look at the following resources:
+- `src/features/<tool>/` — each tool is a self-contained feature (components, lib, slice, tests).
+- `src/app/tools/<tool>/` — route pages for each tool.
+- `src/features/tools/tool-registry.ts` — the central list of tools rendered on the homepage.
+- `public/qpdf/` and `public/pdf.worker.min.mjs` — vendored third-party bundles (ignored by ESLint).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Testing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm test
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Unit tests cover the pure logic of each feature (PDF operations, image helpers, QR payloads, hash generation, and state slices).

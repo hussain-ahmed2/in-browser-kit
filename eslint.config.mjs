@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored third-party bundles (not our code):
+    "public/qpdf/**",
+    "public/pdf.worker.min.mjs",
   ]),
 ]);
 
