@@ -118,7 +118,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Create QR codes from any text or URL and download them.",
     icon: QrCode,
     category: "Utilities",
-    planned: true,
   },
 ];
 
