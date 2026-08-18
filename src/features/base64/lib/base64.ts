@@ -5,7 +5,8 @@ export function encodeText(text: string): string {
 }
 
 export function decodeText(base64: string): string {
-    return decodeURIComponent(escape(atob(base64)))
+    const cleaned = base64.replace(/\s+/g, '')
+    return decodeURIComponent(escape(atob(cleaned)))
 }
 
 export function encodeFile(file: File): Promise<string> {
@@ -26,7 +27,8 @@ export function encodeFile(file: File): Promise<string> {
 }
 
 export async function decodeFile(base64: string, filename: string): Promise<File> {
-    const binary = atob(base64)
+    const cleaned = base64.replace(/\s+/g, '')
+    const binary = atob(cleaned)
     const bytes = new Uint8Array(binary.length)
     for (let i = 0; i < binary.length; i++) {
         bytes[i] = binary.charCodeAt(i)
@@ -36,8 +38,10 @@ export async function decodeFile(base64: string, filename: string): Promise<File
 
 export function validateBase64(base64: string): boolean {
     try {
-        if (!/^[A-Za-z0-9+/]*={0,2}$/.test(base64)) return false
-        atob(base64)
+        // Remove whitespace (newlines, spaces, tabs) that may be present in pasted Base64
+        const cleaned = base64.replace(/\s+/g, '')
+        if (!/^[A-Za-z0-9+/]*={0,2}$/.test(cleaned)) return false
+        atob(cleaned)
         return true
     } catch {
         return false
