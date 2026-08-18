@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { FileType, Download, Loader2, AlertCircle } from 'lucide-react'
+import { FileType, Download, Loader2, AlertCircle, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { encodeText, decodeText, encodeFile, decodeFile, validateBase64 } from '../lib/base64'
 
@@ -163,20 +163,20 @@ export function Base64Page() {
                                     onPaste={handlePaste}
                                     placeholder={
                                         inputFile
-                                            ? `File selected: ${inputFile.name} (${(inputFile.size / 1024).toFixed(1)} KB)`
+                                            ? `File selected: ${inputFile.name} (${(inputFile.size / 1024).toFixed(1)} KB) — click "Remove file" to type text`
                                             : 'Type or paste text to encode…'
                                     }
                                     className={cn(inputFile && 'text-muted-foreground')}
                                     disabled={!!inputFile}
                                 />
                                 {inputFile && (
-                                    <div className="absolute bottom-2 right-2 flex gap-1">
+                                    <div className="absolute bottom-2 right-2 flex gap-2">
                                         <Label
                                             htmlFor="encode-file"
-                                            className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2.5 py-1 text-xs font-medium cursor-pointer hover:bg-muted/80"
+                                            className="inline-flex items-center gap-1.5 rounded-md bg-muted px-3 py-1.5 text-sm font-medium cursor-pointer hover:bg-muted/80 transition-colors"
                                         >
-                                            <FileType className="h-3 w-3" />
-                                            Change
+                                            <FileType className="h-3.5 w-3.5" />
+                                            Change file
                                         </Label>
                                         <button
                                             type="button"
@@ -185,9 +185,10 @@ export function Base64Page() {
                                                 const input = document.getElementById('encode-file') as HTMLInputElement
                                                 if (input) input.value = ''
                                             }}
-                                            className="inline-flex items-center gap-1.5 rounded-md bg-destructive/10 px-2.5 py-1 text-xs font-medium text-destructive hover:bg-destructive/20"
+                                            className="inline-flex items-center gap-1.5 rounded-md bg-destructive/10 px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/20 transition-colors"
                                         >
-                                            Remove
+                                            <X className="h-3.5 w-3.5" />
+                                            Remove file
                                         </button>
                                     </div>
                                 )}
