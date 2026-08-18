@@ -12,6 +12,7 @@ import {
   QrCode,
   Code,
   Braces,
+  Ruler,
   type LucideIcon,
 } from "lucide-react";
 
@@ -30,7 +31,8 @@ export type ToolIconName =
   | "FileImage"
   | "QrCode"
   | "Code"
-  | "Braces";
+  | "Braces"
+  | "Ruler";
 
 export interface ToolDefinition {
   slug: string;
@@ -155,6 +157,13 @@ export const tools: ToolDefinition[] = [
     icon: "Fingerprint",
     category: "Utilities",
   },
+  {
+    slug: "unit-converter",
+    name: "Unit Converter",
+    tagline: "Convert between units of length, weight, temperature, data, time, area, volume, and speed.",
+    icon: "Ruler",
+    category: "Utilities",
+  },
 ];
 
 export function getToolBySlug(slug: string): ToolDefinition | undefined {
@@ -180,6 +189,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     QrCode,
     Code,
     Braces,
+    Ruler,
   };
   return iconMap[iconName];
 }

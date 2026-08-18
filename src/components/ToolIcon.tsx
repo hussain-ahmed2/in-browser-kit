@@ -14,6 +14,7 @@ import {
     QrCode,
     Code,
     Braces,
+    Ruler,
     type LucideIcon
 } from "lucide-react"
 import type { ToolIconName } from "@/features/tools/tool-registry"
@@ -31,7 +32,8 @@ const iconMap: Record<ToolIconName, LucideIcon> = {
     FileImage,
     QrCode,
     Code,
-    Braces
+    Braces,
+    Ruler
 }
 
 interface ToolIconProps {
