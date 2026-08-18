@@ -102,7 +102,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Resize images and convert between JPG, PNG, and WebP.",
     icon: Crop,
     category: "Images",
-    planned: true,
   },
   {
     slug: "image-to-pdf",
