@@ -30,7 +30,9 @@ import {
   downloadDataUrl,
   validateQrInput,
   getCapacityChars,
+  type QrPreset,
 } from '../lib/qr'
+import { QrPresetChips } from './QrPresetChips'
 
 const qrSchema = z.object({
   text: z.string().min(1, 'Enter text or a URL'),
@@ -48,6 +50,7 @@ export function QrGeneratorPage() {
   const [outputSvg, setOutputSvg] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [activeSlug, setActiveSlug] = useState<string | null>(null)
 
   const form = useForm<QrFormValues>({
     resolver: zodResolver(qrSchema),
@@ -116,6 +119,11 @@ export function QrGeneratorPage() {
     URL.revokeObjectURL(url)
   }
 
+  const handlePresetSelect = (preset: QrPreset) => {
+    form.setValue('text', preset.example, { shouldDirty: true })
+    setActiveSlug(preset.slug)
+  }
+
   const capacityChars = getCapacityChars(ecLevel)
   const showWarning = text.length > capacityChars * 0.8
 
@@ -140,7 +148,10 @@ export function QrGeneratorPage() {
                   <textarea
                     id={field.name}
                     value={field.value}
-                    onChange={field.onChange}
+                    onChange={(event) => {
+                      field.onChange(event)
+                      setActiveSlug(null)
+                    }}
                     placeholder="Type or paste text or a URL…"
                     className={textareaClasses}
                   />
@@ -151,6 +162,8 @@ export function QrGeneratorPage() {
                 </Field>
               )}
             />
+
+            <QrPresetChips activeSlug={activeSlug} onSelect={handlePresetSelect} />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
               <SelectField

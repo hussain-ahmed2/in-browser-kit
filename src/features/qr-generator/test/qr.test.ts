@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   QR_EC_LEVELS,
   QR_CAPACITY_BYTES,
+  QR_PRESETS,
   getCapacityChars,
   validateQrInput,
   generateQrDataUrl,
@@ -26,6 +27,68 @@ describe('qr-generator lib', () => {
       expect(getCapacityChars('M')).toBe(2331)
       expect(getCapacityChars('Q')).toBe(1663)
       expect(getCapacityChars('H')).toBe(1273)
+    })
+  })
+
+  describe('QR_PRESETS', () => {
+    it('has unique slugs and labels', () => {
+      const slugs = QR_PRESETS.map((p) => p.slug)
+      const labels = QR_PRESETS.map((p) => p.label)
+      expect(new Set(slugs).size).toBe(slugs.length)
+      expect(new Set(labels).size).toBe(labels.length)
+    })
+
+    it('includes the expected preset types', () => {
+      const slugs = QR_PRESETS.map((p) => p.slug)
+      expect(slugs).toEqual(
+        expect.arrayContaining([
+          'text',
+          'url',
+          'wifi',
+          'email',
+          'phone',
+          'sms',
+          'vcard',
+          'bitcoin',
+        ])
+      )
+    })
+
+    it('every example is non-empty and within capacity for all EC levels', () => {
+      for (const preset of QR_PRESETS) {
+        expect(preset.example.length).toBeGreaterThan(0)
+        for (const level of QR_EC_LEVELS) {
+          expect(validateQrInput(preset.example, level)).toBeNull()
+        }
+      }
+    })
+
+    it('every preset has at least one usage tip', () => {
+      for (const preset of QR_PRESETS) {
+        expect(preset.tips.length).toBeGreaterThan(0)
+        for (const tip of preset.tips) {
+          expect(tip.length).toBeGreaterThan(0)
+        }
+      }
+    })
+
+    it('uses the correct payload format for each type', () => {
+      const example = (slug: string) =>
+        QR_PRESETS.find((p) => p.slug === slug)!.example
+      expect(example('wifi')).toMatch(/^WIFI:T:/)
+      expect(example('email')).toMatch(/^mailto:/)
+      expect(example('phone')).toMatch(/^tel:/)
+      expect(example('sms')).toMatch(/^smsto:/)
+      expect(example('vcard')).toContain('BEGIN:VCARD')
+      expect(example('vcard')).toContain('END:VCARD')
+      expect(example('bitcoin')).toMatch(/^bitcoin:/)
+      expect(example('url')).toMatch(/^https?:\/\//)
+    })
+
+    it('generates a scannable QR from the wifi example', async () => {
+      const wifi = QR_PRESETS.find((p) => p.slug === 'wifi')!.example
+      const dataUrl = await generateQrDataUrl(wifi, { size: 128, ecLevel: 'M' })
+      expect(dataUrl).toMatch(/^data:image\/png;base64,/)
     })
   })
 

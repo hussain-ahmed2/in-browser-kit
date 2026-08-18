@@ -16,6 +16,10 @@ import pdfLockReducer, {
   fileSelected as pdfLockFileSelected,
   fileReplaced as pdfLockFileReplaced,
 } from "@/features/pdf-lock/pdfLockSlice";
+import imageToPdfReducer, {
+  filesAdded as imageToPdfFilesAdded,
+  itemsReplaced as imageToPdfItemsReplaced,
+} from "@/features/image-to-pdf/imageToPdfSlice";
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +28,7 @@ export const store = configureStore({
     pdfRemovePages: pdfRemovePagesReducer,
     pdfSplit: pdfSplitReducer,
     pdfLock: pdfLockReducer,
+    imageToPdf: imageToPdfReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -36,6 +41,8 @@ export const store = configureStore({
           pdfSplitFileSelected.type,
           pdfLockFileSelected.type,
           pdfLockFileReplaced.type,
+          imageToPdfFilesAdded.type,
+          imageToPdfItemsReplaced.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",
@@ -43,6 +50,7 @@ export const store = configureStore({
           "pdfRemovePages.item",
           "pdfSplit.item",
           "pdfLock.item",
+          "imageToPdf.items",
         ],
       },
     }),

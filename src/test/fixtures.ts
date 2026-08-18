@@ -1,4 +1,5 @@
 import { PDFDocument, degrees } from 'pdf-lib'
+import sharp from 'sharp'
 import {
     configureStore,
     type Reducer,
@@ -46,4 +47,50 @@ export function createTestStore(reducer: Reducer | ReducersMapObject) {
  */
 export async function readPdf(url: string): Promise<PDFDocument> {
     return PDFDocument.load(await readPdfBlob(url).arrayBuffer())
+}
+
+/**
+ * Creates an in-memory PNG image file with the given pixel dimensions.
+ */
+export async function makePngFile(
+    name: string,
+    width = 100,
+    height = 50
+): Promise<File> {
+    const buffer = await sharp({
+        create: {
+            width,
+            height,
+            channels: 4,
+            background: { r: 255, g: 0, b: 0, alpha: 1 }
+        }
+    })
+        .png()
+        .toBuffer()
+    return new File([buffer as unknown as BlobPart], name, {
+        type: 'image/png'
+    })
+}
+
+/**
+ * Creates an in-memory JPEG image file with the given pixel dimensions.
+ */
+export async function makeJpegFile(
+    name: string,
+    width = 100,
+    height = 50
+): Promise<File> {
+    const buffer = await sharp({
+        create: {
+            width,
+            height,
+            channels: 3,
+            background: { r: 0, g: 0, b: 255 }
+        }
+    })
+        .jpeg()
+        .toBuffer()
+    return new File([buffer as unknown as BlobPart], name, {
+        type: 'image/jpeg'
+    })
 }

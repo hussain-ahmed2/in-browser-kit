@@ -110,7 +110,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Combine multiple images into a single PDF document.",
     icon: FileImage,
     category: "PDF",
-    planned: true,
   },
   {
     slug: "qr-generator",
