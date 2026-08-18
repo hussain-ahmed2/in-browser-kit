@@ -11,6 +11,7 @@ import {
   FileImage,
   QrCode,
   Code,
+  Braces,
   type LucideIcon,
 } from "lucide-react";
 
@@ -123,6 +124,13 @@ export const tools: ToolDefinition[] = [
     name: "Base64 Encode/Decode",
     tagline: "Convert between text/files and Base64 encoding.",
     icon: Code,
+    category: "Utilities",
+  },
+  {
+    slug: "json-formatter",
+    name: "JSON Formatter",
+    tagline: "Format, validate, and visualize JSON with tree view.",
+    icon: Braces,
     category: "Utilities",
   },
 ];
