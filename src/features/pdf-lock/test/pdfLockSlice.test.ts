@@ -105,6 +105,7 @@ describe('buildEncryptArgs', () => {
             mode: 'lock',
             userPassword: 'user123',
             ownerPassword: 'owner456',
+            unlockPassword: '',
             originalFileWasEncrypted: false,
             permissions: { printing: true, modifying: true, copying: true }
         })
@@ -127,6 +128,7 @@ describe('buildEncryptArgs', () => {
             mode: 'lock',
             userPassword: 'user123',
             ownerPassword: '',
+            unlockPassword: '',
             originalFileWasEncrypted: false,
             permissions: { printing: false, modifying: false, copying: false }
         })
