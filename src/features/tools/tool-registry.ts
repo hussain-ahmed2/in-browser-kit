@@ -15,6 +15,7 @@ import {
   Ruler,
   Search,
   KeySquare,
+  ScanSearch,
   type LucideIcon,
 } from "lucide-react";
 
@@ -37,7 +38,8 @@ export type ToolIconName =
   | "Ruler"
   | "Search"
   | "FileImage"
-  | "KeySquare";
+  | "KeySquare"
+  | "ScanSearch";
 
 export interface ToolDefinition {
   slug: string;
@@ -190,6 +192,13 @@ export const tools: ToolDefinition[] = [
     icon: "KeySquare",
     category: "Utilities",
   },
+  {
+    slug: "image-metadata",
+    name: "Image Metadata",
+    tagline: "Inspect EXIF, IPTC, ICC, and GPS metadata embedded in your images.",
+    icon: "ScanSearch",
+    category: "Images",
+  },
 ];
 
 export function getToolBySlug(slug: string): ToolDefinition | undefined {
@@ -218,6 +227,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     Ruler,
     Search,
     KeySquare,
+    ScanSearch,
   };
   return iconMap[iconName];
 }
