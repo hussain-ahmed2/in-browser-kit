@@ -34,7 +34,8 @@ export type ToolIconName =
   | "Code"
   | "Braces"
   | "Ruler"
-  | "Search";
+  | "Search"
+  | "FileImage";
 
 export interface ToolDefinition {
   slug: string;
@@ -172,6 +173,13 @@ export const tools: ToolDefinition[] = [
     tagline: "Test regular expressions with live match highlighting, capture groups, and substitution preview.",
     icon: "Search",
     category: "Utilities",
+  },
+  {
+    slug: "pdf-to-images",
+    name: "PDF to Images",
+    tagline: "Convert PDF pages to high-quality images (PNG, JPEG, WebP) with customizable DPI and quality.",
+    icon: "FileImage",
+    category: "PDF",
   },
 ];
 
