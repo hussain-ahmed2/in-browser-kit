@@ -13,6 +13,7 @@ import {
   Code,
   Braces,
   Ruler,
+  Search,
   type LucideIcon,
 } from "lucide-react";
 
@@ -32,7 +33,8 @@ export type ToolIconName =
   | "QrCode"
   | "Code"
   | "Braces"
-  | "Ruler";
+  | "Ruler"
+  | "Search";
 
 export interface ToolDefinition {
   slug: string;
@@ -164,6 +166,13 @@ export const tools: ToolDefinition[] = [
     icon: "Ruler",
     category: "Utilities",
   },
+  {
+    slug: "regex-tester",
+    name: "Regex Tester",
+    tagline: "Test regular expressions with live match highlighting, capture groups, and substitution preview.",
+    icon: "Search",
+    category: "Utilities",
+  },
 ];
 
 export function getToolBySlug(slug: string): ToolDefinition | undefined {
@@ -190,6 +199,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     Code,
     Braces,
     Ruler,
+    Search,
   };
   return iconMap[iconName];
 }
