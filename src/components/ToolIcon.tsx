@@ -16,6 +16,7 @@ import {
     Braces,
     Ruler,
     Search,
+    KeySquare,
     type LucideIcon
 } from "lucide-react"
 import type { ToolIconName } from "@/features/tools/tool-registry"
@@ -35,7 +36,8 @@ const iconMap: Record<ToolIconName, LucideIcon> = {
     Code,
     Braces,
     Ruler,
-    Search
+    Search,
+    KeySquare
 }
 
 interface ToolIconProps {

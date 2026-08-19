@@ -14,6 +14,7 @@ import {
   Braces,
   Ruler,
   Search,
+  KeySquare,
   type LucideIcon,
 } from "lucide-react";
 
@@ -35,7 +36,8 @@ export type ToolIconName =
   | "Braces"
   | "Ruler"
   | "Search"
-  | "FileImage";
+  | "FileImage"
+  | "KeySquare";
 
 export interface ToolDefinition {
   slug: string;
@@ -181,6 +183,13 @@ export const tools: ToolDefinition[] = [
     icon: "FileImage",
     category: "PDF",
   },
+  {
+    slug: "jwt-decoder",
+    name: "JWT Decoder",
+    tagline: "Decode JWT tokens and inspect header, payload, and signature claims.",
+    icon: "KeySquare",
+    category: "Utilities",
+  },
 ];
 
 export function getToolBySlug(slug: string): ToolDefinition | undefined {
@@ -208,6 +217,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     Braces,
     Ruler,
     Search,
+    KeySquare,
   };
   return iconMap[iconName];
 }
