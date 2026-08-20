@@ -156,7 +156,7 @@ export function UuidGeneratorPage() {
                     <Button onClick={generate} disabled={isGenerating} className="flex-1">
                         {isGenerating ? (
                             <>
-                                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                <Loader2 className="animate-spin" />
                                 Generating…
                             </>
                         ) : (
@@ -164,11 +164,11 @@ export function UuidGeneratorPage() {
                         )}
                     </Button>
                     <Button variant="outline" onClick={handleDownload} disabled={results.length === 0}>
-                        <Download className="h-4 w-4 mr-2" />
+                        <Download />
                         Download
                     </Button>
                     <Button variant="outline" onClick={handleCopyAll} disabled={results.length === 0}>
-                        <Copy className="h-4 w-4 mr-2" />
+                        <Copy />
                         Copy All
                     </Button>
                     <Button variant="ghost" onClick={handleClear} disabled={results.length === 0}>

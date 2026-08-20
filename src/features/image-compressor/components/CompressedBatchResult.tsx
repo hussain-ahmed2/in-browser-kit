@@ -236,7 +236,7 @@ export function CompressedBatchResult({ results, onTweakSettings }: CompressedBa
               className="w-full sm:w-auto"
               variant="success"
             >
-              <Download className="size-4 mr-2" />
+              <Download />
               Download Image
             </Button>
           ) : (
@@ -248,12 +248,12 @@ export function CompressedBatchResult({ results, onTweakSettings }: CompressedBa
             >
               {isZipping ? (
                 <>
-                  <Loader2 className="animate-spin size-4 mr-2" />
+                  <Loader2 className="animate-spin" />
                   Zipping...
                 </>
               ) : (
                 <>
-                  <FileArchive className="size-4 mr-2" />
+                  <FileArchive />
                   Download All (ZIP)
                 </>
               )}

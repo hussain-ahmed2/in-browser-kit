@@ -149,7 +149,7 @@ export function LockUnlockWorkspace({
             >
                 <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="lock" disabled={isEncrypted}>
-                        <Lock aria-hidden="true" className="mr-2 h-4 w-4" />
+                        <Lock aria-hidden="true" />
                         Lock
                         {isEncrypted && (
                             <Shield
@@ -159,7 +159,7 @@ export function LockUnlockWorkspace({
                         )}
                     </TabsTrigger>
                     <TabsTrigger value="unlock">
-                        <Unlock aria-hidden="true" className="mr-2 h-4 w-4" />
+                        <Unlock aria-hidden="true" />
                         Unlock
                     </TabsTrigger>
                 </TabsList>
@@ -340,7 +340,7 @@ export function LockUnlockWorkspace({
                                     {isUnlocking ? (
                                         <>
                                             <Loader2
-                                                className="animate-spin mr-2"
+                                                className="animate-spin"
                                                 aria-hidden="true"
                                             />
                                             Unlocking...
@@ -348,7 +348,6 @@ export function LockUnlockWorkspace({
                                     ) : (
                                         <>
                                             <Unlock
-                                                className="mr-2 h-4 w-4"
                                                 aria-hidden="true"
                                             />
                                             Unlock & Preview
