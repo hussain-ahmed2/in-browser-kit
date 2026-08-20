@@ -23,6 +23,7 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     shortcuts: tools
       .filter((tool) => !tool.planned)
+      .slice(0, 10)
       .map((tool) => ({
         name: tool.name,
         url: `/tools/${tool.slug}`,
