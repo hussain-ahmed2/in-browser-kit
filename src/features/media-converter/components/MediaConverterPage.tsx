@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -38,18 +38,8 @@ export function MediaConverterPage() {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<MediaConversionResult | null>(null);
 
-  const { isFfmpegLoaded, isConverting, progress, logs, load, convert, clear } =
+  const { isFfmpegLoaded, isConverting, progress, logs, convert, clear } =
     useFFmpegService();
-
-  useEffect(() => {
-    if (!isFfmpegLoaded) {
-      // Delay preloading by 1.5s to ensure the page renders and animates smoothly first
-      const timer = setTimeout(() => {
-        load();
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [isFfmpegLoaded, load]);
 
   const currentStep = result ? 2 : file ? 1 : 0;
 
@@ -91,10 +81,13 @@ export function MediaConverterPage() {
             <AlertTriangle className="size-4" />
             <AlertTitle>Performance Notice</AlertTitle>
             <AlertDescription>
-              Conversions run locally in your browser. Please keep this tab open and visible until the conversion completes to prevent your browser from pausing the background process. Very large files may crash the browser on older devices.
+              Conversions run locally in your browser. Please keep this tab open
+              and visible until the conversion completes to prevent your browser
+              from pausing the background process. Very large files may crash
+              the browser on older devices.
             </AlertDescription>
           </Alert>
-          
+
           {!file ? (
             <MediaUploader onFileSelect={setFile} />
           ) : (
@@ -175,7 +168,7 @@ export function MediaConverterPage() {
                       <div className="flex justify-end gap-4 pt-4 border-t border-border">
                         <Button
                           type="submit"
-                          disabled={isConverting || !isFfmpegLoaded}
+                          disabled={isConverting}
                           className="w-full sm:w-auto bg-linear-to-r from-brand to-[color-mix(in_oklab,var(--brand)_60%,var(--glow))] text-brand-foreground hover:shadow-[0_0_28px_-6px] hover:shadow-brand/60"
                         >
                           {isConverting ? (
@@ -184,15 +177,7 @@ export function MediaConverterPage() {
                                 className="animate-spin"
                                 aria-hidden="true"
                               />{" "}
-                              Converting...
-                            </>
-                          ) : !isFfmpegLoaded ? (
-                            <>
-                              <Loader2
-                                className="animate-spin"
-                                aria-hidden="true"
-                              />{" "}
-                              Loading Engine...
+                              {!isFfmpegLoaded ? "Loading Engine..." : "Converting..."}
                             </>
                           ) : (
                             "Convert File"

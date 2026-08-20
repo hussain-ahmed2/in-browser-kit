@@ -11,3 +11,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # UI and Styling Rules
 
 - **Shadcn Buttons**: Never add margin classes (like `mr-2` or `ml-2`) or sizing classes (like `size-4` or `h-4 w-4`) to SVG icons inside Shadcn `<Button>` components. The Shadcn button component automatically applies `gap-2` for spacing and handles the SVG sizes automatically via its internal selectors.
+
+# TypeScript & FFmpeg Rules
+
+- **FFmpeg Enums**: Never import `FFFSType` or other enums from `@ffmpeg/ffmpeg` at runtime. The `@ffmpeg/ffmpeg` package has broken ESM/SSR exports for its enums, and importing them will crash Next.js (e.g. `Export FFFSType doesn't exist in target module`). Instead, use the literal string and cast it (e.g., `"WORKERFS" as any`) and disable the linter for that line.

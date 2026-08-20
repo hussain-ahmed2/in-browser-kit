@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { fetchFile, toBlobURL } from "@ffmpeg/util";
+import { toBlobURL } from "@ffmpeg/util";
 import { toast } from "sonner";
 import { MediaConversionFormValues, MediaConversionResult } from "../types";
 import { getFFmpegArgs, getMimeType } from "../lib/ffmpegUtils";
@@ -17,7 +17,7 @@ export function useFFmpegService() {
       if (!ffmpegRef.current) {
         ffmpegRef.current = new FFmpeg();
       }
-      const baseURL = "https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/umd";
+      const baseURL = "/ffmpeg";
       const ffmpeg = ffmpegRef.current;
 
       ffmpeg.on("log", ({ message }) => {
@@ -51,27 +51,42 @@ export function useFFmpegService() {
     }
   }, []);
 
-  const convert = useCallback(
-    async (
-      file: File,
-      values: MediaConversionFormValues,
+  const convert = useCallback(async (
+        file: File, 
+        values: MediaConversionFormValues
     ): Promise<MediaConversionResult | null> => {
-      if (!file || !isFfmpegLoaded || !ffmpegRef.current) return null;
+        if (!file) return null;
+        
+        setIsConverting(true);
+        setProgress(0);
+        setLogs("Loading engine...");
 
-      setIsConverting(true);
-      setProgress(0);
-      setLogs("Starting conversion...");
+        if (!isFfmpegLoaded) {
+            await load();
+        }
+        
+        if (!ffmpegRef.current) return null;
+        
+        setLogs("Starting conversion...");
 
-      let inputName = "";
-      let outputName = "";
+        let inputName = "";
+        let outputName = "";
 
-      try {
+        try {
         const ffmpeg = ffmpegRef.current;
-        const inputExt = file.name.split(".").pop() || "tmp";
-        inputName = `input.${inputExt}`;
+        inputName = `/mnt/${file.name}`;
         outputName = `output.${values.outputFormat}`;
 
-        await ffmpeg.writeFile(inputName, await fetchFile(file));
+        // Ensure the mount directory exists before mounting to avoid FS errors
+        try {
+            await ffmpeg.createDir("/mnt");
+        } catch (e) {
+            // Directory might already exist, safe to ignore
+        }
+
+        // FFFSType is not exported at runtime in the ESM build, so we must cast the string
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await ffmpeg.mount("WORKERFS" as any, { files: [file] }, "/mnt");
 
         const maxThreads =
           typeof navigator !== "undefined" && navigator.hardwareConcurrency
@@ -116,11 +131,16 @@ export function useFFmpegService() {
         return null;
       } finally {
         setIsConverting(false);
-        if (ffmpegRef.current && inputName && outputName) {
+        if (ffmpegRef.current) {
           try {
-            ffmpegRef.current.deleteFile(inputName).catch(() => {});
-            ffmpegRef.current.deleteFile(outputName).catch(() => {});
-          } catch {}
+            await ffmpegRef.current.unmount("/mnt").catch(() => {});
+          } catch (e) {}
+
+          if (outputName) {
+            try {
+              ffmpegRef.current.deleteFile(outputName).catch(() => {});
+            } catch (e) {}
+          }
         }
       }
     },
