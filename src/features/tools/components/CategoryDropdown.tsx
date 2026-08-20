@@ -6,7 +6,8 @@ import {
     FileText,
     Image as ImageIcon,
     ShieldCheck,
-    Wrench
+    Wrench,
+    Film
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
@@ -29,7 +30,8 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string; s
     PDF: FileText,
     Images: ImageIcon,
     Security: ShieldCheck,
-    Utilities: Wrench
+    Utilities: Wrench,
+    "Video & Audio": Film
 }
 
 interface CategoryDropdownProps {

@@ -16,10 +16,11 @@ import {
   Search,
   KeySquare,
   ScanSearch,
+  Film,
   type LucideIcon,
 } from "lucide-react";
 
-export type ToolCategory = "PDF" | "Images" | "Security" | "Utilities";
+export type ToolCategory = "PDF" | "Images" | "Security" | "Utilities" | "Video & Audio";
 
 export type ToolIconName =
   | "Image"
@@ -39,7 +40,8 @@ export type ToolIconName =
   | "Search"
   | "FileImage"
   | "KeySquare"
-  | "ScanSearch";
+  | "ScanSearch"
+  | "Film";
 
 export interface ToolDefinition {
   slug: string;
@@ -51,12 +53,13 @@ export interface ToolDefinition {
   planned?: boolean;
 }
 
-export const CATEGORIES: ToolCategory[] = ["PDF", "Images", "Security", "Utilities"];
+export const CATEGORIES: ToolCategory[] = ["PDF", "Images", "Security", "Video & Audio", "Utilities"];
 
 export const CATEGORY_LABELS: Record<ToolCategory, string> = {
   PDF: "PDF Tools",
   Images: "Image Tools",
   Security: "Password & Security",
+  "Video & Audio": "Video & Audio Tools",
   Utilities: "Utilities",
 };
 
@@ -79,6 +82,13 @@ export const tools: ToolDefinition[] = [
     tagline: "Reduce image file sizes without losing visible quality.",
     icon: "Image",
     category: "Images",
+  },
+  {
+    slug: "media-converter",
+    name: "Media Converter",
+    tagline: "Convert between video and audio formats (MP4, MP3, GIF) locally in your browser.",
+    icon: "Film",
+    category: "Video & Audio",
   },
   {
     slug: "password-toolkit",
@@ -228,6 +238,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     Search,
     KeySquare,
     ScanSearch,
+    Film,
   };
   return iconMap[iconName];
 }
