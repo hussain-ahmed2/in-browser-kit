@@ -9,3 +9,7 @@
   [headers.values]
     Cross-Origin-Embedder-Policy = "require-corp"
     Cross-Origin-Opener-Policy = "same-origin"
+
+[[edge_functions]]
+  path = "/*"
+  function = "coep"
