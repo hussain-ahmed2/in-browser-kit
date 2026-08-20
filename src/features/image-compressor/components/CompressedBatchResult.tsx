@@ -16,9 +16,10 @@ import JSZip from "jszip";
 
 interface CompressedBatchResultProps {
   results: CompressionResult[];
+  onTweakSettings: () => void;
 }
 
-export function CompressedBatchResult({ results }: CompressedBatchResultProps) {
+export function CompressedBatchResult({ results, onTweakSettings }: CompressedBatchResultProps) {
   const [isZipping, setIsZipping] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
@@ -217,36 +218,46 @@ export function CompressedBatchResult({ results }: CompressedBatchResultProps) {
         })}
       </div>
 
-      <div className="flex justify-end gap-4 pt-6 border-t border-border">
-        {results.length === 1 ? (
-          <Button
-            onClick={() => handleDownloadSingle(results[0].compressedFile)}
-            className="w-full sm:w-auto"
-            variant="success"
-          >
-            <Download className="size-4 mr-2" />
-            Download Image
-          </Button>
-        ) : (
-          <Button
-            onClick={handleDownloadAllZip}
-            disabled={isZipping}
-            className="w-full sm:w-auto"
-            variant="success"
-          >
-            {isZipping ? (
-              <>
-                <Loader2 className="animate-spin size-4 mr-2" />
-                Zipping...
-              </>
-            ) : (
-              <>
-                <FileArchive className="size-4 mr-2" />
-                Download All (ZIP)
-              </>
-            )}
-          </Button>
-        )}
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-border">
+        <Button
+          variant="outline"
+          onClick={onTweakSettings}
+          className="w-full sm:w-auto order-2 sm:order-1"
+        >
+          Tweak Settings &amp; Recompress
+        </Button>
+
+        <div className="flex justify-end gap-4 w-full sm:w-auto order-1 sm:order-2">
+          {results.length === 1 ? (
+            <Button
+              onClick={() => handleDownloadSingle(results[0].compressedFile)}
+              className="w-full sm:w-auto"
+              variant="success"
+            >
+              <Download className="size-4 mr-2" />
+              Download Image
+            </Button>
+          ) : (
+            <Button
+              onClick={handleDownloadAllZip}
+              disabled={isZipping}
+              className="w-full sm:w-auto"
+              variant="success"
+            >
+              {isZipping ? (
+                <>
+                  <Loader2 className="animate-spin size-4 mr-2" />
+                  Zipping...
+                </>
+              ) : (
+                <>
+                  <FileArchive className="size-4 mr-2" />
+                  Download All (ZIP)
+                </>
+              )}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

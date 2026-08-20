@@ -71,11 +71,11 @@ export function ImageCompressorPage() {
 
         setIsCompressing(true)
         const options: Parameters<typeof imageCompression>[1] = {
-            maxSizeMB: values.maxSizeMB,
-            maxWidthOrHeight: values.maxWidth,
+            maxSizeMB: Number(values.maxSizeMB),
+            maxWidthOrHeight: Number(values.maxWidth),
             useWebWorker: true,
-            initialQuality: values.initialQuality,
-            alwaysKeepResolution: values.alwaysKeepResolution
+            initialQuality: Number(values.initialQuality),
+            alwaysKeepResolution: Boolean(values.alwaysKeepResolution)
         }
 
         if (values.fileType !== 'keep') {
@@ -84,7 +84,23 @@ export function ImageCompressorPage() {
 
         try {
             const compressionPromises = files.map(async (file) => {
-                const compressed = await imageCompression(file, options)
+                let compressed = await imageCompression(file, options)
+
+                // If the user requested a format change, ensure the file extension matches the new MIME type
+                if (values.fileType !== 'keep' && compressed.type === values.fileType) {
+                    const ext = values.fileType === 'image/jpeg' ? '.jpg' 
+                              : values.fileType === 'image/png' ? '.png' 
+                              : '.webp';
+                              
+                    const lastDot = file.name.lastIndexOf('.');
+                    const nameWithoutExt = lastDot !== -1 ? file.name.substring(0, lastDot) : file.name;
+                    const newName = `${nameWithoutExt}${ext}`;
+                    
+                    if (compressed.name !== newName) {
+                        compressed = new File([compressed], newName, { type: compressed.type });
+                    }
+                }
+
                 return { originalFile: file, compressedFile: compressed }
             })
 
@@ -125,7 +141,10 @@ export function ImageCompressorPage() {
 
                             {results.length > 0 ? (
                                 <div className="animate-fade-in">
-                                    <CompressedBatchResult results={results} />
+                                    <CompressedBatchResult 
+                                        results={results} 
+                                        onTweakSettings={() => setResults([])} 
+                                    />
                                 </div>
                             ) : (
                                 <FormProvider {...form}>
