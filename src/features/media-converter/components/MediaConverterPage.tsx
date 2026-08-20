@@ -34,7 +34,7 @@ export function MediaConverterPage() {
             if (!ffmpegRef.current) {
                 ffmpegRef.current = new FFmpeg();
             }
-            const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd";
+            const baseURL = "https://unpkg.com/@ffmpeg/core-mt@0.12.6/dist/umd";
             const ffmpeg = ffmpegRef.current;
             
             ffmpeg.on("log", ({ message }) => {
@@ -48,6 +48,7 @@ export function MediaConverterPage() {
             await ffmpeg.load({
                 coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, "text/javascript"),
                 wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, "application/wasm"),
+                workerURL: await toBlobURL(`${baseURL}/ffmpeg-core.worker.js`, "text/javascript"),
             });
             setIsFfmpegLoaded(true);
         } catch (error) {
@@ -94,9 +95,10 @@ export function MediaConverterPage() {
 
             await ffmpeg.writeFile(inputName, await fetchFile(file));
 
-            const args = ["-i", inputName];
+            const args = ["-i", inputName, "-threads", "0"];
             
             if (values.outputFormat === "mp4" || values.outputFormat === "webm") {
+                args.push("-preset", "ultrafast");
                 if (values.quality === "high") args.push("-crf", "18");
                 if (values.quality === "medium") args.push("-crf", "23");
                 if (values.quality === "low") args.push("-crf", "28");
