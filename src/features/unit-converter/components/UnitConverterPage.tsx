@@ -12,7 +12,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { ArrowLeftRight, RotateCcw, Download } from 'lucide-react'
+import { ArrowLeftRight, RotateCcw, Download, LayoutDashboard, Scale } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   convertUnit,
@@ -137,11 +137,7 @@ export function UnitConverterPage() {
     <Card className="animate-fade-in-up stagger-4 backdrop-blur-md ring-border">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M7 16l-4-4 4-4" />
-            <path d="M17 8l4 4-4 4" />
-            <path d="M17 16H7a4 4 0 0 1-4-4V4" />
-          </svg>
+          <Scale className="h-5 w-5" />
           Unit Converter
         </CardTitle>
         <CardDescription>
@@ -152,11 +148,7 @@ export function UnitConverterPage() {
         {/* Category Selector */}
         <div className="space-y-3">
           <Label className="flex items-center gap-2 text-sm font-medium">
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <path d="M3 9h18" />
-              <path d="M9 21V9" />
-            </svg>
+            <LayoutDashboard className="h-4 w-4" />
             Category
           </Label>
           <Select value={category} onValueChange={setCategory as (value: string) => void}>
@@ -190,7 +182,7 @@ export function UnitConverterPage() {
         </div>
 
         {/* Converter */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 md:gap-6">
           {/* From */}
           <div className="space-y-3">
             <Label className="flex items-center gap-2 text-sm font-medium">
@@ -217,7 +209,7 @@ export function UnitConverterPage() {
           </div>
 
           {/* Swap */}
-          <div className="flex flex-col items-center justify-center md:hidden">
+          <div className="flex flex-col items-center justify-center md:pt-6">
             <button
               onClick={handleSwap}
               className={cn(
@@ -234,21 +226,9 @@ export function UnitConverterPage() {
           <div className="space-y-3">
             <Label className="flex items-center justify-between text-sm font-medium">
               To
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleSwap}
-                  className={cn(
-                    "p-2 rounded-full bg-muted hover:bg-muted/80 transition-all duration-200 hidden md:flex",
-                    swapDirection && "rotate-180"
-                  )}
-                  aria-label="Swap units"
-                >
-                  <ArrowLeftRight className="h-5 w-5 text-muted-foreground transition-transform duration-200" />
-                </button>
-                <CopyButton value={toValue} size="sm">
-                  Copy
-                </CopyButton>
-              </div>
+              <CopyButton value={toValue} size="sm">
+                Copy
+              </CopyButton>
             </Label>
             <Select value={toUnit} onValueChange={(value) => handleUnitChange(fromUnit, value)}>
               <SelectTrigger>
