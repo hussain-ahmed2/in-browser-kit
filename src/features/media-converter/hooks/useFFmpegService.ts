@@ -96,17 +96,19 @@ export function useFFmpegService() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await ffmpeg.mount("WORKERFS" as any, { files: [safeFile] }, "/mnt");
 
-        const maxThreads =
-          typeof navigator !== "undefined" && navigator.hardwareConcurrency
-            ? Math.min(navigator.hardwareConcurrency, 4).toString()
-            : "2";
+        let maxThreadsStr = "2";
+        if (typeof navigator !== "undefined" && navigator.hardwareConcurrency) {
+            // Allocate 75% of available cores, min 2, max 8 (WASM multi-threading plateaus around 8)
+            const optimalThreads = Math.max(2, Math.min(8, Math.floor(navigator.hardwareConcurrency * 0.75)));
+            maxThreadsStr = optimalThreads.toString();
+        }
 
         const args = getFFmpegArgs(
           values.outputFormat,
           values.quality ?? "medium",
           inputName,
           outputName,
-          maxThreads,
+          maxThreadsStr,
         );
 
         const exitCode = await ffmpeg.exec(args);

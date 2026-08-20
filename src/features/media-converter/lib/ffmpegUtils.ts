@@ -11,12 +11,18 @@ export function getFFmpegArgs(
         // Prevent WebAssembly OOM crashes by capping resolution to 1080p (4K buffering blows up the heap)
         args.push("-vf", "scale='min(1920,iw)':-2");
         
+        // Use extremely fast presets for browser encoding
         if (quality === "high") {
-            args.push("-preset", "medium", "-crf", "22");
+            args.push("-preset", "fast", "-crf", "22");
         } else if (quality === "medium") {
-            args.push("-preset", "fast", "-crf", "28");
+            args.push("-preset", "veryfast", "-crf", "28");
         } else if (quality === "low") {
-            args.push("-preset", "veryfast", "-crf", "35");
+            args.push("-preset", "ultrafast", "-crf", "35");
+        }
+
+        // WebM defaults to VP9, which is very slow. Force realtime processing speed.
+        if (format === "webm") {
+            args.push("-deadline", "realtime", "-cpu-used", "8");
         }
     } else if (format === "mp3") {
         if (quality === "high") args.push("-b:a", "320k");

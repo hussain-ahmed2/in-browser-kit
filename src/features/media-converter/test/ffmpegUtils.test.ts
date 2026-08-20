@@ -9,7 +9,7 @@ describe('FFmpeg Utilities', () => {
                 '-i', 'input.mov', 
                 '-threads', '4', 
                 '-vf', "scale='min(1920,iw)':-2",
-                '-preset', 'medium', 
+                '-preset', 'fast', 
                 '-crf', '22', 
                 'output.mp4'
             ]);
@@ -21,8 +21,10 @@ describe('FFmpeg Utilities', () => {
                 '-i', 'input.mp4', 
                 '-threads', '2', 
                 '-vf', "scale='min(1920,iw)':-2",
-                '-preset', 'veryfast', 
-                '-crf', '35', 
+                '-preset', 'ultrafast', 
+                '-crf', '35',
+                '-deadline', 'realtime',
+                '-cpu-used', '8',
                 'output.webm'
             ]);
         });
