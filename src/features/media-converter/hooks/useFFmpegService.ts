@@ -88,7 +88,7 @@ export function useFFmpegService() {
         // Ensure the mount directory exists before mounting to avoid FS errors
         try {
             await ffmpeg.createDir("/mnt");
-        } catch (e) {
+        } catch {
             // Directory might already exist, safe to ignore
         }
 
@@ -147,12 +147,12 @@ export function useFFmpegService() {
         if (ffmpegRef.current) {
           try {
             await ffmpegRef.current.unmount("/mnt").catch(() => {});
-          } catch (e) {}
+          } catch {}
 
           if (outputName) {
             try {
               ffmpegRef.current.deleteFile(outputName).catch(() => {});
-            } catch (e) {}
+            } catch {}
           }
         }
       }
