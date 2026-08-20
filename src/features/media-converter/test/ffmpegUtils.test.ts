@@ -8,6 +8,7 @@ describe('FFmpeg Utilities', () => {
             expect(args).toEqual([
                 '-i', 'input.mov', 
                 '-threads', '4', 
+                '-vf', "scale='min(1920,iw)':-2",
                 '-preset', 'medium', 
                 '-crf', '22', 
                 'output.mp4'
@@ -19,6 +20,7 @@ describe('FFmpeg Utilities', () => {
             expect(args).toEqual([
                 '-i', 'input.mp4', 
                 '-threads', '2', 
+                '-vf', "scale='min(1920,iw)':-2",
                 '-preset', 'veryfast', 
                 '-crf', '35', 
                 'output.webm'

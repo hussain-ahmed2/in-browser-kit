@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     // Vendored third-party bundles (not our code):
     "public/qpdf/**",
     "public/pdf.worker.min.mjs",
+    "public/ffmpeg/**",
   ]),
 ]);
 

@@ -8,6 +8,9 @@ export function getFFmpegArgs(
     const args = ["-i", inputName, "-threads", maxThreads];
     
     if (format === "mp4" || format === "webm") {
+        // Prevent WebAssembly OOM crashes by capping resolution to 1080p (4K buffering blows up the heap)
+        args.push("-vf", "scale='min(1920,iw)':-2");
+        
         if (quality === "high") {
             args.push("-preset", "medium", "-crf", "22");
         } else if (quality === "medium") {

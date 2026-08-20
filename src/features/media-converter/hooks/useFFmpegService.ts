@@ -21,6 +21,7 @@ export function useFFmpegService() {
       const ffmpeg = ffmpegRef.current;
 
       ffmpeg.on("log", ({ message }) => {
+        console.log("[FFmpeg]", message);
         setLogs(message);
       });
 
@@ -74,7 +75,14 @@ export function useFFmpegService() {
 
         try {
         const ffmpeg = ffmpegRef.current;
-        inputName = `/mnt/${file.name}`;
+        
+        // Emscripten/FFmpeg often fails if virtual file paths contain spaces or special characters.
+        // We create a safe clone of the File object with a generic name (e.g. input.mp4) to mount safely.
+        const ext = file.name.substring(file.name.lastIndexOf("."));
+        const safeInputName = `input${ext}`;
+        const safeFile = new File([file], safeInputName, { type: file.type });
+        
+        inputName = `/mnt/${safeInputName}`;
         outputName = `output.${values.outputFormat}`;
 
         // Ensure the mount directory exists before mounting to avoid FS errors
@@ -86,7 +94,7 @@ export function useFFmpegService() {
 
         // FFFSType is not exported at runtime in the ESM build, so we must cast the string
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await ffmpeg.mount("WORKERFS" as any, { files: [file] }, "/mnt");
+        await ffmpeg.mount("WORKERFS" as any, { files: [safeFile] }, "/mnt");
 
         const maxThreads =
           typeof navigator !== "undefined" && navigator.hardwareConcurrency
@@ -101,7 +109,10 @@ export function useFFmpegService() {
           maxThreads,
         );
 
-        await ffmpeg.exec(args);
+        const exitCode = await ffmpeg.exec(args);
+        if (exitCode !== 0) {
+            throw new Error(`FFmpeg exited with code ${exitCode}. Check logs for details.`);
+        }
 
         const data = await ffmpeg.readFile(outputName);
 
@@ -144,7 +155,7 @@ export function useFFmpegService() {
         }
       }
     },
-    [isFfmpegLoaded],
+    [isFfmpegLoaded, load],
   );
 
   const clear = useCallback(() => {
