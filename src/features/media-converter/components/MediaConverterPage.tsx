@@ -5,6 +5,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useFFmpegService } from "../hooks/useFFmpegService";
+import { AlertTriangle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -40,10 +42,14 @@ export function MediaConverterPage() {
     useFFmpegService();
 
   useEffect(() => {
-    if (file && !isFfmpegLoaded) {
-      load();
+    if (!isFfmpegLoaded) {
+      // Delay preloading by 1.5s to ensure the page renders and animates smoothly first
+      const timer = setTimeout(() => {
+        load();
+      }, 1500);
+      return () => clearTimeout(timer);
     }
-  }, [file, isFfmpegLoaded, load]);
+  }, [isFfmpegLoaded, load]);
 
   const currentStep = result ? 2 : file ? 1 : 0;
 
@@ -81,6 +87,14 @@ export function MediaConverterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
+          <Alert variant="warning">
+            <AlertTriangle className="size-4" />
+            <AlertTitle>Performance Notice</AlertTitle>
+            <AlertDescription>
+              Conversions run locally in your browser. Please keep this tab open and visible until the conversion completes to prevent your browser from pausing the background process. Very large files may crash the browser on older devices.
+            </AlertDescription>
+          </Alert>
+          
           {!file ? (
             <MediaUploader onFileSelect={setFile} />
           ) : (
