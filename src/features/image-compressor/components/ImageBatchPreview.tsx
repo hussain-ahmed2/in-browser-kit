@@ -83,9 +83,15 @@ export function ImageBatchPreview({
                 >
                   {file.name}
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  {formatSize(file.size)}
-                </p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <p className="text-xs text-muted-foreground">
+                    {formatSize(file.size)}
+                  </p>
+                  <span className="text-xs text-muted-foreground/50">•</span>
+                  <p className="text-xs text-muted-foreground capitalize">
+                    {file.type.split("/")[1] || "unknown"}
+                  </p>
+                </div>
               </div>
             </div>
             <Button

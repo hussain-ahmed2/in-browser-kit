@@ -138,10 +138,10 @@ export function CompressedBatchResult({ results, onTweakSettings }: CompressedBa
               <div className="flex items-center justify-between">
                 <div className="min-w-0 flex-1">
                   <p
-                    className="font-medium text-sm truncate max-w-50 sm:max-w-75"
-                    title={r.originalFile.name}
+                    className="font-medium text-sm truncate max-w-[200px] sm:max-w-[300px]"
+                    title={r.compressedFile.name}
                   >
-                    {r.originalFile.name}
+                    {r.compressedFile.name}
                   </p>
                   <div className="flex items-center gap-2 mt-0.5 text-xs text-muted-foreground">
                     <span className="line-through opacity-70">
@@ -151,6 +151,8 @@ export function CompressedBatchResult({ results, onTweakSettings }: CompressedBa
                     <span className="text-success font-medium">
                       {formatSize(r.compressedFile.size)}
                     </span>
+                    <span className="text-muted-foreground/50 mx-1">•</span>
+                    <span className="capitalize">{r.compressedFile.type.split("/")[1] || "unknown"}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-2">
