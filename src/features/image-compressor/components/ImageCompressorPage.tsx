@@ -13,27 +13,18 @@ import {
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ImageUploader } from './ImageUploader'
-import { ImagePreview } from './ImagePreview'
-import { CompressedResult } from './CompressedResult'
+import { ImageBatchPreview } from './ImageBatchPreview'
+import { CompressedBatchResult } from './CompressedBatchResult'
 import { StepIndicator } from '@/components/StepIndicator'
 import { useForm, FormProvider } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { InputField } from '@/components/form/input-field'
 import { CheckboxField } from '@/components/form/checkbox-field'
 import { SelectField } from '@/components/form/select-field'
 import { SliderField } from '@/components/form/slider-field'
 import { FieldGroup, FieldSet } from '@/components/ui/field'
-
-const compressorSchema = z.object({
-    maxSizeMB: z.number().min(0.1, 'Must be at least 0.1 MB'),
-    maxWidth: z.number().min(100, 'Must be at least 100px'),
-    initialQuality: z.number().min(0.1).max(1.0),
-    alwaysKeepResolution: z.boolean(),
-    fileType: z.string()
-})
-
-type CompressorFormValues = z.infer<typeof compressorSchema>
+import { compressorSchema, CompressorFormValues, CompressionResult } from '../types'
+import { COMPRESSOR_DEFAULTS, MAX_BATCH_SIZE } from '../constants'
 
 const steps = [
     { label: 'Upload' },
@@ -42,38 +33,41 @@ const steps = [
 ]
 
 export function ImageCompressorPage() {
-    const [file, setFile] = useState<File | null>(null)
-    const [compressedFile, setCompressedFile] = useState<File | null>(null)
+    const [files, setFiles] = useState<File[]>([])
+    const [results, setResults] = useState<CompressionResult[]>([])
     const [isCompressing, setIsCompressing] = useState<boolean>(false)
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 
-    const currentStep = compressedFile ? 2 : file ? 1 : 0
+    const currentStep = results.length > 0 ? 2 : files.length > 0 ? 1 : 0
 
     const form = useForm<CompressorFormValues>({
         resolver: zodResolver(compressorSchema),
-        defaultValues: {
-            maxSizeMB: 1,
-            maxWidth: 1920,
-            initialQuality: 0.8,
-            alwaysKeepResolution: false,
-            fileType: 'keep'
-        }
+        defaultValues: COMPRESSOR_DEFAULTS
     })
 
-    const handleFileSelect = (selectedFile: File) => {
-        setFile(selectedFile)
-        setCompressedFile(null)
-        setPreviewUrl(URL.createObjectURL(selectedFile))
+    const handleFilesSelect = (selectedFiles: File[]) => {
+        setFiles(prev => {
+            const combined = [...prev, ...selectedFiles];
+            if (combined.length > MAX_BATCH_SIZE) {
+                toast.error(`You can only process up to ${MAX_BATCH_SIZE} images at a time.`);
+                return combined.slice(0, MAX_BATCH_SIZE);
+            }
+            return combined;
+        })
+        setResults([])
     }
 
-    const handleClear = () => {
-        setFile(null)
-        setCompressedFile(null)
-        setPreviewUrl(null)
+    const handleRemoveFile = (index: number) => {
+        setFiles(prev => prev.filter((_, i) => i !== index))
+        setResults([])
     }
 
-    const compressImage = async (values: CompressorFormValues) => {
-        if (!file) return
+    const handleClearAll = () => {
+        setFiles([])
+        setResults([])
+    }
+
+    const compressImages = async (values: CompressorFormValues) => {
+        if (files.length === 0) return
 
         setIsCompressing(true)
         const options: Parameters<typeof imageCompression>[1] = {
@@ -89,13 +83,18 @@ export function ImageCompressorPage() {
         }
 
         try {
-            const compressed = await imageCompression(file, options)
-            setCompressedFile(compressed)
-            toast.success('Image compressed successfully!')
+            const compressionPromises = files.map(async (file) => {
+                const compressed = await imageCompression(file, options)
+                return { originalFile: file, compressedFile: compressed }
+            })
+
+            const completedResults = await Promise.all(compressionPromises)
+            setResults(completedResults)
+            toast.success(`Successfully compressed ${completedResults.length} image(s)!`)
         } catch (error: unknown) {
             console.error('Compression failed:', error)
             toast.error(
-                'Error compressing image. It might be corrupt or unsupported.'
+                'Error compressing images. Some might be corrupt or unsupported.'
             )
         } finally {
             setIsCompressing(false)
@@ -108,38 +107,30 @@ export function ImageCompressorPage() {
 
             <Card className="animate-fade-in-up stagger-4 backdrop-blur-md ring-border">
                 <CardHeader>
-                    <CardTitle>Upload Image</CardTitle>
+                    <CardTitle>Batch Image Compressor</CardTitle>
                     <CardDescription>
-                        Select a JPG, PNG, or WebP file to compress.
+                        Select multiple JPG, PNG, or WebP files to compress simultaneously.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8">
-                    {!file ? (
-                        <ImageUploader
-                            onFileSelect={handleFileSelect}
-                            maxSizeMB={50}
-                        />
+                    {files.length === 0 ? (
+                        <ImageUploader onFilesSelect={handleFilesSelect} />
                     ) : (
                         <div className="space-y-6 animate-fade-in">
-                            <ImagePreview
-                                file={file}
-                                previewUrl={previewUrl}
-                                onClear={handleClear}
+                            <ImageBatchPreview
+                                files={files}
+                                onRemove={handleRemoveFile}
+                                onClearAll={handleClearAll}
                             />
 
-                            {compressedFile ? (
+                            {results.length > 0 ? (
                                 <div className="animate-fade-in">
-                                    <CompressedResult
-                                        originalFile={file}
-                                        compressedFile={compressedFile}
-                                    />
+                                    <CompressedBatchResult results={results} />
                                 </div>
                             ) : (
                                 <FormProvider {...form}>
                                     <form
-                                        onSubmit={form.handleSubmit(
-                                            compressImage
-                                        )}
+                                        onSubmit={form.handleSubmit(compressImages)}
                                         className="space-y-6"
                                     >
                                         <div className="p-8 rounded-xl bg-secondary/30 border border-border">
@@ -149,6 +140,7 @@ export function ImageCompressorPage() {
                                                         name="maxSizeMB"
                                                         label="Max Target Size (MB)"
                                                         type="number"
+                                                        step={0.1}
                                                     />
                                                     <InputField
                                                         name="maxWidth"
@@ -202,8 +194,29 @@ export function ImageCompressorPage() {
 
                                         <div className="flex justify-end gap-4 pt-6 border-t border-border">
                                             <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() => {
+                                                    const fileInput = document.createElement("input");
+                                                    fileInput.type = "file";
+                                                    fileInput.multiple = true;
+                                                    fileInput.accept = "image/*";
+                                                    fileInput.onchange = (e) => {
+                                                        const target = e.target as HTMLInputElement;
+                                                        if (target.files) {
+                                                            const newFiles = Array.from(target.files);
+                                                            handleFilesSelect(newFiles);
+                                                        }
+                                                    };
+                                                    fileInput.click();
+                                                }}
+                                                className="w-full sm:w-auto"
+                                            >
+                                                Add More Files
+                                            </Button>
+                                            <Button
                                                 type="submit"
-                                                disabled={isCompressing}
+                                                disabled={isCompressing || files.length === 0}
                                                 className="w-full sm:w-auto bg-linear-to-r from-brand to-[color-mix(in_oklab,var(--brand)_60%,var(--glow))] text-brand-foreground hover:shadow-[0_0_28px_-6px] hover:shadow-brand/60"
                                             >
                                                 {isCompressing ? (
@@ -215,7 +228,7 @@ export function ImageCompressorPage() {
                                                         Compressing...
                                                     </>
                                                 ) : (
-                                                    'Compress Image'
+                                                    `Compress ${files.length} Image${files.length > 1 ? 's' : ''}`
                                                 )}
                                             </Button>
                                         </div>

@@ -21,17 +21,28 @@ export function ImagePreview({ file, previewUrl, onClear }: ImagePreviewProps) {
         {previewUrl ? (
           <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-secondary ring-1 ring-border">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={previewUrl} alt={`Preview of ${file.name}`} className="object-cover w-full h-full" />
+            <img
+              src={previewUrl}
+              alt={`Preview of ${file.name}`}
+              className="object-cover w-full h-full"
+            />
           </div>
         ) : null}
         <div>
-          <p className="font-medium truncate max-w-[200px] sm:max-w-xs" title={file.name}>
+          <p
+            className="font-medium truncate max-w-50 sm:max-w-xs"
+            title={file.name}
+          >
             {file.name}
           </p>
           <div className="flex items-center gap-2 mt-0.5">
-            <p className="text-sm text-muted-foreground">{formatSize(file.size)}</p>
+            <p className="text-sm text-muted-foreground">
+              {formatSize(file.size)}
+            </p>
             <span className="text-xs text-muted-foreground/50">•</span>
-            <p className="text-sm text-muted-foreground capitalize">{file.type.split("/")[1]}</p>
+            <p className="text-sm text-muted-foreground capitalize">
+              {file.type.split("/")[1]}
+            </p>
           </div>
         </div>
       </div>

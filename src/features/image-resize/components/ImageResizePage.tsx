@@ -18,7 +18,7 @@ import { InputField } from '@/components/form/input-field'
 import { SelectField } from '@/components/form/select-field'
 import { SliderField } from '@/components/form/slider-field'
 import { StepIndicator } from '@/components/StepIndicator'
-import { ImagePreview } from '@/features/image-compressor/components/ImagePreview'
+import { ImagePreview } from './ImagePreview'
 import { ImageUploader } from './ImageUploader'
 import { ResizeResult } from './ResizeResult'
 import {

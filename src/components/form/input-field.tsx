@@ -9,6 +9,7 @@ interface InputFieldProps {
   description?: string;
   type?: HTMLInputTypeAttribute;
   placeholder?: string;
+  step?: number | string;
 }
 
 export function InputField({
@@ -17,6 +18,7 @@ export function InputField({
   description,
   type = "text",
   placeholder,
+  step,
 }: InputFieldProps) {
   const form = useFormContext();
 
@@ -34,6 +36,7 @@ export function InputField({
             aria-invalid={fieldState.invalid}
             placeholder={placeholder}
             autoComplete="off"
+            step={step}
           />
           {description && <FieldDescription>{description}</FieldDescription>}
           {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
