@@ -1,3 +1,6 @@
+[build]
+  publish = "out"
+
 [[headers]]
   for = "/_next/static/*"
   [headers.values]
