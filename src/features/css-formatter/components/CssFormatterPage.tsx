@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import * as prettier from "prettier/standalone";
 import * as prettierPluginPostcss from "prettier/plugins/postcss";
-import { Copy, Trash2, AlertCircle, Check } from "lucide-react";
+import { Copy, Trash2, AlertCircle, Check, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -33,6 +33,17 @@ export function CssFormatterPage() {
     setError(null);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      setInput(evt.target?.result as string);
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
+
   const handleCopy = () => {
     if (!output) return;
     navigator.clipboard.writeText(output);
@@ -42,13 +53,13 @@ export function CssFormatterPage() {
   };
 
   useEffect(() => {
-    if (!input.trim()) {
-      setOutput("");
-      setError(null);
-      return;
-    }
-
     const processCss = async () => {
+      if (!input.trim()) {
+        setOutput("");
+        setError(null);
+        return;
+      }
+
       try {
         if (mode === "format") {
           const formatted = await prettier.format(input, {
@@ -62,7 +73,7 @@ export function CssFormatterPage() {
           // 1. Remove comments
           // 2. Remove whitespace around rules
           // 3. Condense multiple spaces
-          let minified = input
+          const minified = input
             .replace(/\/\*[\s\S]*?\*\//g, "")
             .replace(/\s*([{}|;:,])\s*/g, "$1")
             .replace(/\s+/g, " ")
@@ -72,7 +83,7 @@ export function CssFormatterPage() {
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
-          setError(err.message.split("\n")[0]); // Prettier often throws multi-line errors, first line is usually best.
+          setError(err.message.split("\n")[0]);
         } else {
           setError("Failed to process CSS.");
         }
@@ -100,16 +111,30 @@ export function CssFormatterPage() {
               </Select>
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleClear}
-              disabled={!input && !output}
-              className="shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 hover:border-destructive/30"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Clear
-            </Button>
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <Button variant="outline" size="sm" className="shrink-0">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload CSS
+                </Button>
+                <input
+                  type="file"
+                  accept=".css,text/css"
+                  onChange={handleFileUpload}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClear}
+                disabled={!input && !output}
+                className="shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 hover:border-destructive/30"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Clear
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -130,7 +155,7 @@ export function CssFormatterPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Paste your messy CSS here..."
-            className="flex-1 min-h-[500px] font-mono text-sm resize-y"
+            className="flex-1 min-h-125 font-mono text-sm resize-y"
           />
         </div>
 
@@ -154,7 +179,7 @@ export function CssFormatterPage() {
             readOnly
             value={output}
             placeholder="Result will appear here..."
-            className="flex-1 min-h-[500px] font-mono text-sm resize-y bg-secondary/20"
+            className="flex-1 min-h-125 font-mono text-sm resize-y bg-secondary/20"
           />
         </div>
       </div>

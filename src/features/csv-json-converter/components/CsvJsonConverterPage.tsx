@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Papa from "papaparse";
-import { ArrowLeftRight, Copy, Download, AlertCircle, Check } from "lucide-react";
+import { ArrowLeftRight, Copy, Download, AlertCircle, Check, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -117,6 +117,17 @@ export function CsvJsonConverterPage() {
     toast.success("File downloaded successfully");
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      setInput(evt.target?.result as string);
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
+
   const inputLabel = mode === "csv-to-json" ? "CSV Input" : "JSON Input";
   const outputLabel = mode === "csv-to-json" ? "JSON Output" : "CSV Output";
 
@@ -158,15 +169,29 @@ export function CsvJsonConverterPage() {
               )}
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleSwap}
-              className="shrink-0 group hover:bg-brand hover:text-brand-foreground hover:border-brand transition-colors"
-            >
-              <ArrowLeftRight className="w-4 h-4 mr-2 group-hover:rotate-180 transition-transform duration-300" />
-              Swap Direction
-            </Button>
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="relative">
+                <Button variant="outline" size="sm">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload {mode === "csv-to-json" ? "CSV" : "JSON"}
+                </Button>
+                <input
+                  type="file"
+                  accept={mode === "csv-to-json" ? ".csv,text/csv" : ".json,application/json"}
+                  onChange={handleFileUpload}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSwap}
+                className="shrink-0 group hover:bg-brand hover:text-brand-foreground hover:border-brand transition-colors"
+              >
+                <ArrowLeftRight className="w-4 h-4 mr-2 group-hover:rotate-180 transition-transform duration-300" />
+                Swap Direction
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

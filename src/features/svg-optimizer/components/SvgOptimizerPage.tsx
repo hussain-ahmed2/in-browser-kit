@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// @ts-expect-error svgo browser build doesn't have native types exposed cleanly without node
-import { optimize } from "svgo/dist/svgo.browser.js";
-import { Copy, Trash2, AlertCircle, Check, Play } from "lucide-react";
+import { optimize } from "svgo/browser";
+import { Copy, Trash2, AlertCircle, Check, Play, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -30,6 +29,18 @@ export function SvgOptimizerPage() {
     setOutputSize(0);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      setInput(evt.target?.result as string);
+    };
+    reader.readAsText(file);
+    // Reset input so the same file can be re-uploaded
+    e.target.value = "";
+  };
+
   const handleCopy = () => {
     if (!output) return;
     navigator.clipboard.writeText(output);
@@ -50,21 +61,8 @@ export function SvgOptimizerPage() {
     try {
       const result = optimize(input, {
         multipass: multipass,
-        plugins: [
-          {
-            name: "preset-default",
-            params: {
-              overrides: {
-                removeViewBox: false, // Generally bad to remove viewBox for responsive SVGs
-              },
-            },
-          },
-        ],
+        plugins: ["preset-default"],
       });
-
-      if (result.error) {
-        throw new Error(result.error);
-      }
 
       setOutput(result.data);
       setError(null);
@@ -85,6 +83,7 @@ export function SvgOptimizerPage() {
   useEffect(() => {
     // Only auto-run if input is somewhat small to prevent huge lag, otherwise manual
     if (input.length < 500000) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       processSvg();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -111,6 +110,18 @@ export function SvgOptimizerPage() {
             </div>
 
             <div className="flex items-center gap-3">
+              <div className="relative">
+                <Button variant="outline" size="sm" className="shrink-0">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload SVG
+                </Button>
+                <input
+                  type="file"
+                  accept=".svg,image/svg+xml"
+                  onChange={handleFileUpload}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
               {input.length >= 500000 && (
                  <Button
                  variant="default"
@@ -171,14 +182,14 @@ export function SvgOptimizerPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Paste your bloated SVG code here..."
-            className="w-full min-h-[300px] font-mono text-xs resize-y"
+            className="w-full min-h-75 font-mono text-xs resize-y"
           />
           {input && !error && (
             <Card className="border overflow-hidden">
               <div className="bg-secondary/50 p-2 text-xs text-center border-b font-medium text-muted-foreground">Original Render Preview</div>
-              <CardContent className="p-4 flex items-center justify-center min-h-[200px] checkerboard-bg">
+              <CardContent className="p-4 flex items-center justify-center min-h-50 checkerboard-bg">
                 <div 
-                  className="max-w-full max-h-[300px] overflow-hidden" 
+                  className="max-w-full max-h-75 overflow-hidden" 
                   dangerouslySetInnerHTML={{ __html: input }} 
                 />
               </CardContent>
@@ -206,14 +217,14 @@ export function SvgOptimizerPage() {
             readOnly
             value={output}
             placeholder="Optimized result will appear here..."
-            className="w-full min-h-[300px] font-mono text-xs resize-y bg-secondary/20"
+            className="w-full min-h-75 font-mono text-xs resize-y bg-secondary/20"
           />
           {output && !error && (
             <Card className="border overflow-hidden">
               <div className="bg-brand/10 p-2 text-xs text-center border-b border-brand/20 font-medium text-brand">Optimized Render Preview</div>
-              <CardContent className="p-4 flex items-center justify-center min-h-[200px] checkerboard-bg">
+              <CardContent className="p-4 flex items-center justify-center min-h-50 checkerboard-bg">
                 <div 
-                  className="max-w-full max-h-[300px] overflow-hidden" 
+                  className="max-w-full max-h-75 overflow-hidden" 
                   dangerouslySetInnerHTML={{ __html: output }} 
                 />
               </CardContent>
