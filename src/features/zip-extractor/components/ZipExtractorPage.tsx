@@ -15,6 +15,12 @@ interface ZipEntry {
   file: JSZip.JSZipObject;
 }
 
+interface InternalZipData {
+  _data?: {
+    uncompressedSize?: number;
+  };
+}
+
 export function ZipExtractorPage() {
   const [entries, setEntries] = useState<ZipEntry[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -31,12 +37,12 @@ export function ZipExtractorPage() {
       zip.forEach((relativePath, zipEntry) => {
         // Exclude system hidden files common in zips (like __MACOSX)
         if (!relativePath.startsWith("__MACOSX/") && !relativePath.includes(".DS_Store")) {
-          // size might be uncompressed size if available, otherwise it's in zipEntry._data?.uncompressedSize (internal)
-          // JSZip handles this differently. Let's just use the name and dir properties. We'll use 0 for size if undefined initially, 
-          // but we can access `zipEntry._data?.uncompressedSize` if we bypass types, or just not show size.
-          // Wait, zipEntry doesn't expose size publicly until extracted. 
-          // We can cast `zipEntry as any` to get `_data.uncompressedSize` for a preview.
-          const size = (zipEntry as any)._data?.uncompressedSize || 0;
+          // JSZip handles this differently. Let's just use the name and dir properties. We'll use 0 for size if undefined initially.
+          // zipEntry doesn't expose size publicly until extracted, but we can access `_data.uncompressedSize` 
+          // via a strictly typed interface for a preview.
+          const internalEntry = zipEntry as unknown as InternalZipData;
+          const size = internalEntry._data?.uncompressedSize || 0;
+          
           parsedEntries.push({
             name: relativePath,
             size,
