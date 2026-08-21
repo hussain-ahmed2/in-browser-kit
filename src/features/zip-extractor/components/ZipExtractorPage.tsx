@@ -54,7 +54,7 @@ export function ZipExtractorPage() {
       
       setEntries(parsedEntries);
       toast.success(`Loaded ${parsedEntries.length} items from ${file.name}`);
-    } catch (err) {
+    } catch {
       setError("Failed to parse the ZIP file. Please ensure it is a valid archive.");
     } finally {
       setIsLoading(false);
@@ -96,7 +96,7 @@ export function ZipExtractorPage() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (err) {
+    } catch {
       toast.error("Failed to extract file.");
     }
   };
@@ -158,7 +158,7 @@ export function ZipExtractorPage() {
           </div>
           
           <div className="rounded-md border border-border bg-card overflow-hidden">
-            <div className="max-h-[600px] overflow-y-auto">
+            <div className="max-h-150 overflow-y-auto">
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-muted-foreground uppercase bg-secondary/50 sticky top-0 z-10 backdrop-blur-md">
                   <tr>
@@ -176,7 +176,7 @@ export function ZipExtractorPage() {
                         ) : (
                           <File className="w-4 h-4 text-muted-foreground shrink-0" />
                         )}
-                        <span className="truncate max-w-[400px]" title={entry.name}>
+                        <span className="truncate max-w-100" title={entry.name}>
                           {entry.name}
                         </span>
                       </td>

@@ -51,7 +51,8 @@ export type ToolIconName =
   | "Table"
   | "Link2"
   | "Paintbrush"
-  | "FileArchive";
+  | "FileArchive"
+  | "Scissors";
 
 export interface ToolDefinition {
   slug: string;
@@ -225,6 +226,13 @@ export const tools: ToolDefinition[] = [
     tagline: "View contents of ZIP archives and selectively extract files locally.",
     icon: "FileArchive",
     category: "Utilities",
+  },
+  {
+    slug: "svg-optimizer",
+    name: "SVG Optimizer",
+    tagline: "Strip massive paths and bloat from SVGs to dramatically reduce file sizes.",
+    icon: "Scissors",
+    category: "Images",
   },
   {
     slug: "regex-tester",
