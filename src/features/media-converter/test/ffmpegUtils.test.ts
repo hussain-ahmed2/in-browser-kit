@@ -4,7 +4,7 @@ import { getFFmpegArgs, getMimeType } from '../lib/ffmpegUtils'
 describe('FFmpeg Utilities', () => {
     describe('getFFmpegArgs', () => {
         it('generates correct arguments for high quality mp4', () => {
-            const args = getFFmpegArgs('mp4', 'high', 'original', 'input.mov', 'output.mp4', '4');
+            const args = getFFmpegArgs('mp4', 'high', 'original', 'default', 'input.mov', 'output.mp4', '4');
             expect(args).toEqual([
                 '-i', 'input.mov', 
                 '-threads', '4', 
@@ -15,8 +15,37 @@ describe('FFmpeg Utilities', () => {
             ]);
         });
 
+        it('generates correct arguments for trimmed video', () => {
+            const args = getFFmpegArgs('mp4', 'medium', 'original', 'default', 'input.mp4', 'output.mp4', '4', '00:00:10', '00:00:20');
+            expect(args).toEqual([
+                '-i', 'input.mp4',
+                '-threads', '4',
+                '-ss', '00:00:10',
+                '-to', '00:00:20',
+                '-vf', "scale='min(1920,iw)':-2",
+                '-preset', 'veryfast',
+                '-crf', '28',
+                '-movflags', '+faststart',
+                'output.mp4'
+            ]);
+        });
+
+        it('generates correct arguments for HEVC codec', () => {
+            const args = getFFmpegArgs('mp4', 'medium', '1080p', 'hevc', 'input.mov', 'output.mp4', '4');
+            expect(args).toEqual([
+                '-i', 'input.mov', 
+                '-threads', '4', 
+                '-c:v', 'libx265',
+                '-vf', "scale='min(1920,iw)':-2",
+                '-preset', 'veryfast', 
+                '-crf', '28', 
+                '-movflags', '+faststart',
+                'output.mp4'
+            ]);
+        });
+
         it('generates correct arguments for low quality webm', () => {
-            const args = getFFmpegArgs('webm', 'low', 'input.mp4', 'output.webm', '2');
+            const args = getFFmpegArgs('webm', 'low', 'original', 'default', 'input.mp4', 'output.webm', '2');
             expect(args).toEqual([
                 '-i', 'input.mp4', 
                 '-threads', '2', 
@@ -30,7 +59,7 @@ describe('FFmpeg Utilities', () => {
         });
 
         it('generates correct arguments for high quality mp3', () => {
-            const args = getFFmpegArgs('mp3', 'high', 'original', 'input.wav', 'output.mp3', '4');
+            const args = getFFmpegArgs('mp3', 'high', 'original', 'default', 'input.wav', 'output.mp3', '4');
             expect(args).toEqual([
                 '-i', 'input.wav', 
                 '-threads', '4', 
@@ -40,7 +69,7 @@ describe('FFmpeg Utilities', () => {
         });
 
         it('generates correct arguments for wav (no quality flags)', () => {
-            const args = getFFmpegArgs('wav', 'medium', 'original', 'input.mp3', 'output.wav', '4');
+            const args = getFFmpegArgs('wav', 'medium', 'original', 'default', 'input.mp3', 'output.wav', '4');
             expect(args).toEqual([
                 '-i', 'input.mp3', 
                 '-threads', '4', 
@@ -49,11 +78,26 @@ describe('FFmpeg Utilities', () => {
         });
 
         it('defaults to 2 threads if not provided', () => {
-            const args = getFFmpegArgs('gif', 'medium', 'original', 'input.mp4', 'output.gif');
+            const args = getFFmpegArgs('gif', 'medium', 'original', 'default', 'input.mp4', 'output.gif');
             expect(args).toEqual([
                 '-i', 'input.mp4', 
                 '-threads', '2', 
                 'output.gif'
+            ]);
+        });
+
+        it('generates correct arguments for trimmed video', () => {
+            const args = getFFmpegArgs('mp4', 'medium', 'original', 'default', 'input.mp4', 'output.mp4', '4', '00:00:10', '00:00:20');
+            expect(args).toEqual([
+                '-ss', '00:00:10',
+                '-i', 'input.mp4',
+                '-to', '00:00:20',
+                '-threads', '4',
+                '-vf', "scale='min(1920,iw)':-2",
+                '-preset', 'veryfast',
+                '-crf', '28',
+                '-movflags', '+faststart',
+                'output.mp4'
             ]);
         });
     });

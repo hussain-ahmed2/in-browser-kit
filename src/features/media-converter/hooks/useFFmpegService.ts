@@ -102,6 +102,7 @@ export function useFFmpegService() {
           values.outputFormat,
           values.quality ?? "medium",
           values.resolution ?? "original",
+          values.videoCodec ?? "default",
           inputName,
           outputName,
           maxThreadsStr,

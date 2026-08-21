@@ -4,6 +4,7 @@ export const mediaConversionSchema = z.object({
     outputFormat: z.enum(['mp4', 'webm', 'mp3', 'wav', 'gif']),
     resolution: z.enum(['original', '1080p', '720p', '480p', '360p']).default('original'),
     quality: z.enum(['high', 'medium', 'low']).default('medium'),
+    videoCodec: z.enum(['default', 'avc', 'hevc', 'vp9', 'av1']).default('default'),
     filter: z.enum(['none', 'grayscale', 'sepia', 'invert', 'blur']).default('none'),
     saveMode: z.enum(['direct', 'memory']).default('direct'),
     trimStart: z.string().optional(),

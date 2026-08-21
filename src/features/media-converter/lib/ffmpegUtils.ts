@@ -2,6 +2,7 @@ export function getFFmpegArgs(
     format: string,
     quality: string,
     resolution: string,
+    videoCodec: string,
     inputName: string,
     outputName: string,
     maxThreads: string = "2",
@@ -23,6 +24,14 @@ export function getFFmpegArgs(
     args.push("-threads", maxThreads);
     
     if (format === "mp4" || format === "webm") {
+        // Apply explicitly selected codec
+        if (videoCodec !== "default") {
+            if (videoCodec === "hevc") args.push("-c:v", "libx265");
+            else if (videoCodec === "avc") args.push("-c:v", "libx264");
+            else if (videoCodec === "vp9") args.push("-c:v", "libvpx-vp9");
+            else if (videoCodec === "av1") args.push("-c:v", "libaom-av1");
+        }
+
         // Prevent WebAssembly OOM crashes by capping resolution (4K buffering blows up the heap)
         let scaleFilter = "scale='min(1920,iw)':-2"; // default original/1080p fallback
         if (resolution === "1080p") scaleFilter = "scale='min(1920,iw)':-2";

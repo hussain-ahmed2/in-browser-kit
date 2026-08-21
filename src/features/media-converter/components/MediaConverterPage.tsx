@@ -60,6 +60,7 @@ export function MediaConverterPage() {
       filter: "none",
       saveMode: "direct",
       resolution: 'original',
+      videoCodec: 'default',
       useHardwareAcceleration: true,
     },
   });
@@ -207,6 +208,17 @@ export function MediaConverterPage() {
                               { label: "High (Larger size)", value: "high" },
                               { label: "Medium (Balanced)", value: "medium" },
                               { label: "Low (Smaller size)", value: "low" },
+                            ]}
+                          />
+                          <SelectField
+                            name="videoCodec"
+                            label="Video Codec"
+                            options={[
+                              { label: "Default (Auto)", value: "default" },
+                              { label: "H.264 (Most Compatible)", value: "avc" },
+                              { label: "H.265 / HEVC (Best Compression)", value: "hevc" },
+                              { label: "VP9 (WebM Optimized)", value: "vp9" },
+                              { label: "AV1 (Next-Gen)", value: "av1" },
                             ]}
                           />
                         </FieldSet>
