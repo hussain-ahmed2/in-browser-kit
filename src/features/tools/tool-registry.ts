@@ -20,6 +20,7 @@ import {
   FileDiff,
   Table,
   Link2,
+  Paintbrush,
   type LucideIcon,
 } from "lucide-react";
 
@@ -47,7 +48,8 @@ export type ToolIconName =
   | "Film"
   | "FileDiff"
   | "Table"
-  | "Link2";
+  | "Link2"
+  | "Paintbrush";
 
 export interface ToolDefinition {
   slug: string;
@@ -209,6 +211,13 @@ export const tools: ToolDefinition[] = [
     category: "Utilities",
   },
   {
+    slug: "css-formatter",
+    name: "CSS Formatter / Minifier",
+    tagline: "Instantly pretty-print messy CSS or minify it for production.",
+    icon: "Paintbrush",
+    category: "Utilities",
+  },
+  {
     slug: "regex-tester",
     name: "Regex Tester",
     tagline: "Test regular expressions with live match highlighting, capture groups, and substitution preview.",
@@ -269,6 +278,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     FileDiff,
     Table,
     Link2,
+    Paintbrush,
   };
   return iconMap[iconName];
 }

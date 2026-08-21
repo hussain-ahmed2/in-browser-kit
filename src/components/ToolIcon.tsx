@@ -22,6 +22,7 @@ import {
     FileDiff,
     Table,
     Link2,
+    Paintbrush,
     type LucideIcon
 } from "lucide-react"
 import type { ToolIconName } from "@/features/tools/tool-registry"
@@ -47,7 +48,8 @@ const iconMap: Record<ToolIconName, LucideIcon> = {
     Film,
     FileDiff,
     Table,
-    Link2
+    Link2,
+    Paintbrush
 }
 
 interface ToolIconProps {
