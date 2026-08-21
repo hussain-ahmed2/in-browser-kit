@@ -134,7 +134,7 @@ export function MediaConverterForm({
           >
             {isConverting ? (
               <>
-                <Loader2 className="animate-spin mr-2 h-4 w-4" aria-hidden="true" />
+                <Loader2 className="animate-spin" aria-hidden="true" />
                 {isHardwareEncoding
                   ? "Hardware Encoding..."
                   : !isFfmpegLoaded
