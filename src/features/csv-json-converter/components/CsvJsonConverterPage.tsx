@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Papa from "papaparse";
 import { ArrowLeftRight, Copy, Download, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -41,6 +41,7 @@ export function CsvJsonConverterPage() {
   // Convert logic
   useEffect(() => {
     if (!input.trim()) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOutput("");
       setError(null);
       return;
@@ -124,7 +125,7 @@ export function CsvJsonConverterPage() {
               <div className="flex items-center gap-2 shrink-0">
                 <Label className="text-sm">Delimiter</Label>
                 <Select value={delimiter} onValueChange={setDelimiter}>
-                  <SelectTrigger className="w-[120px] bg-background">
+                  <SelectTrigger className="w-30 bg-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

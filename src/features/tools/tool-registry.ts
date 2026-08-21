@@ -19,6 +19,7 @@ import {
   Film,
   FileDiff,
   Table,
+  Link2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -45,7 +46,8 @@ export type ToolIconName =
   | "ScanSearch"
   | "Film"
   | "FileDiff"
-  | "Table";
+  | "Table"
+  | "Link2";
 
 export interface ToolDefinition {
   slug: string;
@@ -200,6 +202,13 @@ export const tools: ToolDefinition[] = [
     category: "Utilities",
   },
   {
+    slug: "url-encoder",
+    name: "URL Encoder / Decoder",
+    tagline: "Cleanly encode and decode URL query parameters safely.",
+    icon: "Link2",
+    category: "Utilities",
+  },
+  {
     slug: "regex-tester",
     name: "Regex Tester",
     tagline: "Test regular expressions with live match highlighting, capture groups, and substitution preview.",
@@ -259,6 +268,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     Film,
     FileDiff,
     Table,
+    Link2,
   };
   return iconMap[iconName];
 }

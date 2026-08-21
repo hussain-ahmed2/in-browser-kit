@@ -68,8 +68,8 @@ export function CategoryDropdown({ category }: CategoryDropdownProps) {
                             {CATEGORY_LABELS[category]}
                         </span>
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="p-1.5 w-80 gap-2 md:w-100">
-                        <ul className="flex flex-col gap-0.5">
+                    <NavigationMenuContent>
+                        <ul className="grid w-100 gap-2 p-1 md:w-125 md:grid-cols-2 lg:w-150">
                             {categoryTools.map((tool) => {
                                 const href = `/tools/${tool.slug}`
 
@@ -114,23 +114,22 @@ interface CategoryListItemProps {
 function CategoryListItem({ tool, isActive }: CategoryListItemProps) {
     return (
         <li>
-            <NavigationMenuLink
-                asChild
-                className={cn(
-                    'p-2',
-                    isActive && 'bg-brand/10 text-brand hover:bg-brand/15'
-                )}
-            >
+            <NavigationMenuLink asChild className={cn(
+                "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                isActive && "bg-brand/10"
+            )}>
                 <Link href={`/tools/${tool.slug}`}>
-                    <ToolIcon name={tool.icon} className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-                    <span className="flex min-w-0 flex-1 flex-col gap-1">
-                        <span className="leading-none font-medium">
+                    <div className="flex flex-col gap-1 text-sm">
+                        <div className={cn(
+                            "leading-none font-medium",
+                            isActive && "text-brand"
+                        )}>
                             {tool.name}
-                        </span>
-                        <span className="line-clamp-2 text-muted-foreground">
+                        </div>
+                        <div className="line-clamp-2 text-muted-foreground">
                             {tool.tagline}
-                        </span>
-                    </span>
+                        </div>
+                    </div>
                 </Link>
             </NavigationMenuLink>
         </li>
