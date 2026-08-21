@@ -8,7 +8,7 @@ interface ToolPageProps {
     children: React.ReactNode
     title?: string
     tagline?: string
-    maxWidth?: '3xl' | '4xl'
+    maxWidth?: '3xl' | '4xl' | 'container'
 }
 
 /**
@@ -27,13 +27,13 @@ export function ToolPage({
 
     return (
         <div className="p-6">
-            <div className="max-w-3xl mx-auto">
+            <div className={cn("mx-auto", maxWidth === 'container' ? 'container' : `max-w-${maxWidth}`)}>
                 <Breadcrumbs items={[{ label: title ?? tool?.name ?? slug }]} />
             </div>
             <main
                 className={cn(
-                    'mx-auto space-y-8',
-                    maxWidth === '3xl' ? 'max-w-3xl' : 'max-w-4xl'
+                    'mx-auto space-y-8 mt-6',
+                    maxWidth === 'container' ? 'container' : `max-w-${maxWidth}`
                 )}
             >
                 <header className="text-center space-y-4">

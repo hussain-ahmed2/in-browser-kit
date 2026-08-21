@@ -142,38 +142,43 @@ export function MediaConverterPage() {
           {!file ? (
             <MediaUploader onFileSelect={setFile} />
           ) : (
-            <div className="space-y-6 animate-fade-in">
-              {file.type.startsWith("video/") && !result && (
-                <VideoPreview file={file} filter={selectedFilter || "none"} />
-              )}
-              
-              <div className="p-4 rounded-lg bg-secondary/50 border border-border flex items-center justify-between">
-                <div className="truncate min-w-0 pr-4">
-                  <p className="font-medium text-sm truncate">{file.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
+            <div className={`animate-fade-in items-start gap-8 ${file.type.startsWith("video/") && !result ? "grid lg:grid-cols-[1fr_1fr]" : "space-y-6"}`}>
+              <div className="space-y-6 flex-1 min-w-0">
+                <div className="p-4 rounded-lg bg-secondary/50 border border-border flex items-center justify-between">
+                  <div className="truncate min-w-0 pr-4">
+                    <p className="font-medium text-sm truncate">{file.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                  {!isConverting && !result && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleClear}
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      Remove
+                    </Button>
+                  )}
                 </div>
-                {!isConverting && !result && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleClear}
-                    className="text-muted-foreground hover:text-destructive"
-                  >
-                    Remove
-                  </Button>
+
+                {file.type.startsWith("video/") && !result && (
+                  <VideoPreview file={file} filter={selectedFilter || "none"} />
+                )}
+
+                {result && (
+                  <MediaResult result={result} onStartOver={handleClear} />
                 )}
               </div>
 
-              {result ? (
-                <MediaResult result={result} onStartOver={handleClear} />
-              ) : (
-                <FormProvider {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(handleConvert)}
-                    className="space-y-6"
-                  >
+              {!result && (
+                <div className="flex-1 min-w-0">
+                  <FormProvider {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(handleConvert)}
+                      className="space-y-6"
+                    >
                     <div className="p-8 rounded-xl bg-secondary/30 border border-border">
                       <FieldGroup>
                         <FieldSet className="grid grid-cols-1 sm:grid-cols-2">
@@ -311,7 +316,8 @@ export function MediaConverterPage() {
                       </div>
                     </div>
                   </form>
-                </FormProvider>
+                  </FormProvider>
+                </div>
               )}
             </div>
           )}

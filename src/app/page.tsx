@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Sparkles, Zap, ShieldCheck, Upload, Download } from 'lucide-react';
 import { ToolCard } from '@/features/tools/components/ToolCard';
-import { tools } from '@/features/tools/tool-registry';
+import { tools, CATEGORIES, CATEGORY_LABELS } from '@/features/tools/tool-registry';
 import { SITE_NAME, SITE_TAGLINE } from '@/lib/site';
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default function Home() {
       <div className="absolute bottom-[-18%] right-[-8%] w-[42%] h-[42%] bg-glow/15 blur-[130px] rounded-full animate-blob-delay" aria-hidden="true" />
       <div className="absolute top-[32%] right-[18%] w-[22%] h-[22%] bg-brand/10 blur-[100px] rounded-full animate-blob-delay-2" aria-hidden="true" />
 
-      <main className="z-10 flex flex-col items-center text-center max-w-4xl space-y-8 py-12">
+      <main className="z-10 flex flex-col items-center text-center container mx-auto px-4 space-y-8 py-12">
         {/* Status badge */}
         <div className="animate-fade-in-up stagger-1">
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full glass border border-brand/25 shadow-[0_0_24px_-8px] shadow-brand/40">
@@ -46,30 +46,44 @@ export default function Home() {
           <span
             className="text-transparent bg-clip-text bg-[linear-gradient(110deg,var(--foreground)_30%,var(--brand)_50%,var(--glow)_55%,var(--foreground)_75%)] bg-[length:200%_auto] animate-shimmer"
           >
-            Document Toolkit
+            In-Browser Toolkit
           </span>
         </h1>
 
         <p className="animate-fade-in-up stagger-3 text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed">
-          Compress images and merge PDFs instantly right in your browser.
+          Convert videos, manage PDFs, and access essential developer tools instantly right in your browser.
           Zero uploads, infinite privacy, and blazing fast speeds.
         </p>
 
-        {/* Tool cards */}
-        <div className="grid md:grid-cols-2 gap-6 w-full max-w-3xl mt-8 animate-fade-in-up stagger-4">
-          {availableTools.map((tool) => (
-            <ToolCard key={tool.slug} tool={tool} />
-          ))}
+        {/* Tool categories */}
+        <div className="w-full mt-8 animate-fade-in-up stagger-4 space-y-12">
+          {CATEGORIES.map((category) => {
+            const categoryTools = availableTools.filter((t) => t.category === category);
+            if (categoryTools.length === 0) return null;
+
+            return (
+              <div key={category} className="space-y-4 text-left">
+                <h3 className="text-xl font-bold tracking-tight px-1">
+                  {CATEGORY_LABELS[category]}
+                </h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {categoryTools.map((tool) => (
+                    <ToolCard key={tool.slug} tool={tool} />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         {/* How It Works */}
-        <div className="w-full max-w-3xl mt-12 animate-fade-in-up stagger-5">
+        <div className="w-full max-w-5xl mt-16 animate-fade-in-up stagger-5">
           <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-8">
             How it works
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
-              { step: "1", label: "Choose a Tool", description: "Image compression or PDF merging", icon: Sparkles },
+              { step: "1", label: "Choose a Tool", description: "Media conversion, PDF tools, or dev utilities", icon: Sparkles },
               { step: "2", label: "Upload Your File", description: "Drag & drop or click to select", icon: Upload },
               { step: "3", label: "Download Result", description: "Get your file instantly", icon: Download },
             ].map(({ step, label, description, icon: Icon }) => (
@@ -101,6 +115,9 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-2 px-4 py-1.5 rounded-full glass ring-1 ring-purple-500/25 text-sm text-purple-600 dark:text-purple-400">
             <Sparkles className="size-3.5" /> No Registration
+          </div>
+          <div className="flex items-center gap-2 px-4 py-1.5 rounded-full glass ring-1 ring-blue-500/25 text-sm text-blue-600 dark:text-blue-400">
+            <Zap className="size-3.5" /> WebAssembly Powered
           </div>
         </div>
       </main>

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const SITE_NAME = "InBrowser";
 
 export const SITE_TAGLINE =
-  "Privacy-first file tools. Compress images, merge PDFs, and more — all in your browser.";
+  "The ultimate privacy-first toolkit. Convert media, manage PDFs, generate developer tools, and more — all locally in your browser.";
 
 /**
  * Public origin for sitemap/canonical links. Override in Netlify project
@@ -12,7 +12,7 @@ export const SITE_TAGLINE =
  * domain so a misconfigured deploy never points at a real site.
  */
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://inbrowserkit.netlify.app";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://inbrowserkit.vercel.app";
 
 export function toolMetadata(slug: string): Metadata {
   const tool = getToolBySlug(slug);

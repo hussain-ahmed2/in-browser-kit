@@ -8,7 +8,7 @@ export const metadata: Metadata = toolMetadata("media-converter");
 
 export default function Page() {
     return (
-        <ToolPage slug="media-converter">
+        <ToolPage slug="media-converter" maxWidth="container">
             <StructuredData
               name="Media Converter"
               description="Convert video and audio formats natively in your browser."
