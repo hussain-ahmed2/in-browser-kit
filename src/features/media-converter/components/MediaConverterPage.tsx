@@ -63,16 +63,16 @@ export function MediaConverterPage() {
   });
 
   useEffect(() => {
-    if (file && !isVideo) {
-      const currentFormat = form.getValues("outputFormat");
-      if (["mp4", "webm", "gif"].includes(currentFormat)) {
+    if (file) {
+      if (isVideo) {
+        form.setValue("outputFormat", "mp4");
+      } else {
         form.setValue("outputFormat", "mp3");
       }
     }
   }, [file, isVideo, form]);
 
   const selectedFilter = useWatch({ control: form.control, name: "filter"});
-
   const handleClear = () => {
     setFile(null);
     setResult(null);

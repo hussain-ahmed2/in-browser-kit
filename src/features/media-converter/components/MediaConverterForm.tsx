@@ -43,7 +43,7 @@ export function MediaConverterForm({
     <form onSubmit={form.handleSubmit(onConvert)} className="space-y-6">
       <div className="p-8 rounded-xl bg-secondary/30 border border-border">
         <FieldGroup>
-          <FieldSet className="grid grid-cols-1 sm:grid-cols-2">
+          <FieldSet className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
             <SelectField
               name="outputFormat"
               label="Output Format"
@@ -56,9 +56,7 @@ export function MediaConverterForm({
                 options={RESOLUTION_OPTIONS}
               />
             )}
-          </FieldSet>
-          
-          <FieldSet className="grid grid-cols-1 sm:grid-cols-2 mt-4">
+            
             <SelectField
               name="quality"
               label="Quality"
@@ -71,9 +69,7 @@ export function MediaConverterForm({
                 options={VIDEO_CODEC_OPTIONS}
               />
             )}
-          </FieldSet>
-          
-          <FieldSet className="grid grid-cols-1 sm:grid-cols-2 mt-4">
+            
             {isVideo && (
               <SelectField
                 name="filter"
@@ -86,9 +82,7 @@ export function MediaConverterForm({
               label="Save Mode (Memory Efficiency)"
               options={SAVE_MODE_OPTIONS}
             />
-          </FieldSet>
-          
-          <FieldSet className="grid grid-cols-1 sm:grid-cols-2 mt-4">
+            
             <InputField
               name="trimStart"
               label="Trim Start (e.g. 00:00:05)"

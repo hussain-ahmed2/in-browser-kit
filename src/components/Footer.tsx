@@ -1,4 +1,4 @@
-import { ShieldCheck, Heart } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 export function Footer() {
   return (
