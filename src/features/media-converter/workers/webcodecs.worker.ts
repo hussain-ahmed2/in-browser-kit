@@ -111,6 +111,26 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
       formats: ALL_FORMATS,
     });
 
+    // Phase 5: Dynamic Bitrate scaling based on original file size
+    // Calculate the approximate original bitrate in bits per second
+    const originalBitrate = duration > 0 ? (file.size * 8) / duration : 5_000_000;
+    let targetBitrate = originalBitrate;
+
+    switch (values.quality) {
+      case "low":
+        targetBitrate = originalBitrate * 0.3; // Strictly force a 70% reduction in size
+        break;
+      case "medium":
+        targetBitrate = originalBitrate * 0.7; // Strictly force a 30% reduction in size
+        break;
+      case "high":
+        targetBitrate = originalBitrate * 1.2; // Increase by 20% to preserve quality during re-encoding
+        break;
+      default:
+        targetBitrate = originalBitrate;
+        break;
+    }
+
     let target;
     let fileSystemWritable: FileSystemWritableFileStream | undefined = undefined;
 
@@ -135,16 +155,19 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
     const conversion = await Conversion.init({
       input,
       output,
-      ...(start !== undefined || end !== undefined
-        ? { trim: { start, end } }
-        : {}),
       video: {
-        quality: new Quality(values.quality || "medium"),
+        quality: new Quality({
+          bitrate: Math.floor(targetBitrate),
+          bitrateMode: "variable",
+        }),
         hardwareAcceleration: "prefer-hardware",
       },
       audio: {
         quality: new Quality(values.quality || "medium"),
       },
+      ...(start !== undefined || end !== undefined
+        ? { trim: { start, end } }
+        : {}),
     });
 
     const startTime = Date.now();
