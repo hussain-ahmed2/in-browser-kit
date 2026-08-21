@@ -18,6 +18,7 @@ import {
   ScanSearch,
   Film,
   FileDiff,
+  Table,
   type LucideIcon,
 } from "lucide-react";
 
@@ -43,7 +44,8 @@ export type ToolIconName =
   | "KeySquare"
   | "ScanSearch"
   | "Film"
-  | "FileDiff";
+  | "FileDiff"
+  | "Table";
 
 export interface ToolDefinition {
   slug: string;
@@ -191,6 +193,13 @@ export const tools: ToolDefinition[] = [
     category: "Utilities",
   },
   {
+    slug: "csv-json-converter",
+    name: "CSV ↔ JSON Converter",
+    tagline: "Convert CSV spreadsheets into JSON arrays (and vice versa) instantly.",
+    icon: "Table",
+    category: "Utilities",
+  },
+  {
     slug: "regex-tester",
     name: "Regex Tester",
     tagline: "Test regular expressions with live match highlighting, capture groups, and substitution preview.",
@@ -249,6 +258,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     ScanSearch,
     Film,
     FileDiff,
+    Table,
   };
   return iconMap[iconName];
 }
