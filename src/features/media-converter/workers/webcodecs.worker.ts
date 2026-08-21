@@ -111,25 +111,27 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
       formats: ALL_FORMATS,
     });
 
-    // Phase 5: Dynamic Bitrate scaling based on original file size
-    // Calculate the approximate original bitrate in bits per second
     const originalBitrate = duration > 0 ? (file.size * 8) / duration : 5_000_000;
-    let targetBitrate = originalBitrate;
+    
+    // Clamp to prevent WebCodecs from crashing on absurdly high/low bitrates
+    let targetBitrate = Math.max(100_000, Math.min(originalBitrate, 60_000_000)); 
 
     switch (values.quality) {
       case "low":
-        targetBitrate = originalBitrate * 0.3; // Strictly force a 70% reduction in size
+        targetBitrate *= 0.3; // Strictly force a 70% reduction in size
         break;
       case "medium":
-        targetBitrate = originalBitrate * 0.7; // Strictly force a 30% reduction in size
+        targetBitrate *= 0.7; // Strictly force a 30% reduction in size
         break;
       case "high":
-        targetBitrate = originalBitrate * 1.2; // Increase by 20% to preserve quality during re-encoding
+        targetBitrate *= 1.2; // Increase by 20% to preserve quality during re-encoding
         break;
       default:
-        targetBitrate = originalBitrate;
         break;
     }
+    
+    // Final clamp to ensure scaled bitrate is still valid
+    targetBitrate = Math.max(100_000, Math.min(targetBitrate, 60_000_000));
 
     let target;
     let fileSystemWritable: FileSystemWritableFileStream | undefined = undefined;
@@ -158,7 +160,6 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
       video: {
         quality: new Quality({
           bitrate: Math.floor(targetBitrate),
-          bitrateMode: "variable",
         }),
         hardwareAcceleration: "prefer-hardware",
       },
