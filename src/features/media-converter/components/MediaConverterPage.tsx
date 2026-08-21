@@ -59,6 +59,7 @@ export function MediaConverterPage() {
       quality: "medium",
       filter: "none",
       saveMode: "direct",
+      resolution: 'original',
       useHardwareAcceleration: true,
     },
   });

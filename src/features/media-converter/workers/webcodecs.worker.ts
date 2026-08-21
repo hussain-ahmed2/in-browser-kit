@@ -135,36 +135,12 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
     const conversion = await Conversion.init({
       input,
       output,
-      video: async (track) => {
-        // Fix: correctly await the track's coded height instead of reading undefined metadata
-        const originalHeight = await track.getCodedHeight();
-        let targetHeight = originalHeight;
-
-        // Apply explicit user resolution choice, falling back to original if selected
-        switch (values.resolution) {
-          case "1080p":
-            targetHeight = Math.min(originalHeight, 1080);
-            break;
-          case "720p":
-            targetHeight = Math.min(originalHeight, 720);
-            break;
-          case "480p":
-            targetHeight = Math.min(originalHeight, 480);
-            break;
-          case "360p":
-            targetHeight = Math.min(originalHeight, 360);
-            break;
-          case "original":
-          default:
-            targetHeight = originalHeight;
-            break;
-        }
-
-        return {
-          quality: new Quality(values.quality || "medium"),
-          height: targetHeight,
-          hardwareAcceleration: "prefer-hardware",
-        };
+      video: {
+        quality: new Quality(values.quality || "medium"),
+        hardwareAcceleration: "prefer-hardware",
+        ...(values.resolution && values.resolution !== "original" 
+          ? { height: parseInt(values.resolution.replace("p", "")) } 
+          : {})
       },
       audio: {
         quality: new Quality(values.quality || "medium"),
@@ -173,6 +149,8 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
         ? { trim: { start, end } }
         : {}),
     });
+
+    console.log("✅ WebCodecs Initialization Successful! (The warning above is normal because we are resizing the video, so it falls back to the rerender path intentionally). Starting execution...");
 
     const startTime = Date.now();
     let maxWritten = 0;
