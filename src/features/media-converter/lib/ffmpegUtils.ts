@@ -20,6 +20,11 @@ export function getFFmpegArgs(
             args.push("-preset", "ultrafast", "-crf", "35");
         }
 
+        // Move the moov atom to the start of the file for instant playback in browsers
+        if (format === "mp4") {
+            args.push("-movflags", "+faststart");
+        }
+
         // WebM defaults to VP9, which is very slow. Force realtime processing speed.
         if (format === "webm") {
             args.push("-deadline", "realtime", "-cpu-used", "8");

@@ -4,6 +4,7 @@ import { toBlobURL, fetchFile } from "@ffmpeg/util";
 import { toast } from "sonner";
 import { MediaConversionFormValues, MediaConversionResult } from "../types";
 import { getFFmpegArgs, getMimeType } from "../lib/ffmpegUtils";
+import { getOptimalThreadCount } from "../lib/threadUtils";
 
 export function useFFmpegService() {
   const ffmpegRef = useRef<FFmpeg | null>(null);
@@ -84,12 +85,9 @@ export function useFFmpegService() {
         inputName = safeInputName;
         outputName = `output.${values.outputFormat}`;
 
-        // Load the file into FFmpeg's MEMFS. We avoid WORKERFS as it often deadlocks with multithreading.
         await ffmpeg.writeFile(safeInputName, await fetchFile(file));
 
-        // Limit to 2 threads. This provides a 50-80% speed boost over single-threaded encoding
-        // while remaining safe from the WebAssembly memory deadlocks that occur with 3+ threads.
-        const maxThreadsStr = "2";
+        const maxThreadsStr = getOptimalThreadCount(file.size).toString();
 
         const args = getFFmpegArgs(
           values.outputFormat,
@@ -129,6 +127,16 @@ export function useFFmpegService() {
         toast.error(
           "Failed to convert media. It might be corrupt or unsupported.",
         );
+
+        // Terminate the corrupted WASM instance so the next conversion starts fresh.
+        // A failed encode can leave libx264's internal state broken, causing
+        // "function signature mismatch" errors if the same instance is reused.
+        if (ffmpegRef.current) {
+          try { ffmpegRef.current.terminate(); } catch {}
+          ffmpegRef.current = null;
+          setIsFfmpegLoaded(false);
+        }
+
         return null;
       } finally {
         setIsConverting(false);
