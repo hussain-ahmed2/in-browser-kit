@@ -8,6 +8,7 @@ import { getOptimalThreadCount } from "../lib/threadUtils";
 
 export function useFFmpegService() {
   const ffmpegRef = useRef<FFmpeg | null>(null);
+  const isConvertingRef = useRef(false);
   const [isFfmpegLoaded, setIsFfmpegLoaded] = useState(false);
   const [logs, setLogs] = useState<string>("");
   const [progress, setProgress] = useState(0);
@@ -23,11 +24,13 @@ export function useFFmpegService() {
 
       ffmpeg.on("log", ({ message }) => {
         console.log("[FFmpeg]", message);
-        setLogs(message);
+        if (isConvertingRef.current) setLogs(message);
       });
 
       ffmpeg.on("progress", ({ progress }) => {
-        setProgress(Math.max(0, Math.min(100, Math.round(progress * 100))));
+        if (isConvertingRef.current) {
+          setProgress(Math.max(0, Math.min(100, Math.round(progress * 100))));
+        }
       });
 
       await ffmpeg.load({
@@ -59,9 +62,10 @@ export function useFFmpegService() {
     ): Promise<MediaConversionResult | null> => {
         if (!file) return null;
         
-        setIsConverting(true);
         setProgress(0);
         setLogs("Loading engine...");
+        setIsConverting(true);
+        isConvertingRef.current = true;
 
         if (!isFfmpegLoaded) {
             await load();
@@ -139,7 +143,9 @@ export function useFFmpegService() {
 
         return null;
       } finally {
+        isConvertingRef.current = false;
         setIsConverting(false);
+        setProgress(0);
         if (ffmpegRef.current) {
           if (inputName) {
             try {
