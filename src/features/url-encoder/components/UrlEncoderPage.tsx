@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeftRight, Copy, Trash2, AlertCircle } from "lucide-react";
+import { ArrowLeftRight, Copy, Trash2, AlertCircle, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type ConvertMode = "encode" | "decode";
 
@@ -15,6 +16,7 @@ export function UrlEncoderPage() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
 
   // Swap function
   const handleSwap = () => {
@@ -63,6 +65,8 @@ export function UrlEncoderPage() {
     if (!output) return;
     navigator.clipboard.writeText(output);
     toast.success("Copied to clipboard");
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   return (
@@ -130,9 +134,9 @@ export function UrlEncoderPage() {
               onClick={handleCopy}
               disabled={!output}
               title="Copy to clipboard"
-              className="h-7 w-7"
+              className={cn("h-7 w-7 transition-all duration-300", isCopied && "text-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600")}
             >
-              <Copy className="w-3.5 h-3.5" />
+              {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
             </Button>
           </div>
           <Textarea
