@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw } from "lucide-react";
+import { Download, RefreshCw, ArrowRight, TrendingDown, TrendingUp } from "lucide-react";
 import { MediaConversionResult } from "../types";
 
 interface MediaResultProps {
@@ -36,6 +36,9 @@ export function MediaResult({ result, onStartOver }: MediaResultProps) {
 
   if (!url) return null;
 
+  const isSmaller = result.convertedFile.size < result.originalFile.size;
+  const sizeDiffPercent = Math.abs((1 - result.convertedFile.size / result.originalFile.size) * 100).toFixed(0);
+
   return (
     <div className="space-y-6">
       <div className="rounded-lg overflow-hidden border border-border bg-black flex items-center justify-center p-4 min-h-75">
@@ -54,11 +57,22 @@ export function MediaResult({ result, onStartOver }: MediaResultProps) {
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <div className="text-sm text-muted-foreground">
-          Converted to{" "}
-          <span className="font-semibold text-foreground uppercase">
-            {result.convertedFile.name.split(".").pop()}
-          </span>
+        <div className="text-sm text-muted-foreground flex flex-col gap-1">
+          <div>
+            Converted to{" "}
+            <span className="font-semibold text-foreground uppercase">
+              {result.convertedFile.name.split(".").pop()}
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="opacity-70">{(result.originalFile.size / 1024 / 1024).toFixed(2)} MB</span>
+            <ArrowRight className="w-3 h-3 opacity-50" />
+            <span className="font-medium text-foreground">{(result.convertedFile.size / 1024 / 1024).toFixed(2)} MB</span>
+            <span className={`px-1.5 py-0.5 rounded-sm flex items-center gap-1 ${isSmaller ? 'bg-success/20 text-success' : 'bg-destructive/20 text-destructive'}`}>
+              {isSmaller ? <TrendingDown className="w-3 h-3" /> : <TrendingUp className="w-3 h-3" />}
+              {sizeDiffPercent}%
+            </span>
+          </div>
         </div>
         <div className="flex gap-4 w-full sm:w-auto">
           <Button

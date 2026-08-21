@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useFFmpegService } from "../hooks/useFFmpegService";
@@ -25,6 +25,7 @@ import { StepIndicator } from "@/components/StepIndicator";
 
 import { MediaUploader } from "./MediaUploader";
 import { MediaResult } from "./MediaResult";
+import { VideoPreview } from "./VideoPreview";
 import {
   mediaConversionSchema,
   type MediaConversionFormValues,
@@ -56,9 +57,12 @@ export function MediaConverterPage() {
     defaultValues: {
       outputFormat: "mp4",
       quality: "medium",
+      filter: "none",
       useHardwareAcceleration: true,
     },
   });
+
+  const selectedFilter = useWatch({ control: form.control, name: "filter"});
 
   const handleClear = () => {
     setFile(null);
@@ -113,6 +117,10 @@ export function MediaConverterPage() {
             <MediaUploader onFileSelect={setFile} />
           ) : (
             <div className="space-y-6 animate-fade-in">
+              {file.type.startsWith("video/") && !result && (
+                <VideoPreview file={file} filter={selectedFilter || "none"} />
+              )}
+              
               <div className="p-4 rounded-lg bg-secondary/50 border border-border flex items-center justify-between">
                 <div className="truncate min-w-0 pr-4">
                   <p className="font-medium text-sm truncate">{file.name}</p>
@@ -161,6 +169,17 @@ export function MediaConverterPage() {
                               { label: "High (Larger size)", value: "high" },
                               { label: "Medium (Balanced)", value: "medium" },
                               { label: "Low (Smaller size)", value: "low" },
+                            ]}
+                          />
+                          <SelectField
+                            name="filter"
+                            label="Visual Filter"
+                            options={[
+                              { label: "None", value: "none" },
+                              { label: "Grayscale", value: "grayscale" },
+                              { label: "Sepia", value: "sepia" },
+                              { label: "Invert", value: "invert" },
+                              { label: "Blur", value: "blur" },
                             ]}
                           />
                         </FieldSet>

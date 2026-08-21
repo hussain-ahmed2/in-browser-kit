@@ -75,7 +75,28 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
       BufferTarget,
       Quality,
       ALL_FORMATS,
+      registerVideoSampleTransformer,
+      VideoSample,
     } = mediabunny;
+
+    if (values.filter && values.filter !== "none") {
+      registerVideoSampleTransformer((sample, description) => {
+        const canvas = new OffscreenCanvas(description.width, description.height);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return null;
+        
+        switch (values.filter) {
+          case "grayscale": ctx.filter = "grayscale(100%)"; break;
+          case "sepia": ctx.filter = "sepia(100%)"; break;
+          case "invert": ctx.filter = "invert(100%)"; break;
+          case "blur": ctx.filter = "blur(4px)"; break;
+          default: break;
+        }
+
+        sample.draw(ctx, 0, 0, description.width, description.height);
+        return new VideoSample(canvas, { timestamp: sample.timestamp });
+      });
+    }
 
     self.postMessage({
       type: "PROGRESS",
