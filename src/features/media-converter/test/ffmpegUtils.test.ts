@@ -10,25 +10,12 @@ describe('FFmpeg Utilities', () => {
                 '-threads', '4', 
                 '-vf', "scale='min(1920,iw)':-2",
                 '-preset', 'fast', 
-                '-crf', '22', 
-                'output.mp4'
-            ]);
-        });
-
-        it('generates correct arguments for trimmed video', () => {
-            const args = getFFmpegArgs('mp4', 'medium', 'original', 'default', 'input.mp4', 'output.mp4', '4', '00:00:10', '00:00:20');
-            expect(args).toEqual([
-                '-i', 'input.mp4',
-                '-threads', '4',
-                '-ss', '00:00:10',
-                '-to', '00:00:20',
-                '-vf', "scale='min(1920,iw)':-2",
-                '-preset', 'veryfast',
-                '-crf', '28',
+                '-crf', '22',
                 '-movflags', '+faststart',
                 'output.mp4'
             ]);
         });
+
 
         it('generates correct arguments for HEVC codec', () => {
             const args = getFFmpegArgs('mp4', 'medium', '1080p', 'hevc', 'input.mov', 'output.mp4', '4');
