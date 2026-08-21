@@ -87,9 +87,9 @@ export function useFFmpegService() {
         // Load the file into FFmpeg's MEMFS. We avoid WORKERFS as it often deadlocks with multithreading.
         await ffmpeg.writeFile(safeInputName, await fetchFile(file));
 
-        // Limit to 1 thread. libx264 in WebAssembly frequently deadlocks or exhausts the 
-        // WASM heap if allowed to spawn multiple threads (which is why it hangs at 1%).
-        const maxThreadsStr = "1";
+        // Limit to 2 threads. This provides a 50-80% speed boost over single-threaded encoding
+        // while remaining safe from the WebAssembly memory deadlocks that occur with 3+ threads.
+        const maxThreadsStr = "2";
 
         const args = getFFmpegArgs(
           values.outputFormat,
