@@ -8,7 +8,7 @@ import { getOptimalThreadCount } from "../lib/threadUtils";
 
 export function useFFmpegService() {
   const ffmpegRef = useRef<FFmpeg | null>(null);
-  const isConvertingRef = useRef(false);
+  const execStartTimeRef = useRef(0);
   const [isFfmpegLoaded, setIsFfmpegLoaded] = useState(false);
   const [logs, setLogs] = useState<string>("");
   const [progress, setProgress] = useState(0);
@@ -24,12 +24,17 @@ export function useFFmpegService() {
 
       ffmpeg.on("log", ({ message }) => {
         console.log("[FFmpeg]", message);
-        if (isConvertingRef.current) setLogs(message);
       });
 
-      ffmpeg.on("progress", ({ progress }) => {
-        if (isConvertingRef.current) {
-          setProgress(Math.max(0, Math.min(100, Math.round(progress * 100))));
+      // When reusing the same FFmpeg instance for a second conversion, the worker
+      // replays stale progress events from the previous encode. These arrive via
+      // postMessage within the first ~200ms of exec(). We use a timestamp guard
+      // to ignore any events that arrive too quickly after exec() starts.
+      ffmpeg.on("progress", ({ progress: p }) => {
+        const elapsed = Date.now() - execStartTimeRef.current;
+        if (execStartTimeRef.current > 0 && elapsed > 500) {
+          const pct = Math.max(0, Math.min(100, Math.round(p * 100)));
+          setProgress(pct);
         }
       });
 
@@ -65,7 +70,6 @@ export function useFFmpegService() {
         setProgress(0);
         setLogs("Loading engine...");
         setIsConverting(true);
-        isConvertingRef.current = true;
 
         if (!isFfmpegLoaded) {
             await load();
@@ -101,7 +105,16 @@ export function useFFmpegService() {
           maxThreadsStr,
         );
 
+        // Record the timestamp right before exec(). The progress listener will
+        // ignore any events that arrive within 500ms of this time — that window
+        // is when the FFmpeg worker replays stale progress events from the
+        // previous conversion. Real encoding progress only starts after FFmpeg
+        // finishes initializing the codec, which takes >500ms.
+        setProgress(0);
+        execStartTimeRef.current = Date.now();
+
         const exitCode = await ffmpeg.exec(args);
+
         if (exitCode !== 0) {
             throw new Error(`FFmpeg exited with code ${exitCode}. Check logs for details.`);
         }
@@ -143,9 +156,10 @@ export function useFFmpegService() {
 
         return null;
       } finally {
-        isConvertingRef.current = false;
+        execStartTimeRef.current = 0;
         setIsConverting(false);
         setProgress(0);
+        setLogs("");
         if (ffmpegRef.current) {
           if (inputName) {
             try {
