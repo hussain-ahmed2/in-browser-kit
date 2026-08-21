@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
-import { toBlobURL } from "@ffmpeg/util";
+import { toBlobURL, fetchFile } from "@ffmpeg/util";
 import { toast } from "sonner";
 import { MediaConversionFormValues, MediaConversionResult } from "../types";
 import { getFFmpegArgs, getMimeType } from "../lib/ffmpegUtils";
@@ -80,21 +80,12 @@ export function useFFmpegService() {
         // We create a safe clone of the File object with a generic name (e.g. input.mp4) to mount safely.
         const ext = file.name.substring(file.name.lastIndexOf("."));
         const safeInputName = `input${ext}`;
-        const safeFile = new File([file], safeInputName, { type: file.type });
         
-        inputName = `/mnt/${safeInputName}`;
+        inputName = safeInputName;
         outputName = `output.${values.outputFormat}`;
 
-        // Ensure the mount directory exists before mounting to avoid FS errors
-        try {
-            await ffmpeg.createDir("/mnt");
-        } catch {
-            // Directory might already exist, safe to ignore
-        }
-
-        // FFFSType is not exported at runtime in the ESM build, so we must cast the string
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await ffmpeg.mount("WORKERFS" as any, { files: [safeFile] }, "/mnt");
+        // Load the file into FFmpeg's MEMFS. We avoid WORKERFS as it often deadlocks with multithreading.
+        await ffmpeg.writeFile(safeInputName, await fetchFile(file));
 
         let maxThreadsStr = "2";
         if (typeof navigator !== "undefined" && navigator.hardwareConcurrency) {
