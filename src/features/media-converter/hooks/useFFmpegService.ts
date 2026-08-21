@@ -87,12 +87,9 @@ export function useFFmpegService() {
         // Load the file into FFmpeg's MEMFS. We avoid WORKERFS as it often deadlocks with multithreading.
         await ffmpeg.writeFile(safeInputName, await fetchFile(file));
 
-        let maxThreadsStr = "2";
-        if (typeof navigator !== "undefined" && navigator.hardwareConcurrency) {
-            // Allocate 75% of available cores, min 2, max 8 (WASM multi-threading plateaus around 8)
-            const optimalThreads = Math.max(2, Math.min(8, Math.floor(navigator.hardwareConcurrency * 0.75)));
-            maxThreadsStr = optimalThreads.toString();
-        }
+        // Limit to 1 thread. libx264 in WebAssembly frequently deadlocks or exhausts the 
+        // WASM heap if allowed to spawn multiple threads (which is why it hangs at 1%).
+        const maxThreadsStr = "1";
 
         const args = getFFmpegArgs(
           values.outputFormat,
@@ -136,10 +133,11 @@ export function useFFmpegService() {
       } finally {
         setIsConverting(false);
         if (ffmpegRef.current) {
-          try {
-            await ffmpegRef.current.unmount("/mnt").catch(() => {});
-          } catch {}
-
+          if (inputName) {
+            try {
+              ffmpegRef.current.deleteFile(inputName).catch(() => {});
+            } catch {}
+          }
           if (outputName) {
             try {
               ffmpegRef.current.deleteFile(outputName).catch(() => {});
