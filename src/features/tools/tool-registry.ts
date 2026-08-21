@@ -22,6 +22,7 @@ import {
   Link2,
   Paintbrush,
   FileArchive,
+  Stamp,
   type LucideIcon,
 } from "lucide-react";
 
@@ -52,7 +53,8 @@ export type ToolIconName =
   | "Link2"
   | "Paintbrush"
   | "FileArchive"
-  | "Scissors";
+  | "Scissors"
+  | "Stamp";
 
 export interface ToolDefinition {
   slug: string;
@@ -235,6 +237,13 @@ export const tools: ToolDefinition[] = [
     category: "Images",
   },
   {
+    slug: "image-watermarker",
+    name: "Image Watermarker",
+    tagline: "Stamp text or logo watermarks onto images with full position control.",
+    icon: "Stamp",
+    category: "Images",
+  },
+  {
     slug: "regex-tester",
     name: "Regex Tester",
     tagline: "Test regular expressions with live match highlighting, capture groups, and substitution preview.",
@@ -297,6 +306,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     Link2,
     Paintbrush,
     FileArchive,
+    Stamp,
   };
   return iconMap[iconName];
 }

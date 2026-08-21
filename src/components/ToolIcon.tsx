@@ -24,6 +24,7 @@ import {
     Link2,
     Paintbrush,
     FileArchive,
+    Stamp,
     type LucideIcon
 } from "lucide-react"
 import type { ToolIconName } from "@/features/tools/tool-registry"
@@ -51,7 +52,8 @@ const iconMap: Record<ToolIconName, LucideIcon> = {
     Table,
     Link2,
     Paintbrush,
-    FileArchive
+    FileArchive,
+    Stamp
 }
 
 interface ToolIconProps {
