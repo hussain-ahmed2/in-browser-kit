@@ -58,6 +58,7 @@ export function MediaConverterPage() {
       outputFormat: "mp4",
       quality: "medium",
       filter: "none",
+      saveMode: "direct",
       useHardwareAcceleration: true,
     },
   });
@@ -75,9 +76,32 @@ export function MediaConverterPage() {
     if (!file) return;
     
     let conversionResult = null;
+    let fileHandle: FileSystemFileHandle | undefined = undefined;
 
     if (values.useHardwareAcceleration && webCodecs.isSupported) {
-      conversionResult = await webCodecs.convert(file, values);
+      // Direct-to-Disk Streaming (Phase 4)
+      if (values.saveMode === "direct" && "showSaveFilePicker" in window) {
+        try {
+          // @ts-expect-error showSaveFilePicker is not in standard DOM types yet
+          fileHandle = await window.showSaveFilePicker({
+            suggestedName: `converted-${file.name.replace(/\.[^/.]+$/, "")}.${values.outputFormat}`,
+            types: [
+              {
+                description: "Converted Media File",
+                accept: {
+                  [`video/${values.outputFormat}`]: [`.${values.outputFormat}`],
+                },
+              },
+            ],
+          });
+        } catch (err: unknown) {
+          // User cancelled the picker, abort conversion
+          if (err instanceof Error && err.name === "AbortError") return;
+          console.error("Failed to get file handle", err);
+        }
+      }
+
+      conversionResult = await webCodecs.convert(file, values, fileHandle);
     }
 
     // Fallback to FFmpeg if WebCodecs failed, isn't supported, or user disabled it
@@ -171,6 +195,8 @@ export function MediaConverterPage() {
                               { label: "Low (Smaller size)", value: "low" },
                             ]}
                           />
+                        </FieldSet>
+                        <FieldSet className="grid grid-cols-1 sm:grid-cols-2 mt-4">
                           <SelectField
                             name="filter"
                             label="Visual Filter"
@@ -180,6 +206,14 @@ export function MediaConverterPage() {
                               { label: "Sepia", value: "sepia" },
                               { label: "Invert", value: "invert" },
                               { label: "Blur", value: "blur" },
+                            ]}
+                          />
+                          <SelectField
+                            name="saveMode"
+                            label="Save Mode (Memory Efficiency)"
+                            options={[
+                              { label: "Direct-to-Disk (0MB RAM, Recommended)", value: "direct" },
+                              { label: "In-Memory (Download Later)", value: "memory" },
                             ]}
                           />
                         </FieldSet>

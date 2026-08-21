@@ -6,6 +6,7 @@ export type WorkerInputMessage = {
   file: File;
   values: MediaConversionFormValues;
   duration: number;
+  fileHandle?: FileSystemFileHandle;
 };
 
 // Messages emitted by the worker
@@ -61,7 +62,7 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
   const { type } = e.data;
   if (type !== "START") return;
 
-  const { file, values, duration } = e.data;
+  const { file, values, duration, fileHandle } = e.data;
 
   try {
     const mediabunny = await import("mediabunny");
@@ -77,6 +78,7 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
       ALL_FORMATS,
       registerVideoSampleTransformer,
       VideoSample,
+      StreamTarget,
     } = mediabunny;
 
     if (values.filter && values.filter !== "none") {
@@ -109,7 +111,16 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
       formats: ALL_FORMATS,
     });
 
-    const target = new BufferTarget();
+    let target;
+    let fileSystemWritable: FileSystemWritableFileStream | undefined = undefined;
+
+    if (fileHandle) {
+      fileSystemWritable = await fileHandle.createWritable();
+      target = new StreamTarget(fileSystemWritable);
+    } else {
+      target = new BufferTarget();
+    }
+
     const output = new Output({
       format:
         values.outputFormat === "mp4"
@@ -178,27 +189,33 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
 
     await conversion.execute();
 
-    const arrayBuffer = target.buffer;
-    if (!arrayBuffer) {
-      throw new Error("Target buffer is empty after conversion.");
-    }
-
     const mimeType = getMimeType(values.outputFormat);
     
-    // Transfer the ArrayBuffer back to the main thread
-    self.postMessage(
-      {
+    if (fileHandle) {
+      self.postMessage({
         type: "DONE",
-        buffer: arrayBuffer,
+        buffer: new ArrayBuffer(0),
         mimeType,
-      } as WorkerOutputMessage,
-      { transfer: [arrayBuffer] }
-    );
+      } as WorkerOutputMessage);
+    } else {
+      const arrayBuffer = (target as { buffer?: ArrayBuffer }).buffer;
+      if (!arrayBuffer) {
+        throw new Error("Target buffer is empty after conversion.");
+      }
+      self.postMessage(
+        {
+          type: "DONE",
+          buffer: arrayBuffer,
+          mimeType,
+        } as WorkerOutputMessage,
+        { transfer: [arrayBuffer] }
+      );
+    }
   } catch (error: unknown) {
     console.error("Worker error:", error);
     self.postMessage({
       type: "ERROR",
-      message: error instanceof Error ? error.message : "Unknown error in worker",
+      message: error instanceof Error ? error.message : String(error),
     } as WorkerOutputMessage);
   }
 };

@@ -36,9 +36,10 @@ export function useWebCodecs() {
     };
   }, []);
 
-  const convert = useCallback(async (
+  const convert = async (
     file: File,
-    values: MediaConversionFormValues
+    values: MediaConversionFormValues,
+    fileHandle?: FileSystemFileHandle
   ): Promise<MediaConversionResult | null> => {
     if (!isSupported) {
       toast.error("WebCodecs hardware acceleration only supports MP4 and WebM currently. Falling back to CPU encoder...");
@@ -63,7 +64,7 @@ export function useWebCodecs() {
         const worker = new Worker(new URL("../workers/webcodecs.worker.ts", import.meta.url));
         workerRef.current = worker;
 
-        worker.onmessage = (e: MessageEvent<WorkerOutputMessage>) => {
+        worker.onmessage = async (e: MessageEvent<WorkerOutputMessage>) => {
           const msg = e.data;
           
           if (msg.type === "PROGRESS") {
@@ -72,8 +73,18 @@ export function useWebCodecs() {
               setLogs(msg.logs);
             }
           } else if (msg.type === "DONE") {
-            const blob = new Blob([msg.buffer], { type: msg.mimeType });
-            const convertedFile = new File([blob], `converted-${file.name.split('.')[0]}.${values.outputFormat}`, { type: msg.mimeType });
+            let convertedFile: File;
+            if (fileHandle) {
+              convertedFile = await fileHandle.getFile();
+            } else {
+              const blob = new Blob([msg.buffer], { type: msg.mimeType });
+              const ext = values.outputFormat;
+              convertedFile = new File(
+                [blob],
+                `converted-${file.name.replace(/\.[^/.]+$/, "")}.${ext}`,
+                { type: msg.mimeType }
+              );
+            }
             
             // Clean up
             worker.terminate();
@@ -100,11 +111,12 @@ export function useWebCodecs() {
         };
 
         // Send start message
-        worker.postMessage({
+        workerRef.current.postMessage({
           type: "START",
           file,
           values,
-          duration
+          duration,
+          fileHandle,
         } as WorkerInputMessage);
       });
     } catch (error: unknown) {
@@ -115,7 +127,7 @@ export function useWebCodecs() {
       setLogs("");
       return null; // Fallback
     }
-  }, [isSupported]);
+  };
 
   const clear = useCallback(() => {
     setProgress(0);
