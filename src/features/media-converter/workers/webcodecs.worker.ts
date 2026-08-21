@@ -1,4 +1,5 @@
 import type { MediaConversionFormValues } from "../types";
+import { buildWebCodecVideoConfig } from "../lib/webcodecUtils";
 
 // Messages received by the worker
 export type WorkerInputMessage = {
@@ -136,17 +137,13 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
         const start = parseTimeString(values.trimStart);
         const end = parseTimeString(values.trimEnd);
 
+        const videoConfig = buildWebCodecVideoConfig(values);
+        videoConfig.quality = new Quality(values.quality || "medium");
+
         const conversion = await Conversion.init({
             input,
             output,
-            video: {
-                quality: new Quality(values.quality || "medium"),
-                hardwareAcceleration: "prefer-hardware",
-                ...(values.resolution && values.resolution !== "original"
-                    ? { height: parseInt(values.resolution.replace("p", "")) }
-                    : {}),
-                ...(values.videoCodec && values.videoCodec !== "default" ? { codec: values.videoCodec } : {}),
-            },
+            video: videoConfig,
             audio: {
                 quality: new Quality(values.quality || "medium"),
             },
