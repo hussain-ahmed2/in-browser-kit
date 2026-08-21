@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { optimize } from "svgo/browser";
-import { Copy, Trash2, AlertCircle, Check, Play, Upload } from "lucide-react";
+import { Copy, Trash2, AlertCircle, Check, Play, Upload, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -39,6 +39,20 @@ export function SvgOptimizerPage() {
     reader.readAsText(file);
     // Reset input so the same file can be re-uploaded
     e.target.value = "";
+  };
+
+  const handleDownload = () => {
+    if (!output) return;
+    const blob = new Blob([output], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "optimized.svg";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("SVG downloaded!");
   };
 
   const handleCopy = () => {
@@ -187,9 +201,9 @@ export function SvgOptimizerPage() {
           {input && !error && (
             <Card className="border overflow-hidden">
               <div className="bg-secondary/50 p-2 text-xs text-center border-b font-medium text-muted-foreground">Original Render Preview</div>
-              <CardContent className="p-4 flex items-center justify-center min-h-50 checkerboard-bg">
+              <CardContent className="p-4 checkerboard-bg">
                 <div 
-                  className="max-w-full max-h-75 overflow-hidden" 
+                  className="w-full [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-w-full" 
                   dangerouslySetInnerHTML={{ __html: input }} 
                 />
               </CardContent>
@@ -202,16 +216,28 @@ export function SvgOptimizerPage() {
             <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
               Optimized SVG Output
             </Label>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleCopy}
-              disabled={!output}
-              title="Copy to clipboard"
-              className={cn("h-7 w-7 transition-all duration-300", isCopied && "text-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600")}
-            >
-              {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleDownload}
+                disabled={!output}
+                title="Download optimized SVG"
+                className="h-7 w-7"
+              >
+                <Download className="w-3.5 h-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleCopy}
+                disabled={!output}
+                title="Copy to clipboard"
+                className={cn("h-7 w-7 transition-all duration-300", isCopied && "text-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600")}
+              >
+                {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              </Button>
+            </div>
           </div>
           <Textarea
             readOnly
@@ -222,9 +248,9 @@ export function SvgOptimizerPage() {
           {output && !error && (
             <Card className="border overflow-hidden">
               <div className="bg-brand/10 p-2 text-xs text-center border-b border-brand/20 font-medium text-brand">Optimized Render Preview</div>
-              <CardContent className="p-4 flex items-center justify-center min-h-50 checkerboard-bg">
+              <CardContent className="p-4 checkerboard-bg">
                 <div 
-                  className="max-w-full max-h-75 overflow-hidden" 
+                  className="w-full [&_svg]:w-full [&_svg]:h-auto [&_svg]:max-w-full" 
                   dangerouslySetInnerHTML={{ __html: output }} 
                 />
               </CardContent>

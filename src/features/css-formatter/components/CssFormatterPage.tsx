@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import * as prettier from "prettier/standalone";
 import * as prettierPluginPostcss from "prettier/plugins/postcss";
-import { Copy, Trash2, AlertCircle, Check, Upload } from "lucide-react";
+import { Copy, Trash2, AlertCircle, Check, Upload, Download } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -42,6 +42,21 @@ export function CssFormatterPage() {
     };
     reader.readAsText(file);
     e.target.value = "";
+  };
+
+  const handleDownload = () => {
+    if (!output) return;
+    const ext = mode === "format" ? "formatted.css" : "minified.css";
+    const blob = new Blob([output], { type: "text/css;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = ext;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("CSS downloaded!");
   };
 
   const handleCopy = () => {
@@ -164,16 +179,28 @@ export function CssFormatterPage() {
             <Label className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
               {mode === "format" ? "Formatted Output" : "Minified Output"}
             </Label>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleCopy}
-              disabled={!output}
-              title="Copy to clipboard"
-              className={cn("h-7 w-7 transition-all duration-300", isCopied && "text-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600")}
-            >
-              {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleDownload}
+                disabled={!output}
+                title="Download CSS"
+                className="h-7 w-7"
+              >
+                <Download className="w-3.5 h-3.5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleCopy}
+                disabled={!output}
+                title="Copy to clipboard"
+                className={cn("h-7 w-7 transition-all duration-300", isCopied && "text-green-500 bg-green-500/10 hover:bg-green-500/20 hover:text-green-600")}
+              >
+                {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+              </Button>
+            </div>
           </div>
           <Textarea
             readOnly
