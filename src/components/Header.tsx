@@ -55,7 +55,7 @@ export function Header() {
                     </span>
                 </Link>
 
-                <nav className="hidden sm:flex items-center gap-1.5" aria-label="Tools">
+                <nav className="hidden lg:flex items-center gap-1.5" aria-label="Tools">
                     {CATEGORIES.map((category) => (
                         <CategoryDropdown key={category} category={category} />
                     ))}
@@ -79,7 +79,7 @@ export function Header() {
                             )}
                         </Button>
                     )}
-                    <div className="sm:hidden">
+                    <div className="lg:hidden">
                         <MobileMenu />
                     </div>
                 </div>

@@ -1,38 +1,52 @@
 # InBrowser
 
-Privacy-first file tools. Compress images, merge PDFs, and more — all in your browser.
+The ultimate privacy-first toolkit. Convert media, manage PDFs, generate developer tools, and more — all locally in your browser.
 
-Every tool runs entirely client-side. Your files are never uploaded, stored, or sent to a server. Anything you process stays on your device.
+Every tool runs entirely client-side. Your files are never uploaded, stored, or sent to a server. Anything you process stays firmly on your device.
 
 ## Tools
 
-### PDF
+### Video & Audio
+- **Media Converter** — highly optimized hardware-accelerated (WebCodecs) and fallback (FFmpeg/WebAssembly) media converter. Convert between MP4, WebM, MP3, WAV, and GIF, with full control over bitrate, resolution, and codecs (H.264, HEVC, VP9, AV1).
+
+### PDF Tools
 - **PDF Merger** — combine multiple PDFs into one, with drag-and-drop reordering.
 - **PDF Split** — split a PDF by pages or ranges into separate files.
 - **PDF Rotate** — rotate all or selected pages of a PDF.
 - **PDF Page Remover** — remove unwanted pages and download the cleaned file.
 - **PDF Lock / Unlock** — encrypt a PDF with a password, or remove an existing password.
+- **PDF to Images** — extract pages from a PDF as high-quality JPG or PNG images.
 - **Image to PDF** — turn images (JPG/PNG) into a single PDF, with page size and fit control.
 
-### Images
+### Image Tools
 - **Image Compressor** — shrink JPG/PNG/WebP files with quality and dimension controls.
 - **Resize & Convert** — resize images by max dimension and convert between JPG, PNG, and WebP.
+- **Image Metadata Viewer** — inspect and remove EXIF data (GPS, camera info) from your photos for privacy.
 
-### Security
-- **Password Toolkit** — generate strong passwords and check their strength.
-- **Hash Generator** — compute hashes (MD5, SHA-1, SHA-256, ...) of any text or file.
+### Security & Developer Utilities
+- **JWT Decoder** — decode and inspect JSON Web Tokens locally without sending them over the wire.
+- **Regex Tester** — test regular expressions against text snippets in real-time.
+- **JSON Formatter** — validate, format, and minify JSON payloads.
+- **Base64 Encoder / Decoder** — safely encode or decode text and files to/from Base64.
+- **Hash Generator** — compute hashes (MD5, SHA-1, SHA-256, SHA-512) of any text or file.
+- **Password Toolkit** — generate strong, secure passwords and check their entropy/strength.
+- **UUID Generator** — bulk generate v1, v4, or v7 UUIDs instantly.
 
-### Utilities
+### Everyday Utilities
 - **QR Code Generator** — create QR codes for URLs, Wi-Fi, contact info, and more, with ready-made templates.
+- **Unit Converter** — convert between lengths, weights, temperatures, and data sizes.
 
 ## Tech Stack
 
-- [Next.js](https://nextjs.org) (App Router) + TypeScript
-- [Tailwind CSS v4](https://tailwindcss.com) + shadcn/ui components
-- Redux Toolkit (RTK) for client-side state
-- [pdf-lib](https://pdf-lib.js.org), [pdfjs-dist](https://mozilla.github.io/pdf.js/), and [qpdf](https://qpdf.sourceforge.io/) (compiled to WebAssembly) for PDF work
-- [browser-image-compression](https://github.com/Donaldcwl/browser-image-compression) for image processing
-- [vitest](https://vitest.dev) for testing
+- **Framework**: [Next.js](https://nextjs.org) (App Router) + TypeScript
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com) + custom glassmorphism design system
+- **State**: Redux Toolkit (RTK)
+- **Media Engine**: [mediabunny](https://github.com/hussain-ahmed2/mediabunny) & FFmpeg WASM for blazing fast, local media conversion
+- **PDF Engine**: [pdf-lib](https://pdf-lib.js.org), pdfjs-dist, and qpdf (WebAssembly)
+- **Testing**: [vitest](https://vitest.dev)
+
+## Author
+Developed and maintained by **[Hussain Ahmed](https://github.com/hussain-ahmed2)**.
 
 ## Getting Started
 

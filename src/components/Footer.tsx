@@ -14,9 +14,14 @@ export function Footer() {
             <span className="hidden sm:inline">No Data Leaves Your Browser</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span>Built with</span>
-            <Heart className="h-3.5 w-3.5 text-destructive fill-destructive" />
-            <span>using Next.js</span>
+            <span>Built by</span>
+            <a href="https://github.com/hussain-ahmed2" target="_blank" rel="noopener noreferrer" className="font-semibold text-foreground hover:text-brand transition-colors">
+              Hussain Ahmed
+            </a>
+            <span className="text-border mx-1">|</span>
+            <a href="https://github.com/hussain-ahmed2/in-browser-kit" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+              GitHub Repository
+            </a>
           </div>
         </div>
       </div>
