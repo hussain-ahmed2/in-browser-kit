@@ -3,9 +3,23 @@ export function getFFmpegArgs(
     quality: string,
     inputName: string,
     outputName: string,
-    maxThreads: string = "2"
+    maxThreads: string = "2",
+    trimStart?: string,
+    trimEnd?: string
 ): string[] {
-    const args = ["-i", inputName, "-threads", maxThreads];
+    const args = [];
+    
+    if (trimStart) {
+        args.push("-ss", trimStart);
+    }
+    
+    args.push("-i", inputName);
+    
+    if (trimEnd) {
+        args.push("-to", trimEnd);
+    }
+
+    args.push("-threads", maxThreads);
     
     if (format === "mp4" || format === "webm") {
         // Prevent WebAssembly OOM crashes by capping resolution to 1080p (4K buffering blows up the heap)

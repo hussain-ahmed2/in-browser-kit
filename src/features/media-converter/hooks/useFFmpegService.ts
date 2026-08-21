@@ -24,6 +24,7 @@ export function useFFmpegService() {
 
       ffmpeg.on("log", ({ message }) => {
         console.log("[FFmpeg]", message);
+        setLogs(message);
       });
 
       // When reusing the same FFmpeg instance for a second conversion, the worker
@@ -103,6 +104,8 @@ export function useFFmpegService() {
           inputName,
           outputName,
           maxThreadsStr,
+          values.trimStart,
+          values.trimEnd
         );
 
         // Record the timestamp right before exec(). The progress listener will

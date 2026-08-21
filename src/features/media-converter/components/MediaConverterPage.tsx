@@ -5,6 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useFFmpegService } from "../hooks/useFFmpegService";
+import { useWebCodecs } from "../hooks/useWebCodecs";
 import { AlertTriangle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -17,6 +18,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { SelectField } from "@/components/form/select-field";
+import { InputField } from "@/components/form/input-field";
+import { CheckboxField } from "@/components/form/checkbox-field";
 import { FieldGroup, FieldSet } from "@/components/ui/field";
 import { StepIndicator } from "@/components/StepIndicator";
 
@@ -38,8 +41,13 @@ export function MediaConverterPage() {
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<MediaConversionResult | null>(null);
 
-  const { isFfmpegLoaded, isConverting, progress, logs, convert, clear } =
-    useFFmpegService();
+  const ffmpeg = useFFmpegService();
+  const webCodecs = useWebCodecs();
+
+  const isConverting = ffmpeg.isConverting || webCodecs.isConverting;
+  const progress = webCodecs.isConverting ? webCodecs.progress : ffmpeg.progress;
+  const logs = webCodecs.isConverting ? webCodecs.logs : ffmpeg.logs;
+  const isFfmpegLoaded = ffmpeg.isFfmpegLoaded;
 
   const currentStep = result ? 2 : file ? 1 : 0;
 
@@ -48,18 +56,31 @@ export function MediaConverterPage() {
     defaultValues: {
       outputFormat: "mp4",
       quality: "medium",
+      useHardwareAcceleration: true,
     },
   });
 
   const handleClear = () => {
     setFile(null);
     setResult(null);
-    clear();
+    ffmpeg.clear();
+    webCodecs.clear();
   };
 
   const handleConvert = async (values: MediaConversionFormValues) => {
     if (!file) return;
-    const conversionResult = await convert(file, values);
+    
+    let conversionResult = null;
+
+    if (values.useHardwareAcceleration && webCodecs.isSupported) {
+      conversionResult = await webCodecs.convert(file, values);
+    }
+
+    // Fallback to FFmpeg if WebCodecs failed, isn't supported, or user disabled it
+    if (!conversionResult) {
+      conversionResult = await ffmpeg.convert(file, values);
+    }
+
     if (conversionResult) {
       setResult(conversionResult);
     }
@@ -143,6 +164,27 @@ export function MediaConverterPage() {
                             ]}
                           />
                         </FieldSet>
+                        <FieldSet className="grid grid-cols-1 sm:grid-cols-2 mt-4">
+                          <InputField
+                            name="trimStart"
+                            label="Trim Start (e.g. 00:00:05)"
+                            placeholder="Optional"
+                          />
+                          <InputField
+                            name="trimEnd"
+                            label="Trim End (e.g. 00:00:15)"
+                            placeholder="Optional"
+                          />
+                        </FieldSet>
+                        {webCodecs.isSupported && (
+                          <div className="mt-6 pt-6 border-t border-border">
+                            <CheckboxField
+                              name="useHardwareAcceleration"
+                              label="Hardware Acceleration (WebCodecs)"
+                              description="Uses your device's native GPU encoder for massive speedups (5x-10x) and lower battery usage. If it fails, it safely falls back to CPU."
+                            />
+                          </div>
+                        )}
                       </FieldGroup>
                     </div>
 
@@ -177,7 +219,11 @@ export function MediaConverterPage() {
                                 className="animate-spin"
                                 aria-hidden="true"
                               />{" "}
-                              {!isFfmpegLoaded ? "Loading Engine..." : "Converting..."}
+                              {webCodecs.isConverting 
+                                ? "Hardware Encoding..." 
+                                : !isFfmpegLoaded 
+                                  ? "Loading Engine..." 
+                                  : "Converting..."}
                             </>
                           ) : (
                             "Convert File"
