@@ -1,6 +1,7 @@
 export function getFFmpegArgs(
     format: string,
     quality: string,
+    resolution: string,
     inputName: string,
     outputName: string,
     maxThreads: string = "2",
@@ -22,8 +23,14 @@ export function getFFmpegArgs(
     args.push("-threads", maxThreads);
     
     if (format === "mp4" || format === "webm") {
-        // Prevent WebAssembly OOM crashes by capping resolution to 1080p (4K buffering blows up the heap)
-        args.push("-vf", "scale='min(1920,iw)':-2");
+        // Prevent WebAssembly OOM crashes by capping resolution (4K buffering blows up the heap)
+        let scaleFilter = "scale='min(1920,iw)':-2"; // default original/1080p fallback
+        if (resolution === "1080p") scaleFilter = "scale='min(1920,iw)':-2";
+        else if (resolution === "720p") scaleFilter = "scale='min(1280,iw)':-2";
+        else if (resolution === "480p") scaleFilter = "scale='min(854,iw)':-2";
+        else if (resolution === "360p") scaleFilter = "scale='min(640,iw)':-2";
+        
+        args.push("-vf", scaleFilter);
         
         // Use extremely fast presets for browser encoding
         if (quality === "high") {

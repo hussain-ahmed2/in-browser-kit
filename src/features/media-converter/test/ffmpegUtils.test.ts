@@ -4,7 +4,7 @@ import { getFFmpegArgs, getMimeType } from '../lib/ffmpegUtils'
 describe('FFmpeg Utilities', () => {
     describe('getFFmpegArgs', () => {
         it('generates correct arguments for high quality mp4', () => {
-            const args = getFFmpegArgs('mp4', 'high', 'input.mov', 'output.mp4', '4');
+            const args = getFFmpegArgs('mp4', 'high', 'original', 'input.mov', 'output.mp4', '4');
             expect(args).toEqual([
                 '-i', 'input.mov', 
                 '-threads', '4', 
@@ -30,7 +30,7 @@ describe('FFmpeg Utilities', () => {
         });
 
         it('generates correct arguments for high quality mp3', () => {
-            const args = getFFmpegArgs('mp3', 'high', 'input.wav', 'output.mp3', '4');
+            const args = getFFmpegArgs('mp3', 'high', 'original', 'input.wav', 'output.mp3', '4');
             expect(args).toEqual([
                 '-i', 'input.wav', 
                 '-threads', '4', 
@@ -40,7 +40,7 @@ describe('FFmpeg Utilities', () => {
         });
 
         it('generates correct arguments for wav (no quality flags)', () => {
-            const args = getFFmpegArgs('wav', 'medium', 'input.mp3', 'output.wav', '4');
+            const args = getFFmpegArgs('wav', 'medium', 'original', 'input.mp3', 'output.wav', '4');
             expect(args).toEqual([
                 '-i', 'input.mp3', 
                 '-threads', '4', 
@@ -49,7 +49,7 @@ describe('FFmpeg Utilities', () => {
         });
 
         it('defaults to 2 threads if not provided', () => {
-            const args = getFFmpegArgs('gif', 'medium', 'input.mp4', 'output.gif');
+            const args = getFFmpegArgs('gif', 'medium', 'original', 'input.mp4', 'output.gif');
             expect(args).toEqual([
                 '-i', 'input.mp4', 
                 '-threads', '2', 

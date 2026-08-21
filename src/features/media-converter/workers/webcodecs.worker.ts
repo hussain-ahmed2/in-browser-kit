@@ -111,28 +111,6 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
       formats: ALL_FORMATS,
     });
 
-    const originalBitrate = duration > 0 ? (file.size * 8) / duration : 5_000_000;
-    
-    // Clamp to prevent WebCodecs from crashing on absurdly high/low bitrates
-    let targetBitrate = Math.max(100_000, Math.min(originalBitrate, 60_000_000)); 
-
-    switch (values.quality) {
-      case "low":
-        targetBitrate *= 0.3; // Strictly force a 70% reduction in size
-        break;
-      case "medium":
-        targetBitrate *= 0.7; // Strictly force a 30% reduction in size
-        break;
-      case "high":
-        targetBitrate *= 1.2; // Increase by 20% to preserve quality during re-encoding
-        break;
-      default:
-        break;
-    }
-    
-    // Final clamp to ensure scaled bitrate is still valid
-    targetBitrate = Math.max(100_000, Math.min(targetBitrate, 60_000_000));
-
     let target;
     let fileSystemWritable: FileSystemWritableFileStream | undefined = undefined;
 
@@ -157,11 +135,36 @@ self.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
     const conversion = await Conversion.init({
       input,
       output,
-      video: {
-        quality: new Quality({
-          bitrate: Math.floor(targetBitrate),
-        }),
-        hardwareAcceleration: "prefer-hardware",
+      video: async (track) => {
+        // Fix: correctly await the track's coded height instead of reading undefined metadata
+        const originalHeight = await track.getCodedHeight();
+        let targetHeight = originalHeight;
+
+        // Apply explicit user resolution choice, falling back to original if selected
+        switch (values.resolution) {
+          case "1080p":
+            targetHeight = Math.min(originalHeight, 1080);
+            break;
+          case "720p":
+            targetHeight = Math.min(originalHeight, 720);
+            break;
+          case "480p":
+            targetHeight = Math.min(originalHeight, 480);
+            break;
+          case "360p":
+            targetHeight = Math.min(originalHeight, 360);
+            break;
+          case "original":
+          default:
+            targetHeight = originalHeight;
+            break;
+        }
+
+        return {
+          quality: new Quality(values.quality || "medium"),
+          height: targetHeight,
+          hardwareAcceleration: "prefer-hardware",
+        };
       },
       audio: {
         quality: new Quality(values.quality || "medium"),

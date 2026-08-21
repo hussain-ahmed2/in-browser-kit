@@ -101,6 +101,7 @@ export function useFFmpegService() {
         const args = getFFmpegArgs(
           values.outputFormat,
           values.quality ?? "medium",
+          values.resolution ?? "original",
           inputName,
           outputName,
           maxThreadsStr,

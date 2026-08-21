@@ -187,6 +187,19 @@ export function MediaConverterPage() {
                             ]}
                           />
                           <SelectField
+                            name="resolution"
+                            label="Resolution (Resize)"
+                            options={[
+                              { label: "Original", value: "original" },
+                              { label: "1080p (FHD)", value: "1080p" },
+                              { label: "720p (HD)", value: "720p" },
+                              { label: "480p (SD)", value: "480p" },
+                              { label: "360p", value: "360p" },
+                            ]}
+                          />
+                        </FieldSet>
+                        <FieldSet className="grid grid-cols-1 sm:grid-cols-2 mt-4">
+                          <SelectField
                             name="quality"
                             label="Quality"
                             options={[
