@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
 import { useFFmpegService } from "../hooks/useFFmpegService";
 import { useWebCodecs } from "../hooks/useWebCodecs";
 import { AlertTriangle } from "lucide-react";
@@ -17,15 +16,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SelectField } from "@/components/form/select-field";
-import { InputField } from "@/components/form/input-field";
-import { CheckboxField } from "@/components/form/checkbox-field";
-import { FieldGroup, FieldSet } from "@/components/ui/field";
 import { StepIndicator } from "@/components/StepIndicator";
 
 import { MediaUploader } from "./MediaUploader";
 import { MediaResult } from "./MediaResult";
 import { VideoPreview } from "./VideoPreview";
+import { MediaConverterForm } from "./MediaConverterForm";
 import {
   mediaConversionSchema,
   type MediaConversionFormValues,
@@ -50,6 +46,7 @@ export function MediaConverterPage() {
   const logs = webCodecs.isConverting ? webCodecs.logs : ffmpeg.logs;
   const isFfmpegLoaded = ffmpeg.isFfmpegLoaded;
 
+  const isVideo = file?.type.startsWith("video/") ?? false;
   const currentStep = result ? 2 : file ? 1 : 0;
 
   const form = useForm<MediaConversionFormValues>({
@@ -64,6 +61,15 @@ export function MediaConverterPage() {
       useHardwareAcceleration: true,
     },
   });
+
+  useEffect(() => {
+    if (file && !isVideo) {
+      const currentFormat = form.getValues("outputFormat");
+      if (["mp4", "webm", "gif"].includes(currentFormat)) {
+        form.setValue("outputFormat", "mp3");
+      }
+    }
+  }, [file, isVideo, form]);
 
   const selectedFilter = useWatch({ control: form.control, name: "filter"});
 
@@ -175,147 +181,16 @@ export function MediaConverterPage() {
               {!result && (
                 <div className="flex-1 min-w-0">
                   <FormProvider {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(handleConvert)}
-                      className="space-y-6"
-                    >
-                    <div className="p-8 rounded-xl bg-secondary/30 border border-border">
-                      <FieldGroup>
-                        <FieldSet className="grid grid-cols-1 sm:grid-cols-2">
-                          <SelectField
-                            name="outputFormat"
-                            label="Output Format"
-                            options={[
-                              { label: "MP4 Video", value: "mp4" },
-                              { label: "WebM Video", value: "webm" },
-                              { label: "GIF Animation", value: "gif" },
-                              { label: "MP3 Audio", value: "mp3" },
-                              { label: "WAV Audio", value: "wav" },
-                            ]}
-                          />
-                          <SelectField
-                            name="resolution"
-                            label="Resolution (Resize)"
-                            options={[
-                              { label: "Original", value: "original" },
-                              { label: "1080p (FHD)", value: "1080p" },
-                              { label: "720p (HD)", value: "720p" },
-                              { label: "480p (SD)", value: "480p" },
-                              { label: "360p", value: "360p" },
-                            ]}
-                          />
-                        </FieldSet>
-                        <FieldSet className="grid grid-cols-1 sm:grid-cols-2 mt-4">
-                          <SelectField
-                            name="quality"
-                            label="Quality"
-                            options={[
-                              { label: "High (Larger size)", value: "high" },
-                              { label: "Medium (Balanced)", value: "medium" },
-                              { label: "Low (Smaller size)", value: "low" },
-                            ]}
-                          />
-                          <SelectField
-                            name="videoCodec"
-                            label="Video Codec"
-                            options={[
-                              { label: "Default (Auto)", value: "default" },
-                              { label: "H.264 (Most Compatible)", value: "avc" },
-                              { label: "H.265 / HEVC (Best Compression)", value: "hevc" },
-                              { label: "VP9 (WebM Optimized)", value: "vp9" },
-                              { label: "AV1 (Next-Gen)", value: "av1" },
-                            ]}
-                          />
-                        </FieldSet>
-                        <FieldSet className="grid grid-cols-1 sm:grid-cols-2 mt-4">
-                          <SelectField
-                            name="filter"
-                            label="Visual Filter"
-                            options={[
-                              { label: "None", value: "none" },
-                              { label: "Grayscale", value: "grayscale" },
-                              { label: "Sepia", value: "sepia" },
-                              { label: "Invert", value: "invert" },
-                              { label: "Blur", value: "blur" },
-                            ]}
-                          />
-                          <SelectField
-                            name="saveMode"
-                            label="Save Mode (Memory Efficiency)"
-                            options={[
-                              { label: "Direct-to-Disk (0MB RAM, Recommended)", value: "direct" },
-                              { label: "In-Memory (Download Later)", value: "memory" },
-                            ]}
-                          />
-                        </FieldSet>
-                        <FieldSet className="grid grid-cols-1 sm:grid-cols-2 mt-4">
-                          <InputField
-                            name="trimStart"
-                            label="Trim Start (e.g. 00:00:05)"
-                            placeholder="Optional"
-                          />
-                          <InputField
-                            name="trimEnd"
-                            label="Trim End (e.g. 00:00:15)"
-                            placeholder="Optional"
-                          />
-                        </FieldSet>
-                        {webCodecs.isSupported && (
-                          <div className="mt-6 pt-6 border-t border-border">
-                            <CheckboxField
-                              name="useHardwareAcceleration"
-                              label="Hardware Acceleration (WebCodecs)"
-                              description="Uses your device's native GPU encoder for massive speedups (5x-10x) and lower battery usage. If it fails, it safely falls back to CPU."
-                            />
-                          </div>
-                        )}
-                      </FieldGroup>
-                    </div>
-
-                    <div className="flex flex-col gap-4">
-                      {isConverting && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-xs text-muted-foreground">
-                            <span>Processing...</span>
-                            <span>{progress}%</span>
-                          </div>
-                          <div className="h-2 rounded-full bg-secondary overflow-hidden">
-                            <div
-                              className="h-full bg-brand transition-all duration-300"
-                              style={{ width: `${progress}%` }}
-                            />
-                          </div>
-                          <p className="text-[10px] text-muted-foreground text-center truncate opacity-70">
-                            {logs}
-                          </p>
-                        </div>
-                      )}
-
-                      <div className="flex justify-end gap-4 pt-4 border-t border-border">
-                        <Button
-                          type="submit"
-                          disabled={isConverting}
-                          className="w-full sm:w-auto bg-linear-to-r from-brand to-[color-mix(in_oklab,var(--brand)_60%,var(--glow))] text-brand-foreground hover:shadow-[0_0_28px_-6px] hover:shadow-brand/60"
-                        >
-                          {isConverting ? (
-                            <>
-                              <Loader2
-                                className="animate-spin"
-                                aria-hidden="true"
-                              />{" "}
-                              {webCodecs.isConverting 
-                                ? "Hardware Encoding..." 
-                                : !isFfmpegLoaded 
-                                  ? "Loading Engine..." 
-                                  : "Converting..."}
-                            </>
-                          ) : (
-                            "Convert File"
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                  </form>
+                    <MediaConverterForm
+                      isVideo={isVideo}
+                      webCodecsSupported={webCodecs.isSupported}
+                      isConverting={isConverting}
+                      isHardwareEncoding={webCodecs.isConverting}
+                      isFfmpegLoaded={isFfmpegLoaded}
+                      progress={progress}
+                      logs={logs}
+                      onConvert={handleConvert}
+                    />
                   </FormProvider>
                 </div>
               )}
