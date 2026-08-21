@@ -21,6 +21,7 @@ import {
   Table,
   Link2,
   Paintbrush,
+  FileArchive,
   type LucideIcon,
 } from "lucide-react";
 
@@ -49,7 +50,8 @@ export type ToolIconName =
   | "FileDiff"
   | "Table"
   | "Link2"
-  | "Paintbrush";
+  | "Paintbrush"
+  | "FileArchive";
 
 export interface ToolDefinition {
   slug: string;
@@ -218,6 +220,13 @@ export const tools: ToolDefinition[] = [
     category: "Utilities",
   },
   {
+    slug: "zip-extractor",
+    name: "ZIP Viewer / Extractor",
+    tagline: "View contents of ZIP archives and selectively extract files locally.",
+    icon: "FileArchive",
+    category: "Utilities",
+  },
+  {
     slug: "regex-tester",
     name: "Regex Tester",
     tagline: "Test regular expressions with live match highlighting, capture groups, and substitution preview.",
@@ -279,6 +288,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     Table,
     Link2,
     Paintbrush,
+    FileArchive,
   };
   return iconMap[iconName];
 }
