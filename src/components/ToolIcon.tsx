@@ -19,6 +19,7 @@ import {
     KeySquare,
     ScanSearch,
     Film,
+    FileDiff,
     type LucideIcon
 } from "lucide-react"
 import type { ToolIconName } from "@/features/tools/tool-registry"
@@ -41,7 +42,8 @@ const iconMap: Record<ToolIconName, LucideIcon> = {
     Search,
     KeySquare,
     ScanSearch,
-    Film
+    Film,
+    FileDiff
 }
 
 interface ToolIconProps {

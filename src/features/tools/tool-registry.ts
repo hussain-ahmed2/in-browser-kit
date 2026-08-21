@@ -17,6 +17,7 @@ import {
   KeySquare,
   ScanSearch,
   Film,
+  FileDiff,
   type LucideIcon,
 } from "lucide-react";
 
@@ -41,7 +42,8 @@ export type ToolIconName =
   | "FileImage"
   | "KeySquare"
   | "ScanSearch"
-  | "Film";
+  | "Film"
+  | "FileDiff";
 
 export interface ToolDefinition {
   slug: string;
@@ -182,6 +184,13 @@ export const tools: ToolDefinition[] = [
     category: "Utilities",
   },
   {
+    slug: "diff-checker",
+    name: "Text & Code Diff Checker",
+    tagline: "Compare two blocks of text or code and highlight differences.",
+    icon: "FileDiff",
+    category: "Utilities",
+  },
+  {
     slug: "regex-tester",
     name: "Regex Tester",
     tagline: "Test regular expressions with live match highlighting, capture groups, and substitution preview.",
@@ -239,6 +248,7 @@ export function getToolIcon(iconName: ToolIconName): LucideIcon {
     KeySquare,
     ScanSearch,
     Film,
+    FileDiff,
   };
   return iconMap[iconName];
 }
