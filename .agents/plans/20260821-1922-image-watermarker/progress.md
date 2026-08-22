@@ -1,7 +1,7 @@
 # Progress Tracker: Image Watermarker
 
-- [ ] Initial Research
-- [ ] Implementation Plan Approval
-- [ ] UI Development
-- [ ] Core Logic Integration
-- [ ] Testing & Verification
+- [x] Initial Research
+- [x] Implementation Plan Approval
+- [x] UI Development
+- [x] Core Logic Integration
+- [x] Testing & Verification
