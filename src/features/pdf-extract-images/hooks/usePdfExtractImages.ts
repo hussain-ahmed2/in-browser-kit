@@ -25,44 +25,55 @@ export function usePdfExtractImages() {
     totalPages: 0,
     imagesFound: 0,
   });
+  const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
+  const [extractedImages, setExtractedImages] = useState<string[]>([]);
   const [zipUrl, setZipUrl] = useState<string | null>(null);
 
   const reset = useCallback(() => {
     setFile(null);
+    setPdfDoc(null);
     setProgress({ status: "idle", currentPage: 0, totalPages: 0, imagesFound: 0 });
-    if (zipUrl) {
-      URL.revokeObjectURL(zipUrl);
-      setZipUrl(null);
-    }
-  }, [zipUrl]);
+    if (zipUrl) URL.revokeObjectURL(zipUrl);
+    setZipUrl(null);
+    
+    extractedImages.forEach((url) => URL.revokeObjectURL(url));
+    setExtractedImages([]);
+  }, [zipUrl, extractedImages]);
 
   const loadFile = useCallback(
-    (newFile: File) => {
+    async (newFile: File) => {
       reset();
       setFile(newFile);
+      try {
+        const arrayBuffer = await newFile.arrayBuffer();
+        const doc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        setPdfDoc(doc);
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to parse PDF document.");
+      }
     },
     [reset]
   );
 
   const extractImages = useCallback(
     async (ignoreSmall: boolean = true) => {
-      if (!file) return;
+      if (!file || !pdfDoc) return;
 
       setProgress((p) => ({ ...p, status: "scanning", imagesFound: 0, currentPage: 0 }));
 
       try {
-        const arrayBuffer = await file.arrayBuffer();
-        const doc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        const totalPages = doc.numPages;
+        const totalPages = pdfDoc.numPages;
 
         setProgress((p) => ({ ...p, totalPages }));
 
         const zip = new JSZip();
         let imagesExtracted = 0;
+        const newExtractedImages: string[] = [];
 
         for (let i = 1; i <= totalPages; i++) {
           setProgress((p) => ({ ...p, currentPage: i }));
-          const page = await doc.getPage(i);
+          const page = await pdfDoc.getPage(i);
           const ops = await page.getOperatorList();
           
           for (let j = 0; j < ops.fnArray.length; j++) {
@@ -120,6 +131,10 @@ export function usePdfExtractImages() {
 
                   if (blob) {
                     imagesExtracted++;
+                    
+                    const imgUrl = URL.createObjectURL(blob);
+                    newExtractedImages.push(imgUrl);
+                    
                     // Pad numbers nicely (e.g., page_01_img_001.png)
                     const pNum = String(i).padStart(3, "0");
                     const iNum = String(imagesExtracted).padStart(3, "0");
@@ -147,6 +162,7 @@ export function usePdfExtractImages() {
         const zipBlob = await zip.generateAsync({ type: "blob" });
         const url = URL.createObjectURL(zipBlob);
         setZipUrl(url);
+        setExtractedImages(newExtractedImages);
         
         setProgress((p) => ({ ...p, status: "done" }));
         toast.success(`Successfully extracted ${imagesExtracted} images!`);
@@ -156,13 +172,15 @@ export function usePdfExtractImages() {
         setProgress((p) => ({ ...p, status: "error" }));
       }
     },
-    [file]
+    [file, pdfDoc]
   );
 
   return {
     file,
+    pdfDoc,
     progress,
     zipUrl,
+    extractedImages,
     loadFile,
     reset,
     extractImages,
