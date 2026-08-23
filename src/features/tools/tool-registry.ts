@@ -162,7 +162,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Reduce PDF file sizes locally with structural optimization.",
     icon: "FileArchive",
     category: "PDF",
-    planned: true,
   },
   {
     slug: "pdf-watermark",

@@ -12,4 +12,4 @@
 - [x] Implement PDF to Text
 - [x] Implement PDF Cropper (fixed ArrayBuffer detachment bug)
 - [x] Implement Flatten PDF (added form field detection, StepIndicator, PdfResult)
-- [ ] Implement PDF Compressor (via qpdf)
+- [x] Implement PDF Compressor (via qpdf-run)

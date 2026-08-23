@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label'
 interface PdfResultProps {
     url: string
     title: string
-    description: string
+    description: React.ReactNode
     defaultFilename: string
     buttonLabel: string
     onStartOver: () => void
