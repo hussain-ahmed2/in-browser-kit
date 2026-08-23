@@ -1,13 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import * as pdfjsLib from "pdfjs-dist";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 import { toast } from "sonner";
-
-// Ensure worker is configured
-if (typeof window !== "undefined" && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
-}
 
 export interface ExtractionProgress {
   status: "idle" | "scanning" | "done" | "error";
@@ -17,7 +12,7 @@ export interface ExtractionProgress {
 
 export function usePdfToText() {
   const [file, setFile] = useState<File | null>(null);
-  const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
+  const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
   const [extractedText, setExtractedText] = useState<string>("");
   const [progress, setProgress] = useState<ExtractionProgress>({
     status: "idle",
@@ -38,6 +33,10 @@ export function usePdfToText() {
       setFile(newFile);
       try {
         const arrayBuffer = await newFile.arrayBuffer();
+        const pdfjsLib = await import("pdfjs-dist");
+        if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+        }
         const doc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         setPdfDoc(doc);
       } catch (err) {

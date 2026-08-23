@@ -1,14 +1,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import * as pdfjsLib from "pdfjs-dist";
 import JSZip from "jszip";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 import { toast } from "sonner";
-
-// Ensure worker is configured (similar to other pdf tools)
-if (typeof window !== "undefined" && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
-}
 
 export interface ExtractionProgress {
   status: "idle" | "scanning" | "zipping" | "done" | "error";
@@ -25,7 +20,7 @@ export function usePdfExtractImages() {
     totalPages: 0,
     imagesFound: 0,
   });
-  const [pdfDoc, setPdfDoc] = useState<pdfjsLib.PDFDocumentProxy | null>(null);
+  const [pdfDoc, setPdfDoc] = useState<PDFDocumentProxy | null>(null);
   const [extractedImages, setExtractedImages] = useState<string[]>([]);
   const [zipUrl, setZipUrl] = useState<string | null>(null);
 
@@ -46,6 +41,10 @@ export function usePdfExtractImages() {
       setFile(newFile);
       try {
         const arrayBuffer = await newFile.arrayBuffer();
+        const pdfjsLib = await import("pdfjs-dist");
+        if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+        }
         const doc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         setPdfDoc(doc);
       } catch (err) {
@@ -71,6 +70,8 @@ export function usePdfExtractImages() {
         let imagesExtracted = 0;
         const newExtractedImages: string[] = [];
 
+        const pdfjsLib = await import("pdfjs-dist");
+        
         for (let i = 1; i <= totalPages; i++) {
           setProgress((p) => ({ ...p, currentPage: i }));
           const page = await pdfDoc.getPage(i);
