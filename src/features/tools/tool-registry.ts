@@ -216,18 +216,16 @@ export const tools: ToolDefinition[] = [
   {
     slug: "pdf-cropper",
     name: "PDF Cropper",
-    tagline: "Crop page margins visually by modifying the PDF CropBox.",
+    tagline: "Crop margins visually from all pages.",
     icon: "Crop",
     category: "PDF",
-    planned: true,
   },
   {
     slug: "pdf-flatten",
     name: "Flatten PDF",
-    tagline: "Burn form fields and annotations into the PDF layers so they cannot be edited.",
+    tagline: "Burn interactive form fields into the document.",
     icon: "Layers",
     category: "PDF",
-    planned: true,
   },
   {
     slug: "image-resize",
