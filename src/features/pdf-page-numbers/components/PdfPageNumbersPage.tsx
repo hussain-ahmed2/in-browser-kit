@@ -12,13 +12,13 @@ import {
 import { FileDropzone } from "@/components/FileDropzone";
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
-import { PDFDocument, StandardFonts, degrees } from "pdf-lib";
+import { PDFDocument, StandardFonts } from "pdf-lib";
 import { getWatermarkPosition, hexToRgb } from "@/features/pdf-tools/lib/position-math";
 import { SinglePagePreview } from "@/features/pdf-tools/components/SinglePagePreview";
-import { WatermarkControls } from "./WatermarkControls";
-import { useWatermarkPreview, type WatermarkSettings } from "../hooks/useWatermarkPreview";
+import { PageNumberControls } from "./PageNumberControls";
+import { usePageNumbersPreview, type PageNumberSettings } from "../hooks/usePageNumbersPreview";
 
-export function PdfWatermarkPage() {
+export function PdfPageNumbersPage() {
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const originalPdfBytesRef = useRef<ArrayBuffer | null>(null);
   const [originalPdfDoc, setOriginalPdfDoc] = useState<PDFDocument | null>(null);
@@ -28,18 +28,16 @@ export function PdfWatermarkPage() {
   const [isExtracting, setIsExtracting] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const [settings, setSettings] = useState<WatermarkSettings>({
-    watermarkText: "CONFIDENTIAL",
-    color: "#f21818",
-    opacity: 0.3,
-    rotation: 45,
-    size: 40,
-    anchor: "center",
+  const [settings, setSettings] = useState<PageNumberSettings>({
+    format: "Page {n} of {total}",
+    color: "#333333",
+    size: 12,
+    anchor: "bottom-center",
     margin: 40,
   });
 
-  const { previewPdf, previewError, isGeneratingPreview, resetPreview } = useWatermarkPreview({
-    originalPdfDoc: originalPdfDoc,
+  const { previewPdf, previewError, isGeneratingPreview, resetPreview } = usePageNumbersPreview({
+    originalPdfDoc,
     originalFile,
     currentPage,
     settings,
@@ -72,8 +70,8 @@ export function PdfWatermarkPage() {
 
   const handleProcess = async () => {
     if (!originalFile || !originalPdfBytesRef.current) return;
-    if (!settings.watermarkText.trim()) {
-      toast.error("Please enter a watermark text.");
+    if (!settings.format.trim()) {
+      toast.error("Please enter a format string.");
       return;
     }
 
@@ -83,10 +81,18 @@ export function PdfWatermarkPage() {
       const pdfDoc = await PDFDocument.load(originalPdfBytesRef.current);
       const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const pages = pdfDoc.getPages();
+      const total = pages.length;
 
-      for (const page of pages) {
+      for (let i = 0; i < total; i++) {
+        const page = pages[i];
+        const n = i + 1;
+        
         const { width, height } = page.getSize();
-        const textWidth = helvetica.widthOfTextAtSize(settings.watermarkText, settings.size);
+        const text = settings.format
+          .replace(/{n}/g, n.toString())
+          .replace(/{total}/g, total.toString());
+          
+        const textWidth = helvetica.widthOfTextAtSize(text, settings.size);
         const textHeight = settings.size;
 
         const { x, y } = getWatermarkPosition({
@@ -95,18 +101,16 @@ export function PdfWatermarkPage() {
           pageHeight: height,
           textWidth,
           textHeight,
-          rotation: settings.rotation,
+          rotation: 0,
           margin: settings.margin,
         });
 
-        page.drawText(settings.watermarkText, {
+        page.drawText(text, {
           x,
           y,
           size: settings.size,
           font: helvetica,
           color: hexToRgb(settings.color),
-          rotate: degrees(settings.rotation),
-          opacity: settings.opacity,
         });
       }
 
@@ -118,16 +122,16 @@ export function PdfWatermarkPage() {
 
       const link = document.createElement("a");
       link.href = url;
-      link.download = `watermarked_${originalFile.name}`;
+      link.download = `numbered_${originalFile.name}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success("Watermark applied successfully!");
+      toast.success("Page numbers added successfully!");
     } catch (err) {
-      console.error("Watermark error:", err);
-      toast.error("Failed to apply watermark.");
+      console.error("Page number error:", err);
+      toast.error("Failed to add page numbers.");
     } finally {
       setIsProcessing(false);
     }
@@ -143,9 +147,9 @@ export function PdfWatermarkPage() {
   return (
     <Card className="animate-fade-in-up stagger-4 backdrop-blur-md ring-border">
       <CardHeader>
-        <CardTitle>Add Watermark to PDF</CardTitle>
+        <CardTitle>Add Page Numbers to PDF</CardTitle>
         <CardDescription>
-          Preview and stamp custom text across all pages of your PDF.
+          Automatically stamp sequential page numbers with live preview positioning.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-8">
@@ -221,7 +225,7 @@ export function PdfWatermarkPage() {
                 </div>
 
                 {/* CONTROLS PANE */}
-                <WatermarkControls
+                <PageNumberControls
                   settings={settings}
                   onChange={(newSettings) =>
                     setSettings((prev) => ({ ...prev, ...newSettings }))

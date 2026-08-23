@@ -14,6 +14,7 @@ export function getWatermarkPosition({
   textWidth,
   textHeight,
   rotation, // degrees
+  margin = 40,
 }: {
   anchor: string;
   pageWidth: number;
@@ -21,8 +22,8 @@ export function getWatermarkPosition({
   textWidth: number;
   textHeight: number;
   rotation: number;
+  margin?: number;
 }) {
-  const margin = 40;
   let cx = 0;
   let cy = 0;
 

@@ -1,21 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { PDFDocument, StandardFonts, degrees } from "pdf-lib";
+import { PDFDocument, StandardFonts } from "pdf-lib";
 import { usePdfDocument } from "@/features/pdf-tools/lib/usePdfDocument";
 import { getWatermarkPosition, hexToRgb } from "@/features/pdf-tools/lib/position-math";
 
-export interface WatermarkSettings {
-  watermarkText: string;
+export interface PageNumberSettings {
+  format: string; // e.g. "Page {n} of {total}"
   color: string;
-  opacity: number;
-  rotation: number;
   size: number;
   anchor: string;
   margin: number;
 }
 
-export function useWatermarkPreview({
+export function usePageNumbersPreview({
   originalPdfDoc,
   originalFile,
   currentPage,
@@ -24,7 +22,7 @@ export function useWatermarkPreview({
   originalPdfDoc: PDFDocument | null;
   originalFile: File | null;
   currentPage: number;
-  settings: WatermarkSettings;
+  settings: PageNumberSettings;
 }) {
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
@@ -42,10 +40,15 @@ export function useWatermarkPreview({
         ]);
         previewDoc.addPage(copiedPage);
 
-        // Apply watermark
+        // Apply page number
         const helvetica = await previewDoc.embedFont(StandardFonts.Helvetica);
         const { width, height } = copiedPage.getSize();
-        const textWidth = helvetica.widthOfTextAtSize(settings.watermarkText, settings.size);
+        const total = originalPdfDoc.getPageCount();
+        const text = settings.format
+          .replace(/{n}/g, currentPage.toString())
+          .replace(/{total}/g, total.toString());
+          
+        const textWidth = helvetica.widthOfTextAtSize(text, settings.size);
         const textHeight = settings.size; // approximate height is font size
 
         const { x, y } = getWatermarkPosition({
@@ -54,18 +57,16 @@ export function useWatermarkPreview({
           pageHeight: height,
           textWidth,
           textHeight,
-          rotation: settings.rotation,
+          rotation: 0,
           margin: settings.margin,
         });
 
-        copiedPage.drawText(settings.watermarkText, {
+        copiedPage.drawText(text, {
           x,
           y,
           size: settings.size,
           font: helvetica,
           color: hexToRgb(settings.color),
-          rotate: degrees(settings.rotation),
-          opacity: settings.opacity,
         });
 
         const bytes = await previewDoc.save();
