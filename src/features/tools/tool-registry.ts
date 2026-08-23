@@ -212,7 +212,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Extract raw text from a PDF document.",
     icon: "FileText",
     category: "PDF",
-    planned: true,
   },
   {
     slug: "pdf-cropper",
