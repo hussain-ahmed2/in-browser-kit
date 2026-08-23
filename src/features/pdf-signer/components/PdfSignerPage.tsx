@@ -56,7 +56,9 @@ export function PdfSignerPage() {
           <div className="space-y-6 animate-fade-in">
             {/* Header */}
             <div className="p-4 bg-muted/50 rounded-lg border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-              <span className="font-medium truncate">{file.name}</span>
+              <span className="font-medium truncate line-clamp-1">
+                {file.name}
+              </span>
               <Button variant="ghost" size="sm" onClick={reset}>
                 Change File
               </Button>
