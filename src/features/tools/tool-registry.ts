@@ -23,6 +23,12 @@ import {
   Paintbrush,
   FileArchive,
   Stamp,
+  LayoutGrid,
+  FileText,
+  PenTool,
+  Hash,
+  ListOrdered,
+  Layers,
   type LucideIcon,
 } from "lucide-react";
 
@@ -53,8 +59,13 @@ export type ToolIconName =
   | "Link2"
   | "Paintbrush"
   | "FileArchive"
-  | "Scissors"
-  | "Stamp";
+  | "Stamp"
+  | "LayoutGrid"
+  | "FileText"
+  | "PenTool"
+  | "Hash"
+  | "ListOrdered"
+  | "Layers";
 
 export interface ToolDefinition {
   slug: string;
@@ -144,6 +155,83 @@ export const tools: ToolDefinition[] = [
     tagline: "Protect a PDF with a password or remove its protection.",
     icon: "LockKeyhole",
     category: "PDF",
+  },
+  {
+    slug: "pdf-compressor",
+    name: "PDF Compressor",
+    tagline: "Reduce PDF file sizes locally with structural optimization.",
+    icon: "FileArchive",
+    category: "PDF",
+    planned: true,
+  },
+  {
+    slug: "pdf-watermark",
+    name: "PDF Watermark",
+    tagline: "Stamp text or image watermarks onto PDF pages.",
+    icon: "Stamp",
+    category: "PDF",
+  },
+  {
+    slug: "pdf-page-numbers",
+    name: "Add Page Numbers",
+    tagline: "Automatically stamp sequential page numbers across a document.",
+    icon: "ListOrdered",
+    category: "PDF",
+  },
+  {
+    slug: "pdf-metadata",
+    name: "PDF Metadata Editor",
+    tagline: "View and modify hidden PDF metadata (Title, Author, Subject).",
+    icon: "ScanSearch",
+    category: "PDF",
+  },
+  {
+    slug: "pdf-organize",
+    name: "Organize PDF",
+    tagline: "Visually reorder pages in a PDF using drag-and-drop.",
+    icon: "LayoutGrid",
+    category: "PDF",
+    planned: true,
+  },
+  {
+    slug: "pdf-signer",
+    name: "PDF Signer",
+    tagline: "Draw, type, or upload a signature and stamp it onto a PDF.",
+    icon: "PenTool",
+    category: "PDF",
+    planned: true,
+  },
+  {
+    slug: "pdf-extract-images",
+    name: "Extract PDF Images",
+    tagline: "Extract all embedded JPEGs and PNGs from a PDF into a ZIP file.",
+    icon: "Image",
+    category: "PDF",
+    planned: true,
+  },
+  {
+    slug: "pdf-to-text",
+    name: "PDF to Text",
+    tagline: "Extract raw text from a PDF document.",
+    icon: "FileText",
+    category: "PDF",
+    planned: true,
+  },
+  {
+    slug: "pdf-cropper",
+    name: "PDF Cropper",
+    tagline: "Crop page margins visually by modifying the PDF CropBox.",
+    icon: "Crop",
+    category: "PDF",
+    planned: true,
+  },
+  {
+    slug: "pdf-flatten",
+    name: "Flatten PDF",
+    tagline: "Burn form fields and annotations into the PDF layers so they cannot be edited.",
+    icon: "Layers",
+    category: "PDF",
+    planned: true,
   },
   {
     slug: "image-resize",
@@ -281,32 +369,39 @@ export function getToolsByCategory(category: ToolCategory): ToolDefinition[] {
   return tools.filter((tool) => tool.category === category);
 }
 
+export const TOOL_ICON_MAP: Record<ToolIconName, LucideIcon> = {
+  Image,
+  FileDown,
+  KeyRound,
+  Fingerprint,
+  Scissors,
+  RotateCw,
+  FileX2,
+  LockKeyhole,
+  Crop,
+  FileImage,
+  QrCode,
+  Code,
+  Braces,
+  Ruler,
+  Search,
+  KeySquare,
+  ScanSearch,
+  Film,
+  FileDiff,
+  Table,
+  Link2,
+  Paintbrush,
+  FileArchive,
+  Stamp,
+  LayoutGrid,
+  FileText,
+  PenTool,
+  Hash,
+  ListOrdered,
+  Layers,
+};
+
 export function getToolIcon(iconName: ToolIconName): LucideIcon {
-  const iconMap: Record<ToolIconName, LucideIcon> = {
-    Image,
-    FileDown,
-    KeyRound,
-    Fingerprint,
-    Scissors,
-    RotateCw,
-    FileX2,
-    LockKeyhole,
-    Crop,
-    FileImage,
-    QrCode,
-    Code,
-    Braces,
-    Ruler,
-    Search,
-    KeySquare,
-    ScanSearch,
-    Film,
-    FileDiff,
-    Table,
-    Link2,
-    Paintbrush,
-    FileArchive,
-    Stamp,
-  };
-  return iconMap[iconName];
+  return TOOL_ICON_MAP[iconName];
 }
