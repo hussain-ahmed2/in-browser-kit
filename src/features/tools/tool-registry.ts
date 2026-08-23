@@ -205,7 +205,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Extract all embedded JPEGs and PNGs from a PDF into a ZIP file.",
     icon: "Image",
     category: "PDF",
-    planned: true,
   },
   {
     slug: "pdf-to-text",
