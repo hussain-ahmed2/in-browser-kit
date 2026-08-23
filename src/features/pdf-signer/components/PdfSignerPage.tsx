@@ -39,7 +39,8 @@ export function PdfSignerPage() {
       <CardHeader>
         <CardTitle>Sign PDF</CardTitle>
         <CardDescription>
-          Draw your signature and stamp it onto a specific page of your document.
+          Draw your signature and stamp it onto a specific page of your
+          document.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-8">
@@ -70,7 +71,7 @@ export function PdfSignerPage() {
             <div className="flex flex-col lg:flex-row gap-8 items-start">
               {/* LEFT: Preview */}
               <div className="flex-1 w-full flex flex-col gap-4">
-                <div className="relative bg-secondary/20 border border-border rounded-xl p-4 min-h-[400px] flex items-center justify-center">
+                <div className="relative bg-secondary/20 border border-border rounded-xl p-4 min-h-100 flex items-center justify-center">
                   {isGeneratingPreview && (
                     <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[2px] rounded-xl transition-all">
                       <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
@@ -86,7 +87,9 @@ export function PdfSignerPage() {
                         {settings.signatureImage && (
                           <DraggableOverlay
                             position={settings.position}
-                            onChange={(pos) => updateSettings({ position: pos })}
+                            onChange={(pos) =>
+                              updateSettings({ position: pos })
+                            }
                             scale={settings.scale}
                             imageSrc={settings.signatureImage}
                           />
@@ -112,7 +115,9 @@ export function PdfSignerPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => setPageNumber((p) => Math.min(numPages, p + 1))}
+                    onClick={() =>
+                      setPageNumber((p) => Math.min(numPages, p + 1))
+                    }
                     disabled={pageNumber === numPages || isGeneratingPreview}
                   >
                     <ChevronRight className="w-4 h-4" />
@@ -127,7 +132,9 @@ export function PdfSignerPage() {
                     <PenTool className="w-4 h-4" /> Draw Signature
                   </h3>
                   <SignaturePad
-                    onSave={(dataUrl) => updateSettings({ signatureImage: dataUrl })}
+                    onSave={(dataUrl) =>
+                      updateSettings({ signatureImage: dataUrl })
+                    }
                   />
                 </div>
 

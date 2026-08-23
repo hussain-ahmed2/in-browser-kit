@@ -32,7 +32,7 @@ export function SortablePageItem({
       className={cn(
         "group relative flex flex-col items-center bg-card border border-border shadow-sm rounded-xl overflow-hidden hover:ring-2 ring-brand/50 transition-all",
         isDragging && "opacity-50 ring-2 ring-brand scale-95 z-50",
-        isDropTarget && "ring-2 ring-brand/60 bg-brand/5 scale-[1.02]"
+        isDropTarget && "ring-2 ring-brand/60 bg-brand/5 scale-[1.02]",
       )}
     >
       {/* Top Header/Drag Handle */}
@@ -60,7 +60,7 @@ export function SortablePageItem({
       </div>
 
       {/* Page Preview */}
-      <div className="w-full flex-1 min-h-[200px] flex items-center justify-center bg-muted/20 p-4 pointer-events-none">
+      <div className="w-full flex-1 min-h-50 flex items-center justify-center bg-muted/20 p-4 pointer-events-none">
         {pdfjsDoc ? (
           <SinglePagePreview
             pdf={pdfjsDoc}
