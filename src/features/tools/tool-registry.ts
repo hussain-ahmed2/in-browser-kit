@@ -191,7 +191,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Visually reorder pages in a PDF using drag-and-drop.",
     icon: "LayoutGrid",
     category: "PDF",
-    planned: true,
   },
   {
     slug: "pdf-signer",
