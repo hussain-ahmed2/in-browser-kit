@@ -9,7 +9,7 @@ describe('WebCodec Utilities', () => {
                 resolution: 'original',
                 videoCodec: 'default'
             });
-            expect(config.hardwareAcceleration).toBe('prefer-hardware');
+            expect(config.hardwareAcceleration).toBe('no-preference');
             expect(config.height).toBeUndefined();
             expect(config.codec).toBeUndefined();
         });

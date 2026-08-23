@@ -3,7 +3,7 @@ import type { ConversionVideoOptions } from "mediabunny";
 
 export function buildWebCodecVideoConfig(values: Partial<MediaConversionFormValues>): ConversionVideoOptions {
     const videoConfig: ConversionVideoOptions = {
-        hardwareAcceleration: "prefer-hardware",
+        hardwareAcceleration: "no-preference",
     };
 
     if (values.resolution && values.resolution !== "original") {
