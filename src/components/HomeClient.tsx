@@ -56,11 +56,11 @@ export function HomeClient({
 
       {/* Hero title with shimmer */}
       <h1 className="animate-fade-in-up stagger-2 text-5xl md:text-7xl font-extrabold tracking-tight mb-4">
-        <span className="text-transparent bg-clip-text bg-[linear-gradient(110deg,var(--foreground)_30%,var(--brand)_50%,var(--glow)_55%,var(--foreground)_75%)] bg-[length:200%_auto] animate-shimmer">
+        <span className="text-transparent bg-clip-text bg-[linear-gradient(110deg,var(--foreground)_30%,var(--brand)_50%,var(--glow)_55%,var(--foreground)_75%)] bg-size-[200%_auto] animate-shimmer">
           Your Ultimate
         </span>{" "}
         <br className="hidden md:block" />
-        <span className="text-transparent bg-clip-text bg-[linear-gradient(110deg,var(--foreground)_30%,var(--brand)_50%,var(--glow)_55%,var(--foreground)_75%)] bg-[length:200%_auto] animate-shimmer">
+        <span className="text-transparent bg-clip-text bg-[linear-gradient(110deg,var(--foreground)_30%,var(--brand)_50%,var(--glow)_55%,var(--foreground)_75%)] bg-size-[200%_auto] animate-shimmer">
           In-Browser Toolkit
         </span>
       </h1>
@@ -159,7 +159,7 @@ export function HomeClient({
                   <div className="flex items-center justify-center w-11 h-11 rounded-full glass ring-1 ring-border text-brand">
                     <Icon className="size-4.5" />
                   </div>
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gradient-to-br from-brand to-glow/70 text-brand-foreground text-[11px] font-bold flex items-center justify-center shadow-[0_0_12px_-2px] shadow-brand/60">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-linear-to-br from-brand to-glow/70 text-brand-foreground text-[11px] font-bold flex items-center justify-center shadow-[0_0_12px_-2px] shadow-brand/60">
                     {step}
                   </span>
                 </div>
