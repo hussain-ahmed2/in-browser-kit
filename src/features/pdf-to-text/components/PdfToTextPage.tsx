@@ -69,7 +69,7 @@ export function PdfToTextPage() {
             {progress.status === "idle" && (
               <div className="flex flex-col lg:flex-row gap-6 items-start">
                 {/* PDF Preview */}
-                <div className="w-full lg:w-1/2 bg-muted/20 border border-border rounded-xl p-4 flex flex-col items-center justify-center min-h-[300px]">
+                <div className="w-full lg:w-1/2 bg-muted/20 border border-border rounded-xl p-4 flex flex-col items-center justify-center min-h-75">
                   {pdfDoc ? (
                     <SinglePagePreview pdf={pdfDoc} pageNumber={1} />
                   ) : (
@@ -78,13 +78,14 @@ export function PdfToTextPage() {
                 </div>
 
                 {/* Extract Controls */}
-                <div className="w-full lg:w-1/2 flex flex-col items-center justify-center h-full min-h-[300px] border border-border p-6 rounded-xl bg-card shadow-sm text-center space-y-4">
+                <div className="w-full lg:w-1/2 flex flex-col items-center justify-center h-full min-h-75 border border-border p-6 rounded-xl bg-card shadow-sm text-center space-y-4">
                   <div className="w-16 h-16 rounded-full bg-brand/10 text-brand flex items-center justify-center mb-2">
                     <FileText className="w-8 h-8" />
                   </div>
                   <h3 className="text-xl font-medium">Ready to Extract</h3>
                   <p className="text-sm text-muted-foreground max-w-sm mb-4">
-                    We will scan every page in your document and extract the raw text, preserving basic line breaks.
+                    We will scan every page in your document and extract the raw
+                    text, preserving basic line breaks.
                   </p>
                   <Button size="lg" onClick={extractText} disabled={!pdfDoc}>
                     <Play className="w-4 h-4 mr-2" />
@@ -120,11 +121,20 @@ export function PdfToTextPage() {
                     <span className="font-medium">Extracted Text</span>
                   </div>
                   <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <Button variant="outline" size="sm" onClick={handleCopy} className="flex-1 sm:flex-none">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCopy}
+                      className="flex-1 sm:flex-none"
+                    >
                       <Copy className="w-4 h-4 mr-2" />
                       Copy
                     </Button>
-                    <Button size="sm" onClick={downloadTextFile} className="flex-1 sm:flex-none">
+                    <Button
+                      size="sm"
+                      onClick={downloadTextFile}
+                      className="flex-1 sm:flex-none"
+                    >
                       <Download className="w-4 h-4 mr-2" />
                       Download .txt
                     </Button>
