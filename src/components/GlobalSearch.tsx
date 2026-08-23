@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
 import {
   Command,
   CommandDialog,
@@ -13,7 +12,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { tools, CATEGORIES, getToolIcon } from "@/features/tools/tool-registry";
-import { cn } from "@/lib/utils";
 
 export function GlobalSearch() {
   const [open, setOpen] = useState(false);
