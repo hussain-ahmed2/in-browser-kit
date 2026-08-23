@@ -21,7 +21,7 @@ export function usePdfCropper() {
   const [file, setFile] = useState<File | null>(null);
   const [pdfBytes, setPdfBytes] = useState<Uint8Array | null>(null);
   const [previewDoc, setPreviewDoc] = useState<PDFDocumentProxy | null>(null);
-  
+
   const [crop, setCrop] = useState<CropState>({
     top: 0,
     bottom: 0,
@@ -33,9 +33,9 @@ export function usePdfCropper() {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
   const reset = useCallback(() => {
+    setPreviewDoc(null);
     setFile(null);
     setPdfBytes(null);
-    setPreviewDoc(null);
     setCrop({ top: 0, bottom: 0, left: 0, right: 0 });
     setProgress({ status: "idle" });
     if (downloadUrl) URL.revokeObjectURL(downloadUrl);
@@ -55,7 +55,7 @@ export function usePdfCropper() {
         const loadingTask = await createPdfLoadingTask(arrayBuffer);
         const doc = await loadingTask.promise;
         setPreviewDoc(doc);
-      } catch (err) {
+      } catch {
         toast.error("Failed to read file.");
       }
     },
@@ -73,22 +73,22 @@ export function usePdfCropper() {
 
       for (const page of pages) {
         const { width, height } = page.getSize();
-        
+
         // Calculate absolute points from percentages
         // Note: pdf-lib uses a coordinate system where (0,0) is bottom-left!
         const x = (crop.left / 100) * width;
-        const y = (crop.bottom / 100) * height; 
+        const y = (crop.bottom / 100) * height;
         const cropWidth = width - ((crop.left / 100) * width) - ((crop.right / 100) * width);
         const cropHeight = height - ((crop.bottom / 100) * height) - ((crop.top / 100) * height);
 
         page.setCropBox(x, y, cropWidth, cropHeight);
       }
-      
+
       const resultBytes = await pdfDoc.save();
-      const blob = new Blob([resultBytes], { type: "application/pdf" });
+      const blob = new Blob([resultBytes as BlobPart], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       setDownloadUrl(url);
-      
+
       setProgress({ status: "done" });
       toast.success("PDF cropped successfully!");
     } catch (error) {

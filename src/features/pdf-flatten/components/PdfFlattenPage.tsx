@@ -1,6 +1,6 @@
 "use client";
 
-import { FileDropzone } from "@/components/FileDropzone";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,93 +9,92 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Download, Layers, Loader2 } from "lucide-react";
+import { StepIndicator } from "@/components/StepIndicator";
+import { PdfResult } from "@/features/pdf-tools/components/PdfResult";
+import { PdfUploader } from "@/features/pdf-tools/components/PdfUploader";
+import { Layers, Loader2, AlertTriangle } from "lucide-react";
 import { usePdfFlatten } from "../hooks/usePdfFlatten";
 
+const steps = [{ label: "Upload" }, { label: "Flatten" }, { label: "Download" }];
+
 export function PdfFlattenPage() {
-  const { file, progress, downloadUrl, loadFile, reset, flattenPdf } =
+  const { file, hasFormFields, progress, downloadUrl, loadFile, reset, flattenPdf } =
     usePdfFlatten();
 
+  const currentStep = progress.status === "done" ? 2 : file ? 1 : 0;
+
   return (
-    <Card className="animate-fade-in-up stagger-4 backdrop-blur-md ring-border">
-      <CardHeader>
-        <CardTitle>Flatten PDF</CardTitle>
-        <CardDescription>
-          Permanently burn form fields and interactive elements into the visual layer.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-8">
-        {!file ? (
-          <FileDropzone
-            accept="application/pdf"
-            onFiles={(files: File[]) => {
-              if (files[0]) loadFile(files[0]);
-            }}
-            label="Click or drag and drop your PDF here"
-          />
-        ) : (
-          <div className="space-y-6 animate-fade-in">
-            {/* Header */}
-            <div className="p-4 bg-muted/50 rounded-lg border border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-              <span className="font-medium truncate line-clamp-1">
-                {file.name}
-              </span>
-              <Button variant="ghost" size="sm" onClick={reset}>
-                Change File
-              </Button>
+    <>
+      <StepIndicator steps={steps} currentStep={currentStep} />
+
+      <Card className="animate-fade-in-up stagger-4 backdrop-blur-md ring-border">
+        <CardHeader>
+          <CardTitle>Flatten PDF</CardTitle>
+          <CardDescription>
+            Permanently burn form fields and interactive elements into the visual layer.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-8">
+          {!file ? (
+            <PdfUploader onFileSelect={loadFile} hint="Choose a PDF to flatten" />
+          ) : progress.status === "done" && downloadUrl ? (
+            <PdfResult
+              url={downloadUrl}
+              title="Flatten Complete!"
+              description="Your flattened PDF is ready to download. All form fields have been permanently baked into the document."
+              defaultFilename={`flattened_${file.name.replace(/\.pdf$/i, "")}`}
+              buttonLabel="Download Flattened PDF"
+              onStartOver={reset}
+            />
+          ) : (
+            <div className="space-y-6 animate-fade-in">
+              {/* Warning if no form fields detected */}
+              {!hasFormFields && (
+                <Alert variant="warning">
+                  <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+                  <AlertTitle>No form fields detected</AlertTitle>
+                  <AlertDescription>
+                    This PDF does not appear to contain interactive form fields. Flattening will still
+                    process the document, but no visible changes may occur.
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {progress.status === "idle" && (
+                <div className="flex flex-col items-center justify-center p-8 border border-border rounded-xl bg-card shadow-sm text-center space-y-4 max-w-xl mx-auto">
+                  <div className="w-16 h-16 rounded-full bg-brand/10 text-brand flex items-center justify-center mb-2">
+                    <Layers className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-xl font-medium">Ready to Flatten</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Flattening a PDF ensures that all interactive elements, like text fields and
+                    checkboxes, are permanently baked into the document. The resulting file cannot be
+                    edited by standard form tools.
+                  </p>
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={reset}>
+                      Change File
+                    </Button>
+                    <Button size="lg" onClick={flattenPdf}>
+                      Flatten Document
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {progress.status === "flattening" && (
+                <div className="flex flex-col items-center justify-center p-12 border border-border rounded-xl bg-card shadow-sm text-center space-y-4 max-w-xl mx-auto">
+                  <Loader2 className="w-10 h-10 animate-spin text-brand" />
+                  <h3 className="text-lg font-medium">Flattening PDF...</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Processing form fields and baking them into the visual layer...
+                  </p>
+                </div>
+              )}
             </div>
-
-            {progress.status === "idle" && (
-              <div className="flex flex-col items-center justify-center p-8 border border-border rounded-xl bg-card shadow-sm text-center space-y-4 max-w-xl mx-auto">
-                <div className="w-16 h-16 rounded-full bg-brand/10 text-brand flex items-center justify-center mb-2">
-                  <Layers className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-medium">Ready to Flatten</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Flattening a PDF ensures that all interactive elements, like text fields and checkboxes, are permanently baked into the document. The resulting file cannot be edited by standard form tools.
-                </p>
-                <Button size="lg" onClick={flattenPdf}>
-                  Flatten Document
-                </Button>
-              </div>
-            )}
-
-            {progress.status === "flattening" && (
-              <div className="flex flex-col items-center justify-center p-12 border border-border rounded-xl bg-card shadow-sm text-center space-y-4 max-w-xl mx-auto">
-                <Loader2 className="w-10 h-10 animate-spin text-brand" />
-                <h3 className="text-lg font-medium">Flattening PDF...</h3>
-                <p className="text-sm text-muted-foreground">
-                  Processing form fields and baking them into the visual layer...
-                </p>
-              </div>
-            )}
-
-            {progress.status === "done" && downloadUrl && (
-              <div className="flex flex-col items-center justify-center p-8 border border-brand/30 bg-brand/5 rounded-xl shadow-sm text-center space-y-4 max-w-xl mx-auto">
-                <div className="w-16 h-16 rounded-full bg-brand/20 text-brand flex items-center justify-center mb-2">
-                  <Download className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-medium">Success!</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Your document has been fully flattened.
-                </p>
-                <Button
-                  size="lg"
-                  onClick={() => {
-                    const link = document.createElement("a");
-                    link.href = downloadUrl;
-                    link.download = `flattened_${file.name}`;
-                    link.click();
-                  }}
-                >
-                  <Download className="w-4 h-4 mr-2" />
-                  Download Flattened PDF
-                </Button>
-              </div>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          )}
+        </CardContent>
+      </Card>
+    </>
   );
 }

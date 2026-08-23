@@ -11,12 +11,14 @@ export interface FlattenProgress {
 export function usePdfFlatten() {
   const [file, setFile] = useState<File | null>(null);
   const [pdfBytes, setPdfBytes] = useState<Uint8Array | null>(null);
+  const [hasFormFields, setHasFormFields] = useState<boolean>(false);
   const [progress, setProgress] = useState<FlattenProgress>({ status: "idle" });
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
   const reset = useCallback(() => {
     setFile(null);
     setPdfBytes(null);
+    setHasFormFields(false);
     setProgress({ status: "idle" });
     if (downloadUrl) URL.revokeObjectURL(downloadUrl);
     setDownloadUrl(null);
@@ -28,8 +30,19 @@ export function usePdfFlatten() {
       setFile(newFile);
       try {
         const arrayBuffer = await newFile.arrayBuffer();
-        setPdfBytes(new Uint8Array(arrayBuffer));
-      } catch (err) {
+        const bytes = new Uint8Array(arrayBuffer);
+        setPdfBytes(bytes);
+
+        // Detect form fields
+        try {
+          const pdfDoc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+          const form = pdfDoc.getForm();
+          const fields = form.getFields();
+          setHasFormFields(fields.length > 0);
+        } catch {
+          setHasFormFields(false);
+        }
+      } catch {
         toast.error("Failed to read file.");
       }
     },
@@ -43,15 +56,15 @@ export function usePdfFlatten() {
 
     try {
       const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
-      
+
       const form = pdfDoc.getForm();
       form.flatten();
-      
+
       const resultBytes = await pdfDoc.save();
-      const blob = new Blob([resultBytes], { type: "application/pdf" });
+      const blob = new Blob([resultBytes as BlobPart], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       setDownloadUrl(url);
-      
+
       setProgress({ status: "done" });
       toast.success("PDF flattened successfully!");
     } catch (error) {
@@ -63,6 +76,7 @@ export function usePdfFlatten() {
 
   return {
     file,
+    hasFormFields,
     progress,
     downloadUrl,
     loadFile,
