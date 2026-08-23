@@ -24,7 +24,16 @@ import { FileArchive, Loader2, Play } from "lucide-react";
 import { usePdfExtractImages } from "../hooks/usePdfExtractImages";
 
 export function PdfExtractImagesPage() {
-  const { file, pdfDoc, progress, zipUrl, extractedImages, loadFile, reset, extractImages } = usePdfExtractImages();
+  const {
+    file,
+    pdfDoc,
+    progress,
+    zipUrl,
+    extractedImages,
+    loadFile,
+    reset,
+    extractImages,
+  } = usePdfExtractImages();
   const [ignoreSmall, setIgnoreSmall] = useState(true);
 
   return (
@@ -60,7 +69,7 @@ export function PdfExtractImagesPage() {
             {progress.status === "idle" && (
               <div className="flex flex-col lg:flex-row gap-6 items-start">
                 {/* PDF Preview */}
-                <div className="w-full lg:w-1/2 bg-muted/20 border border-border rounded-xl p-4 flex flex-col items-center justify-center min-h-[300px]">
+                <div className="w-full lg:w-1/2 bg-muted/20 border border-border rounded-xl p-4 flex flex-col items-center justify-center min-h-75">
                   {pdfDoc ? (
                     <SinglePagePreview pdf={pdfDoc} pageNumber={1} />
                   ) : (
@@ -75,7 +84,8 @@ export function PdfExtractImagesPage() {
                       <div className="space-y-1">
                         <FieldLabel>Ignore Small Images & Icons</FieldLabel>
                         <FieldDescription>
-                          Skip images smaller than 100x100 pixels (like tracking pixels or UI icons).
+                          Skip images smaller than 100x100 pixels (like tracking
+                          pixels or UI icons).
                         </FieldDescription>
                       </div>
                       <FieldContent>
@@ -86,7 +96,10 @@ export function PdfExtractImagesPage() {
                       </FieldContent>
                     </Field>
                     <div className="pt-4 flex justify-end">
-                      <Button onClick={() => extractImages(ignoreSmall)} disabled={!pdfDoc}>
+                      <Button
+                        onClick={() => extractImages(ignoreSmall)}
+                        disabled={!pdfDoc}
+                      >
                         <Play className="w-4 h-4 mr-2" />
                         Scan & Extract
                       </Button>
@@ -141,18 +154,26 @@ export function PdfExtractImagesPage() {
                   </div>
                   <h3 className="text-xl font-medium">Extraction Complete!</h3>
                   <p className="text-muted-foreground">
-                    Found and extracted {progress.imagesFound} images from the document.
+                    Found and extracted {progress.imagesFound} images from the
+                    document.
                   </p>
-                  
+
                   {zipUrl ? (
                     <Button asChild className="w-full sm:w-auto mt-4" size="lg">
-                      <a href={zipUrl} download={`${file.name.replace(".pdf", "")}-images.zip`}>
+                      <a
+                        href={zipUrl}
+                        download={`${file.name.replace(".pdf", "")}-images.zip`}
+                      >
                         <FileArchive className="w-4 h-4 mr-2" />
                         Download ZIP Archive
                       </a>
                     </Button>
                   ) : (
-                    <Button variant="outline" className="w-full sm:w-auto mt-4" onClick={reset}>
+                    <Button
+                      variant="outline"
+                      className="w-full sm:w-auto mt-4"
+                      onClick={reset}
+                    >
                       Try Another File
                     </Button>
                   )}
@@ -162,14 +183,20 @@ export function PdfExtractImagesPage() {
                 {extractedImages.length > 0 && (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-lg">Extracted Images Preview</h4>
+                      <h4 className="font-medium text-lg">
+                        Extracted Images Preview
+                      </h4>
                       <span className="text-sm text-muted-foreground">
-                        Showing {Math.min(extractedImages.length, 50)} of {extractedImages.length}
+                        Showing {Math.min(extractedImages.length, 50)} of{" "}
+                        {extractedImages.length}
                       </span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                       {extractedImages.slice(0, 50).map((url, i) => (
-                        <div key={i} className="aspect-square bg-muted/20 border border-border rounded-lg overflow-hidden flex items-center justify-center p-2">
+                        <div
+                          key={i}
+                          className="aspect-square bg-muted/20 border border-border rounded-lg overflow-hidden flex items-center justify-center p-2"
+                        >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={url}
