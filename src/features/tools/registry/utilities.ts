@@ -1,0 +1,88 @@
+import type { ToolDefinition } from "./types";
+
+export const utilityTools: ToolDefinition[] = [
+  {
+    slug: "qr-generator",
+    name: "QR Code Generator",
+    tagline: "Create QR codes from any text or URL and download them.",
+    icon: "QrCode",
+    category: "Utilities",
+  },
+  {
+    slug: "base64",
+    name: "Base64 Encode/Decode",
+    tagline: "Convert between text/files and Base64 encoding.",
+    icon: "Code",
+    category: "Utilities",
+  },
+  {
+    slug: "json-formatter",
+    name: "JSON Formatter",
+    tagline: "Format, validate, and visualize JSON with tree view.",
+    icon: "Braces",
+    category: "Utilities",
+  },
+  {
+    slug: "uuid-generator",
+    name: "UUID Generator",
+    tagline: "Generate UUIDs (v1, v4, v7) with customizable formatting.",
+    icon: "Fingerprint",
+    category: "Utilities",
+  },
+  {
+    slug: "unit-converter",
+    name: "Unit Converter",
+    tagline: "Convert between units of length, weight, temperature, data, time, area, volume, and speed.",
+    icon: "Ruler",
+    category: "Utilities",
+  },
+  {
+    slug: "diff-checker",
+    name: "Text & Code Diff Checker",
+    tagline: "Compare two blocks of text or code and highlight differences.",
+    icon: "FileDiff",
+    category: "Utilities",
+  },
+  {
+    slug: "csv-json-converter",
+    name: "CSV ↔ JSON Converter",
+    tagline: "Convert CSV spreadsheets into JSON arrays (and vice versa) instantly.",
+    icon: "Table",
+    category: "Utilities",
+  },
+  {
+    slug: "url-encoder",
+    name: "URL Encoder / Decoder",
+    tagline: "Cleanly encode and decode URL query parameters safely.",
+    icon: "Link2",
+    category: "Utilities",
+  },
+  {
+    slug: "css-formatter",
+    name: "CSS Formatter / Minifier",
+    tagline: "Instantly pretty-print messy CSS or minify it for production.",
+    icon: "Paintbrush",
+    category: "Utilities",
+  },
+  {
+    slug: "zip-extractor",
+    name: "ZIP Viewer / Extractor",
+    tagline: "View contents of ZIP archives and selectively extract files locally.",
+    icon: "FileArchive",
+    category: "Utilities",
+  },
+  {
+    slug: "regex-tester",
+    name: "Regex Tester",
+    tagline: "Test regular expressions with live match highlighting, capture groups, and substitution preview.",
+    icon: "Search",
+    category: "Utilities",
+  },
+  {
+    slug: "jwt-decoder",
+    name: "JWT Decoder",
+    tagline: "Decode JWT tokens and inspect header, payload, and signature claims.",
+    icon: "KeySquare",
+    category: "Utilities",
+  },
+];

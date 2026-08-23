@@ -1,0 +1,74 @@
+import type { ToolDefinition } from "./types";
+
+export const imageTools: ToolDefinition[] = [
+  {
+    slug: "image-compressor",
+    name: "Image Compressor",
+    tagline: "Reduce image file sizes without losing visible quality.",
+    icon: "Image",
+    category: "Images",
+  },
+  {
+    slug: "image-resize",
+    name: "Resize & Convert",
+    tagline: "Resize images and convert between JPG, PNG, and WebP.",
+    icon: "Crop",
+    category: "Images",
+  },
+  {
+    slug: "svg-optimizer",
+    name: "SVG Optimizer",
+    tagline: "Strip massive paths and bloat from SVGs to dramatically reduce file sizes.",
+    icon: "Scissors",
+    category: "Images",
+  },
+  {
+    slug: "image-watermarker",
+    name: "Image Watermarker",
+    tagline: "Stamp text or logo watermarks onto images with full position control.",
+    icon: "Stamp",
+    category: "Images",
+  },
+  {
+    slug: "image-metadata",
+    name: "Image Metadata",
+    tagline: "Inspect EXIF, IPTC, ICC, and GPS metadata embedded in your images.",
+    icon: "ScanSearch",
+    category: "Images",
+  },
+  {
+    slug: "image-rotate",
+    name: "Rotate & Flip",
+    tagline: "Rotate images by any angle and flip horizontally or vertically.",
+    icon: "RotateCw",
+    category: "Images",
+  },
+  {
+    slug: "image-color-picker",
+    name: "Color Picker",
+    tagline: "Pick any color from an image and get HEX, RGB, and HSL values.",
+    icon: "Pipette",
+    category: "Images",
+  },
+  {
+    slug: "image-base64",
+    name: "Image ↔ Base64",
+    tagline: "Encode images to Base64 data URIs and decode them back.",
+    icon: "Binary",
+    category: "Images",
+  },
+  {
+    slug: "image-placeholder",
+    name: "Placeholder Generator",
+    tagline: "Generate colored or textured placeholder images at any size.",
+    icon: "Square",
+    category: "Images",
+  },
+  {
+    slug: "image-crop",
+    name: "Image Crop",
+    tagline: "Visually crop images with free or locked aspect ratios.",
+    icon: "Crop",
+    category: "Images",
+  },
+];
