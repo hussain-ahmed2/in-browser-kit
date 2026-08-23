@@ -7,9 +7,11 @@ import { renderPageThumbnail } from "@/features/pdf-tools/lib/preview";
 export function SinglePagePreview({
   pdf,
   pageNumber,
+  children,
 }: {
   pdf: PDFDocumentProxy;
   pageNumber: number;
+  children?: React.ReactNode;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -45,11 +47,14 @@ export function SinglePagePreview({
   }, [pdf, pageNumber, pdfKey]);
 
   return (
-    <canvas
-      key={pdfKey}
-      ref={canvasRef}
-      className="w-full h-auto max-h-150 object-contain rounded shadow-sm bg-white"
-      aria-label="PDF Preview"
-    />
+    <div className="relative inline-flex items-center justify-center max-w-full max-h-150">
+      <canvas
+        key={pdfKey}
+        ref={canvasRef}
+        className="w-full h-auto max-h-150 object-contain rounded shadow-sm bg-white"
+        aria-label="PDF Preview"
+      />
+      {children}
+    </div>
   );
 }

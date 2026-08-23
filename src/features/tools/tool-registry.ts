@@ -198,7 +198,6 @@ export const tools: ToolDefinition[] = [
     tagline: "Draw, type, or upload a signature and stamp it onto a PDF.",
     icon: "PenTool",
     category: "PDF",
-    planned: true,
   },
   {
     slug: "pdf-extract-images",
