@@ -48,10 +48,12 @@ export function usePdfCropper() {
       setFile(newFile);
       try {
         const arrayBuffer = await newFile.arrayBuffer();
-        const bytes = new Uint8Array(arrayBuffer);
-        setPdfBytes(bytes);
 
-        // Load preview for visuals
+        // Clone the buffer for pdf-lib (pdfjs-dist transfers the original to a worker, detaching it)
+        const pdfLibBytes = new Uint8Array(arrayBuffer.slice(0));
+        setPdfBytes(pdfLibBytes);
+
+        // Load preview for visuals (uses the original buffer)
         const loadingTask = await createPdfLoadingTask(arrayBuffer);
         const doc = await loadingTask.promise;
         setPreviewDoc(doc);

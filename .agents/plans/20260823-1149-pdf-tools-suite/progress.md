@@ -10,6 +10,6 @@
 - [ ] Implement PDF Signer
 - [ ] Implement Extract PDF Images
 - [ ] Implement PDF to Text
-- [ ] Implement PDF Cropper
-- [ ] Implement Flatten PDF
+- [x] Implement PDF Cropper (fixed ArrayBuffer detachment bug)
+- [x] Implement Flatten PDF (added form field detection, StepIndicator, PdfResult)
 - [ ] Implement PDF Compressor (via qpdf)
