@@ -7,6 +7,7 @@ import { ReduxProvider } from "@/app/providers";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { SITE_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 import { WebSiteStructuredData } from "@/components/StructuredData";
 
@@ -140,6 +141,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <div className="flex-1">{children}</div>
             <Footer />
             <Toaster />
+            <GlobalSearch />
           </ReduxProvider>
         </ThemeProvider>
       </body>
