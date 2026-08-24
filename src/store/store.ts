@@ -25,6 +25,11 @@ import imageCropReducer, {
   resultSet as cropResultSet,
   clearAll as cropClearAll,
 } from "@/features/image-crop/cropSlice";
+import imageFormatConverterReducer, {
+  fileSelected as formatConverterFileSelected,
+  resultSet as formatConverterResultSet,
+  clearAll as formatConverterClearAll,
+} from "@/features/image-format-converter/formatConverterSlice";
 
 export const store = configureStore({
   reducer: {
@@ -35,6 +40,7 @@ export const store = configureStore({
     pdfLock: pdfLockReducer,
     imageToPdf: imageToPdfReducer,
     imageCrop: imageCropReducer,
+    imageFormatConverter: imageFormatConverterReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -52,6 +58,9 @@ export const store = configureStore({
           cropFileSelected.type,
           cropResultSet.type,
           cropClearAll.type,
+          formatConverterFileSelected.type,
+          formatConverterResultSet.type,
+          formatConverterClearAll.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",
@@ -62,6 +71,8 @@ export const store = configureStore({
           "imageToPdf.items",
           "imageCrop.item",
           "imageCrop.result",
+          "imageFormatConverter.item",
+          "imageFormatConverter.result",
         ],
       },
     }),

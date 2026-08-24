@@ -71,4 +71,32 @@ export const imageTools: ToolDefinition[] = [
     icon: "Crop",
     category: "Images",
   },
+  {
+    slug: "image-filters",
+    name: "Filters & Effects",
+    tagline: "Apply brightness, contrast, blur, sepia, grayscale, and more.",
+    icon: "Sparkles",
+    category: "Images",
+  },
+  {
+    slug: "image-format-converter",
+    name: "Format Converter",
+    tagline: "Convert between JPG, PNG, WebP, BMP, TIFF, and AVIF.",
+    icon: "ArrowLeftRight",
+    category: "Images",
+  },
+  {
+    slug: "image-favicon",
+    name: "Favicon Generator",
+    tagline: "Create multi-size favicons and apple-touch-icons from any image.",
+    icon: "Globe",
+    category: "Images",
+  },
+  {
+    slug: "image-info",
+    name: "Image Info Viewer",
+    tagline: "View DPI, color space, file size, dimensions, and ICC profile.",
+    icon: "Info",
+    category: "Images",
+  },
 ];
