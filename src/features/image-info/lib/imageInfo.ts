@@ -1,7 +1,6 @@
-import * as ExifReader from 'exifr'
+import * as ExifReader from 'exifreader'
 
 export interface ImageInfo {
-  // Basic info
   fileName: string
   fileSize: number
   mimeType: string
@@ -9,16 +8,13 @@ export interface ImageInfo {
   height: number
   aspectRatio: string
 
-  // Color info
   colorSpace?: string
   bitDepth?: number
   channels?: number
 
-  // DPI
   dpi?: { x: number; y: number }
   ppi?: { x: number; y: number }
 
-  // ICC Profile
   iccProfile?: {
     description?: string
     manufacturer?: string
@@ -28,7 +24,6 @@ export interface ImageInfo {
     connectionSpace?: string
   }
 
-  // EXIF
   exif?: {
     make?: string
     model?: string
@@ -56,7 +51,6 @@ export interface ImageInfo {
     }
   }
 
-  // Raw EXIF (all tags)
   rawExif?: Record<string, unknown>
 }
 
@@ -89,82 +83,27 @@ export function formatFocalLength(focalLength: number): string {
 }
 
 export async function extractImageInfo(file: File): Promise<ImageInfo> {
-  const arrayBuffer = await file.arrayBuffer()
-  const uint8Array = new Uint8Array(arrayBuffer)
-
-  // Get basic image dimensions
   const dimensions = await getImageDimensions(file)
 
-  // Parse EXIF with exifr - use any to bypass TypeScript issues with exifr's complex types
-  // @ts-expect-error - exifr's TypeScript types are overly restrictive
-  const exif = await ExifReader.parse(uint8Array, {
-    ifd0: true,
-    exif: true,
-    gps: true,
-    interop: true,
-    iptc: false,
-    xmp: false,
-    icc: true,
-    jfif: true,
-    tiff: true,
-  }) as Record<string, unknown>
+  const tags = await ExifReader.load(file)
 
-  // Type assertion for exif with GPS and ICCProfile
-  const exifRaw = exif as Record<string, unknown> & { gps?: Record<string, unknown>; ICCProfile?: Record<string, unknown> }
-
-  // Extract ICC profile info
-  let iccProfile: ImageInfo['iccProfile'] = undefined
-  const iccProfileRaw = exifRaw.ICCProfile as Record<string, unknown> | undefined
-  if (iccProfileRaw) {
-    iccProfile = {
-      description: iccProfileRaw.description as string | undefined,
-      manufacturer: iccProfileRaw.manufacturer as string | undefined,
-      model: iccProfileRaw.model as string | undefined,
-      colorSpace: iccProfileRaw.colorSpaceType as string | undefined,
-      renderingIntent: iccProfileRaw.renderingIntent as number | undefined,
-      connectionSpace: iccProfileRaw.connectionSpace as string | undefined,
-    }
-  }
-
-// Extract GPS info
-  let gps: { latitude?: number; longitude?: number; altitude?: number; latitudeRef?: string; longitudeRef?: string } | undefined = undefined
-  const gpsRaw = exifRaw.gps as Record<string, unknown> | undefined
-  if (gpsRaw) {
-    const lat = gpsRaw.GPSLatitude as number[] | undefined
-    const lon = gpsRaw.GPSLongitude as number[] | undefined
-    const latRef = gpsRaw.GPSLatitudeRef as string | undefined
-    const lonRef = gpsRaw.GPSLongitudeRef as string | undefined
-    const alt = gpsRaw.GPSAltitude as number | undefined
-
-    if (lat && lon) {
-      const convertDMS = (dms: number[], ref: string) => {
-        const degrees = dms[0]
-        const minutes = dms[1]
-        const seconds = dms[2]
-        let decimal = degrees + minutes / 60 + seconds / 3600
-        if (ref === 'S' || ref === 'W') decimal = -decimal
-        return decimal
-      }
-
-      gps = {
-        latitude: convertDMS(lat, latRef || 'N'),
-        longitude: convertDMS(lon, lonRef || 'E'),
-        altitude: alt,
-        latitudeRef: latRef,
-        longitudeRef: lonRef,
-      }
-    }
-  }
+  const tagsMap = tags as Record<string, { value: unknown; description?: string }>
 
   // Helper to safely get string values
-  const getString = (val: unknown): string | undefined => {
-    if (val === undefined || val === null) return undefined
+  const getString = (key: string): string | undefined => {
+    const tag = tagsMap[key]
+    if (!tag || tag.value === undefined || tag.value === null) return undefined
+    const val = tag.value
+    if (typeof val === 'string') return val
+    if (typeof val === 'number') return String(val)
+    if (Array.isArray(val)) return val.map(String).join(', ')
     return String(val)
   }
 
-  // Helper to safely get number values
-  const getNumber = (val: unknown): number | undefined => {
-    if (val === undefined || val === null) return undefined
+  const getNumberVal = (key: string): number | undefined => {
+    const tag = tagsMap[key]
+    if (!tag || tag.value === undefined || tag.value === null) return undefined
+    const val = tag.value
     if (typeof val === 'number') return val
     if (typeof val === 'string') {
       const n = Number(val)
@@ -177,6 +116,55 @@ export async function extractImageInfo(file: File): Promise<ImageInfo> {
     return undefined
   }
 
+  // Extract ICC profile info
+  let iccProfile: ImageInfo['iccProfile'] = undefined
+  if (tagsMap['iccProfile'] || tagsMap['icc']) {
+    const icc = tagsMap['iccProfile'] || tagsMap['icc']
+    const iccData = icc?.value as Record<string, unknown> | undefined
+    if (iccData) {
+      iccProfile = {
+        description: iccData.description as string | undefined,
+        manufacturer: iccData.manufacturer as string | undefined,
+        model: iccData.model as string | undefined,
+        colorSpace: iccData.colorSpaceType as string | undefined,
+        renderingIntent: iccData.renderingIntent as number | undefined,
+        connectionSpace: iccData.connectionSpace as string | undefined,
+      }
+    }
+  }
+
+  // Extract GPS info
+  let gps: NonNullable<ImageInfo['exif']>['gps'] | undefined = undefined
+  const latitude = tagsMap['GPSLatitude']?.value as number[] | undefined
+  const longitude = tagsMap['GPSLongitude']?.value as number[] | undefined
+  const latitudeRef = tagsMap['GPSLatitudeRef']?.value as string | undefined
+  const longitudeRef = tagsMap['GPSLongitudeRef']?.value as string | undefined
+  const altitude = tagsMap['GPSAltitude']?.value as number | undefined
+
+  if (latitude && longitude) {
+    const convertDMS = (dms: number[], ref: string) => {
+      const degrees = dms[0]
+      const minutes = dms[1]
+      const seconds = dms[2]
+      let decimal = degrees + minutes / 60 + seconds / 3600
+      if (ref === 'S' || ref === 'W') decimal = -decimal
+      return decimal
+    }
+
+    gps = {
+      latitude: convertDMS(latitude, latitudeRef || 'N'),
+      longitude: convertDMS(longitude, longitudeRef || 'E'),
+      altitude,
+      latitudeRef,
+      longitudeRef,
+    }
+  }
+
+  const rawExif: Record<string, unknown> = {}
+  for (const [key, tag] of Object.entries(tagsMap)) {
+    rawExif[key] = tag.value
+  }
+
   return {
     fileName: file.name,
     fileSize: file.size,
@@ -184,56 +172,45 @@ export async function extractImageInfo(file: File): Promise<ImageInfo> {
     width: dimensions.width,
     height: dimensions.height,
     aspectRatio: formatAspectRatio(dimensions.width, dimensions.height),
-    colorSpace: exifRaw.ColorSpace === 1 ? 'sRGB' : exifRaw.ColorSpace === 65535 ? 'Uncalibrated' : 'Unknown',
-    bitDepth: getNumber((exifRaw.BitsPerSample as number[])?.[0]) || getNumber(exifRaw.BitsPerPixel),
-    channels: getNumber(exifRaw.SamplesPerPixel),
-    dpi: exifRaw.XResolution && exifRaw.YResolution
-      ? { x: Number(exifRaw.XResolution), y: Number(exifRaw.YResolution) }
+    colorSpace: getString('ColorSpace') || undefined,
+    bitDepth: getNumberVal('BitsPerSample') || getNumberVal('BitsPerPixel'),
+    channels: getNumberVal('SamplesPerPixel'),
+    dpi: getNumberVal('XResolution') && getNumberVal('YResolution')
+      ? { x: getNumberVal('XResolution')!, y: getNumberVal('YResolution')! }
       : undefined,
-    ppi: exifRaw.XResolution && exifRaw.YResolution
-      ? { x: Number(exifRaw.XResolution), y: Number(exifRaw.YResolution) }
+    ppi: getNumberVal('XResolution') && getNumberVal('YResolution')
+      ? { x: getNumberVal('XResolution')!, y: getNumberVal('YResolution')! }
       : undefined,
     iccProfile,
     exif: {
-      make: getString(exifRaw.Make),
-      model: getString(exifRaw.Model),
-      software: getString(exifRaw.Software),
-      dateTime: exifRaw.DateTime
-        ? new Date(String(exifRaw.DateTime).replace(':', '-').replace(':', '-')).toLocaleString()
+      make: getString('Make'),
+      model: getString('Model'),
+      software: getString('Software'),
+      dateTime: getString('DateTime')
+        ? new Date(getString('DateTime')!.replace(':', '-').replace(':', '-')).toLocaleString()
         : undefined,
-      dateTimeOriginal: exifRaw.DateTimeOriginal
-        ? new Date(String(exifRaw.DateTimeOriginal).replace(':', '-').replace(':', '-')).toLocaleString()
+      dateTimeOriginal: getString('DateTimeOriginal')
+        ? new Date(getString('DateTimeOriginal')!.replace(':', '-').replace(':', '-')).toLocaleString()
         : undefined,
-      dateTimeDigitized: exifRaw.DateTimeDigitized
-        ? new Date(String(exifRaw.DateTimeDigitized).replace(':', '-').replace(':', '-')).toLocaleString()
+      dateTimeDigitized: getString('DateTimeDigitized')
+        ? new Date(getString('DateTimeDigitized')!.replace(':', '-').replace(':', '-')).toLocaleString()
         : undefined,
-      exposureTime: exifRaw.ExposureTime ? formatExposureTime(Number(exifRaw.ExposureTime)) : undefined,
-      fNumber: exifRaw.FNumber ? formatFNumber(Number(exifRaw.FNumber)) : undefined,
-      iso: (() => {
-      const val = exifRaw.ISOSpeedRatings;
-      if (val === undefined || val === null) return undefined;
-      if (typeof val === 'number') return val;
-      if (typeof val === 'string') {
-        const n = Number(val);
-        return isNaN(n) ? undefined : n;
-      }
-      if (Array.isArray(val) && val.length > 0) {
-        const n = Number(val[0]);
-        return isNaN(n) ? undefined : n;
-      }
-      return undefined;
-    })(),
-      focalLength: exifRaw.FocalLength ? formatFocalLength(Number(exifRaw.FocalLength)) : undefined,
-      lensModel: getString(exifRaw.LensModel),
-      flash: exifRaw.Flash ? formatFlash(Number(exifRaw.Flash)) : undefined,
-      whiteBalance: exifRaw.WhiteBalance === 0 ? 'Auto' : exifRaw.WhiteBalance === 1 ? 'Manual' : undefined,
-      meteringMode: formatMeteringMode(exifRaw.MeteringMode as number | undefined),
-      exposureMode: exifRaw.ExposureMode === 0 ? 'Auto' : exifRaw.ExposureMode === 1 ? 'Manual' : exifRaw.ExposureMode === 2 ? 'Auto Bracket' : undefined,
-      exposureProgram: formatExposureProgram(exifRaw.ExposureProgram as number | undefined),
-      orientation: exifRaw.Orientation as number | undefined,
-      gps: gps,
+      exposureTime: getNumberVal('ExposureTime') ? formatExposureTime(Number(getString('ExposureTime')!)) : undefined,
+      fNumber: getString('FNumber') ? formatFNumber(Number(getString('FNumber')!)) : undefined,
+      iso: getNumberVal('ISOSpeedRatings'),
+      focalLength: getString('FocalLength') ? formatFocalLength(Number(getString('FocalLength')!)) : undefined,
+      lensModel: getString('LensModel'),
+      flash: getNumberVal('Flash') ? formatFlash(Number(getNumberVal('Flash')!)) : undefined,
+      whiteBalance: getNumberVal('WhiteBalance') === 0 ? 'Auto' : getNumberVal('WhiteBalance') === 1 ? 'Manual' : undefined,
+      meteringMode: formatMeteringMode(getNumberVal('MeteringMode')),
+      exposureMode: getNumberVal('ExposureMode') === 0 ? 'Auto' : getNumberVal('ExposureMode') === 1 ? 'Manual' : getNumberVal('ExposureMode') === 2 ? 'Auto Bracket' : undefined,
+      exposureProgram: formatExposureProgram(getNumberVal('ExposureProgram')),
+      orientation: getNumberVal('Orientation'),
+      gps,
     },
-    rawExif: exif,
+    rawExif: Object.fromEntries(
+      Object.entries(tagsMap).map(([k, v]) => [k, v.value])
+    ),
   }
 }
 
