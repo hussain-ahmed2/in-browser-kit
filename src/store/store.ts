@@ -30,6 +30,11 @@ import imageFormatConverterReducer, {
   resultSet as formatConverterResultSet,
   clearAll as formatConverterClearAll,
 } from "@/features/image-format-converter/formatConverterSlice";
+import imageFaviconReducer, {
+  fileSelected as faviconFileSelected,
+  resultSet as faviconResultSet,
+  clearAll as faviconClearAll,
+} from "@/features/image-favicon/faviconSlice";
 
 export const store = configureStore({
   reducer: {
@@ -41,6 +46,7 @@ export const store = configureStore({
     imageToPdf: imageToPdfReducer,
     imageCrop: imageCropReducer,
     imageFormatConverter: imageFormatConverterReducer,
+    imageFavicon: imageFaviconReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -61,6 +67,9 @@ export const store = configureStore({
           formatConverterFileSelected.type,
           formatConverterResultSet.type,
           formatConverterClearAll.type,
+          faviconFileSelected.type,
+          faviconResultSet.type,
+          faviconClearAll.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",
@@ -73,6 +82,8 @@ export const store = configureStore({
           "imageCrop.result",
           "imageFormatConverter.item",
           "imageFormatConverter.result",
+          "imageFavicon.item",
+          "imageFavicon.result",
         ],
       },
     }),
