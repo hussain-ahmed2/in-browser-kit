@@ -35,6 +35,11 @@ import imageFaviconReducer, {
   resultSet as faviconResultSet,
   clearAll as faviconClearAll,
 } from "@/features/image-favicon/faviconSlice";
+import imageGifOptimizerReducer, {
+  fileSelected as gifOptimizerFileSelected,
+  resultSet as gifOptimizerResultSet,
+  clearAll as gifOptimizerClearAll,
+} from "@/features/image-gif-optimizer/gifOptimizerSlice";
 
 export const store = configureStore({
   reducer: {
@@ -47,6 +52,7 @@ export const store = configureStore({
     imageCrop: imageCropReducer,
     imageFormatConverter: imageFormatConverterReducer,
     imageFavicon: imageFaviconReducer,
+    imageGifOptimizer: imageGifOptimizerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -70,6 +76,9 @@ export const store = configureStore({
           faviconFileSelected.type,
           faviconResultSet.type,
           faviconClearAll.type,
+          gifOptimizerFileSelected.type,
+          gifOptimizerResultSet.type,
+          gifOptimizerClearAll.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",
@@ -84,6 +93,8 @@ export const store = configureStore({
           "imageFormatConverter.result",
           "imageFavicon.item",
           "imageFavicon.result",
+          "imageGifOptimizer.item",
+          "imageGifOptimizer.result",
         ],
       },
     }),

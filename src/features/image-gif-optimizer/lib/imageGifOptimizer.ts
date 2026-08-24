@@ -44,7 +44,7 @@ export async function optimizeGif(
     workerScript: '/gif.worker.js',
   })
 
-  // Add optimized frames
+  // Add frames
   for (const frame of frames) {
     const canvas = document.createElement('canvas')
     canvas.width = gif.lsd?.width || 0
@@ -87,46 +87,6 @@ export async function optimizeGif(
 
   // Generate optimized GIF
   return new Promise((resolve, reject) => {
-    const encoder = new GifEncoder({
-      workers: 2,
-      quality: 10,
-      width: gif.lsd?.width || 0,
-      height: gif.lsd?.height || 0,
-      workerScript: '/gif.worker.js',
-    })
-
-    // Re-add frames
-    for (const frame of frames) {
-      const canvas = document.createElement('canvas')
-      canvas.width = gif.lsd?.width || 0
-      canvas.height = gif.lsd?.height || 0
-      const ctx = canvas.getContext('2d')!
-
-      if (frame.patch) {
-        const tempCanvas = document.createElement('canvas')
-        tempCanvas.width = frame.dims?.width || 0
-        tempCanvas.height = frame.dims?.height || 0
-        const tempCtx = tempCanvas.getContext('2d')!
-        tempCtx.putImageData(
-          new ImageData(new Uint8ClampedArray(frame.patch), frame.dims?.width || 0, frame.dims?.height || 0),
-          0, 0
-        )
-        ctx.drawImage(
-          tempCanvas,
-          frame.dims?.left || 0,
-          frame.dims?.top || 0,
-          frame.dims?.width || 0,
-          frame.dims?.height || 0
-        )
-      }
-
-      encoder.addFrame(ctx, {
-        delay: frame.delay || 100,
-        disposal: frame.disposalType || 0,
-        copy: true,
-      })
-    }
-
     encoder.on('finished', (blob: Blob) => {
       const resultFile = new File([blob], 'optimized.gif', {
         type: 'image/gif',
@@ -190,4 +150,16 @@ export function formatBytes(bytes: number): string {
   const sizes = ['B', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
+}
+
+export async function getImageDimensions(file: File): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = () => {
+      resolve({ width: img.naturalWidth, height: img.naturalHeight })
+      URL.revokeObjectURL(img.src)
+    }
+    img.onerror = () => reject(new Error('Failed to load image'))
+    img.src = URL.createObjectURL(file)
+  })
 }
