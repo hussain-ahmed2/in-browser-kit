@@ -20,6 +20,11 @@ import imageToPdfReducer, {
   filesAdded as imageToPdfFilesAdded,
   itemsReplaced as imageToPdfItemsReplaced,
 } from "@/features/image-to-pdf/imageToPdfSlice";
+import imageCropReducer, {
+  fileSelected as cropFileSelected,
+  resultSet as cropResultSet,
+  clearAll as cropClearAll,
+} from "@/features/image-crop/cropSlice";
 
 export const store = configureStore({
   reducer: {
@@ -29,6 +34,7 @@ export const store = configureStore({
     pdfSplit: pdfSplitReducer,
     pdfLock: pdfLockReducer,
     imageToPdf: imageToPdfReducer,
+    imageCrop: imageCropReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -43,6 +49,9 @@ export const store = configureStore({
           pdfLockFileReplaced.type,
           imageToPdfFilesAdded.type,
           imageToPdfItemsReplaced.type,
+          cropFileSelected.type,
+          cropResultSet.type,
+          cropClearAll.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",
@@ -51,6 +60,8 @@ export const store = configureStore({
           "pdfSplit.item",
           "pdfLock.item",
           "imageToPdf.items",
+          "imageCrop.item",
+          "imageCrop.result",
         ],
       },
     }),

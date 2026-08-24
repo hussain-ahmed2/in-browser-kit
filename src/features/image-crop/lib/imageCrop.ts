@@ -12,7 +12,7 @@ export interface CropResult {
   objectUrl: string
 }
 
-export type AspectRatio = 'free' | '1:1' | '4:3' | '16:9' | '3:2' | '9:16'
+export type AspectRatio = 'free' | '1:1' | '4:3' | '16:9' | '3:2' | '9:16' | '4:5' | '1:2' | 'custom'
 
 export const ASPECT_RATIOS: Record<AspectRatio, number | null> = {
   free: null,
@@ -21,6 +21,9 @@ export const ASPECT_RATIOS: Record<AspectRatio, number | null> = {
   '16:9': 16 / 9,
   '3:2': 3 / 2,
   '9:16': 9 / 16,
+  '4:5': 4 / 5,
+  '1:2': 1 / 2,
+  custom: null,
 }
 
 export function constrainCropArea(
