@@ -1,20 +1,24 @@
 "use client";
 
-import { Copy, Check } from "lucide-react";
+import { Copy, Check, LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 interface InfoRowProps {
   label: string;
   value: string | number | undefined;
-  icon?: React.ReactNode;
+  icon?: LucideIcon;
 }
 
-export function InfoRow({ label, value, icon }: InfoRowProps) {
+export function InfoRow({ label, value, icon: Icon }: InfoRowProps) {
   if (value === undefined || value === null || value === "") return null;
   return (
     <div className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0">
-      {icon && <span className="text-muted-foreground size-4">{icon}</span>}
+      {Icon && (
+        <span className="text-muted-foreground size-4">
+          {<Icon className="size-4" />}
+        </span>
+      )}
       <span className="text-sm text-muted-foreground min-w-35">{label}</span>
       <span className="text-sm font-medium font-mono text-primary flex-1 break-all">
         {value}

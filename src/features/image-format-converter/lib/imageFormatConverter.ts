@@ -91,6 +91,20 @@ export function detectBrowserAVIFSupport(): boolean {
   }
 }
 
+export function detectBrowserWebPSupport(): boolean {
+  const canvas = document.createElement("canvas");
+  canvas.width = 1;
+  canvas.height = 1;
+  const ctx = canvas.getContext("2d")!;
+  ctx.fillStyle = "red";
+  ctx.fillRect(0, 0, 1, 1);
+  try {
+    return canvas.toDataURL("image/webp").startsWith("data:image/webp");
+  } catch {
+    return false;
+  }
+}
+
 export async function getImageDimensions(file: File): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
     const img = new Image();

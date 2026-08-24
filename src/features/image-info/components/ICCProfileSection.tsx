@@ -5,12 +5,12 @@ import { InfoRow } from "./InfoRows";
 import { Palette, Hash, Camera, Aperture, Info } from "lucide-react";
 
 interface ICCProfileData {
-  description?: string
-  manufacturer?: string
-  model?: string
-  colorSpace?: string
-  renderingIntent?: number
-  connectionSpace?: string
+  description?: string;
+  manufacturer?: string;
+  model?: string;
+  colorSpace?: string;
+  renderingIntent?: number;
+  connectionSpace?: string;
 }
 
 interface ICCProfileSectionProps {
@@ -22,31 +22,27 @@ export function ICCProfileSection({ iccProfile }: ICCProfileSectionProps) {
 
   return (
     <CollapsibleSection title="ICC Profile" icon={<Palette />}>
-      <InfoRow
-        label="Description"
-        value={iccProfile.description}
-        icon={<Info />}
-      />
+      <InfoRow label="Description" value={iccProfile.description} icon={Info} />
       <InfoRow
         label="Manufacturer"
         value={iccProfile.manufacturer}
-        icon={<Hash />}
+        icon={Hash}
       />
-      <InfoRow label="Model" value={iccProfile.model} icon={<Camera />} />
+      <InfoRow label="Model" value={iccProfile.model} icon={Camera} />
       <InfoRow
         label="Color Space"
         value={iccProfile.colorSpace}
-        icon={<Palette />}
+        icon={Palette}
       />
       <InfoRow
         label="Rendering Intent"
         value={iccProfile.renderingIntent}
-        icon={<Aperture />}
+        icon={Aperture}
       />
       <InfoRow
         label="Connection Space"
         value={iccProfile.connectionSpace}
-        icon={<Hash />}
+        icon={Hash}
       />
     </CollapsibleSection>
   );

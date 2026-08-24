@@ -22,6 +22,7 @@ import {
   SUPPORTED_FORMATS,
   formatBytes,
   detectBrowserAVIFSupport,
+  detectBrowserWebPSupport,
   getImageDimensions,
 } from "../lib/imageFormatConverter";
 import {
@@ -34,6 +35,7 @@ import {
   processingSet,
   resultSet,
   avifSupportedSet,
+  webpSupportedSet,
   clearAll,
 } from "../formatConverterSlice";
 
@@ -45,7 +47,7 @@ const steps = [
 
 export function ImageFormatConverterPage() {
   const dispatch = useAppDispatch();
-  const { item, dimensions, result, isProcessing, avifSupported } =
+  const { item, dimensions, result, isProcessing, avifSupported, webpSupported } =
     useAppSelector((state) => state.imageFormatConverter);
 
   const currentStep = result ? 2 : item ? 1 : 0;
@@ -61,6 +63,7 @@ export function ImageFormatConverterPage() {
 
   useEffect(() => {
     dispatch(avifSupportedSet(detectBrowserAVIFSupport()));
+    dispatch(webpSupportedSet(detectBrowserWebPSupport()));
   }, [dispatch]);
 
   const handleFiles = useCallback(
@@ -147,6 +150,12 @@ export function ImageFormatConverterPage() {
                   {watchedFormat === "image/avif" && !avifSupported && (
                     <p className="text-xs text-amber-600 dark:text-amber-400">
                       ⚠ AVIF encoding may not be supported in this browser.
+                      Falls back to PNG if unsupported.
+                    </p>
+                  )}
+                  {watchedFormat === "image/webp" && !webpSupported && (
+                    <p className="text-xs text-amber-600 dark:text-amber-400">
+                      ⚠ WebP encoding may not be supported in this browser.
                       Falls back to PNG if unsupported.
                     </p>
                   )}

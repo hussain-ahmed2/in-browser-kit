@@ -11,10 +11,18 @@ interface ColorInfoSectionProps {
 
 export function ColorInfoSection({ info }: ColorInfoSectionProps) {
   return (
-    <CollapsibleSection title="Color Information" icon={<Palette />} defaultOpen>
-      <InfoRow label="Color Space" value={info.colorSpace} icon={<Palette />} />
-      <InfoRow label="Bit Depth" value={info.bitDepth ? `${info.bitDepth}-bit` : undefined} icon={<Hash />} />
-      <InfoRow label="Channels" value={info.channels} icon={<Palette />} />
+    <CollapsibleSection
+      title="Color Information"
+      icon={<Palette />}
+      defaultOpen
+    >
+      <InfoRow label="Color Space" value={info.colorSpace} icon={Palette} />
+      <InfoRow
+        label="Bit Depth"
+        value={info.bitDepth ? `${info.bitDepth}-bit` : undefined}
+        icon={Hash}
+      />
+      <InfoRow label="Channels" value={info.channels} icon={Palette} />
     </CollapsibleSection>
   );
 }

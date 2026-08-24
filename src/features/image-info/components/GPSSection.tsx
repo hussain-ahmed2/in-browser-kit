@@ -24,17 +24,17 @@ export function GPSSection({ gps }: GPSSectionProps) {
       <InfoRow
         label="Latitude"
         value={gps.latitude?.toFixed(6)}
-        icon={<MapPin />}
+        icon={MapPin}
       />
       <InfoRow
         label="Longitude"
         value={gps.longitude?.toFixed(6)}
-        icon={<MapPin />}
+        icon={MapPin}
       />
       <InfoRow
         label="Altitude"
         value={gps.altitude ? `${gps.altitude}m` : undefined}
-        icon={<MapPin />}
+        icon={MapPin}
       />
       {gps.latitude !== undefined && gps.longitude !== undefined && (
         <div className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0">

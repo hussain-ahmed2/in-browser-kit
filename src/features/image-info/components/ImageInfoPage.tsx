@@ -66,33 +66,6 @@ export function ImageInfoPage() {
     [previewUrl],
   );
 
-  const handleClear = useCallback(() => {
-    setFile(null);
-    setInfo(null);
-    setDimensions(null);
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPreviewUrl(null);
-  }, [previewUrl]);
-
-  const handleCopyAll = useCallback(() => {
-    if (!info) return;
-    const json = JSON.stringify(info, null, 2);
-    navigator.clipboard.writeText(json);
-    toast.success("All metadata copied to clipboard!");
-  }, [info]);
-
-  const handleDownloadJson = useCallback(() => {
-    if (!info) return;
-    const json = JSON.stringify(info, null, 2);
-    const blob = new Blob([json], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${file?.name.replace(/\.[^/.]+$/, "")}-metadata.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [info, file]);
-
   if (!file) {
     return (
       <>

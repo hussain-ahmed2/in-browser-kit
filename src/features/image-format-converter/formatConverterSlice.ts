@@ -9,6 +9,7 @@ export interface FormatConverterState {
   result: FormatConverterResult | null
   isProcessing: boolean
   avifSupported: boolean
+  webpSupported: boolean
 }
 
 const initialState: FormatConverterState = {
@@ -19,6 +20,7 @@ const initialState: FormatConverterState = {
   result: null,
   isProcessing: false,
   avifSupported: false,
+  webpSupported: false,
 }
 
 const formatConverterSlice = createSlice({
@@ -47,6 +49,9 @@ const formatConverterSlice = createSlice({
     avifSupportedSet(state, action: PayloadAction<boolean>) {
       state.avifSupported = action.payload
     },
+    webpSupportedSet(state, action: PayloadAction<boolean>) {
+      state.webpSupported = action.payload
+    },
     clearAll(state) {
       if (state.item?.previewUrl) URL.revokeObjectURL(state.item.previewUrl)
       if (state.result?.objectUrl) URL.revokeObjectURL(state.result.objectUrl)
@@ -62,6 +67,7 @@ export const {
   resultSet,
   processingSet,
   avifSupportedSet,
+  webpSupportedSet,
   clearAll,
 } = formatConverterSlice.actions
 

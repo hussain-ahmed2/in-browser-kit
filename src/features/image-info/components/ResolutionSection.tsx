@@ -19,7 +19,7 @@ export function ResolutionSection({ info }: ResolutionSectionProps) {
             ? `${Math.round(info.dpi.x)} × ${Math.round(info.dpi.y)}`
             : undefined
         }
-        icon={<ImageIcon />}
+        icon={ImageIcon}
       />
       <InfoRow
         label="PPI"
@@ -28,7 +28,7 @@ export function ResolutionSection({ info }: ResolutionSectionProps) {
             ? `${Math.round(info.ppi.x)} × ${Math.round(info.ppi.y)}`
             : undefined
         }
-        icon={<ImageIcon />}
+        icon={ImageIcon}
       />
     </CollapsibleSection>
   );
