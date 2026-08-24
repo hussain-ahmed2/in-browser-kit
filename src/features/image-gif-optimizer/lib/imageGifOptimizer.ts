@@ -1,4 +1,4 @@
-import { parseGIF, decompressFrames, type GIFFrame, type GIF as GifuctGIF } from 'gifuct-js'
+import { parseGIF, decompressFrames } from 'gifuct-js'
 import GifEncoder from 'gif.js'
 
 export interface OptimizeOptions {
@@ -31,56 +31,46 @@ export async function optimizeGif(
   // Parse original GIF
   const gif = parseGIF(uint8Array)
   const frames = decompressFrames(gif, true)
+  const width = gif.lsd?.width || 0
+  const height = gif.lsd?.height || 0
 
   // Remove duplicate frames if enabled
-  const processedFrames = options.removeDuplicates ? removeDuplicateFrames(frames) : frames
+  const framesToProcess = options.removeDuplicates ? removeDuplicateFrames(frames) : frames
 
-  // Create optimized GIF
+  // Map lossyLevel (0-100) to gif.js quality (1=best, 30=default, 100=worst)
+  const quality = Math.max(1, Math.min(100, Math.round(options.lossyLevel)))
+
+  // Create optimized GIF encoder
   const encoder = new GifEncoder({
     workers: 2,
-    quality: 10,
-    width: gif.lsd?.width || 0,
-    height: gif.lsd?.height || 0,
+    quality,
+    width,
+    height,
     workerScript: '/gif.worker.js',
   })
 
-  // Add frames
-  for (const frame of frames) {
+  // Composite each frame onto a full-size canvas and add to encoder
+  for (const frame of framesToProcess) {
     const canvas = document.createElement('canvas')
-    canvas.width = gif.lsd?.width || 0
-    canvas.height = gif.lsd?.height || 0
+    canvas.width = width
+    canvas.height = height
     const ctx = canvas.getContext('2d')!
 
-    // Draw frame
     if (frame.patch) {
       const tempCanvas = document.createElement('canvas')
-      tempCanvas.width = frame.dims?.width || 0
-      tempCanvas.height = frame.dims?.height || 0
+      tempCanvas.width = frame.dims.width
+      tempCanvas.height = frame.dims.height
       const tempCtx = tempCanvas.getContext('2d')!
       tempCtx.putImageData(
-        new ImageData(new Uint8ClampedArray(frame.patch), frame.dims?.width || 0, frame.dims?.height || 0),
-        0, 0
+        new ImageData(new Uint8ClampedArray(frame.patch), frame.dims.width, frame.dims.height),
+        0,
+        0
       )
-      
-      // Draw background if first frame
-      if (frame.index === 0) {
-        ctx.fillStyle = '#FFFFFF'
-        ctx.fillRect(0, 0, gif.lsd?.width || 0, gif.lsd?.height || 0)
-      }
-
-      // Draw frame at correct position
-      ctx.drawImage(
-        tempCanvas,
-        frame.dims?.left || 0,
-        frame.dims?.top || 0,
-        frame.dims?.width || 0,
-        frame.dims?.height || 0
-      )
+      ctx.drawImage(tempCanvas, frame.dims.left, frame.dims.top)
     }
 
     encoder.addFrame(ctx, {
       delay: frame.delay || 100,
-      disposal: frame.disposalType || 0,
       copy: true,
     })
   }
@@ -94,17 +84,17 @@ export async function optimizeGif(
       })
       const objectUrl = URL.createObjectURL(resultFile)
       const optimizedSize = blob.size
-      const savings = ((1 - optimizedSize / originalSize) * 100).toFixed(1)
+      const savings = parseFloat(((1 - optimizedSize / originalSize) * 100).toFixed(1))
 
       resolve({
         file: resultFile,
         objectUrl,
         originalSize,
-        optimizedSize: blob.size,
-        savings: parseFloat(savings),
-        width: gif.lsd?.width || 0,
-        height: gif.lsd?.height || 0,
-        frameCount: frames.length,
+        optimizedSize,
+        savings,
+        width,
+        height,
+        frameCount: framesToProcess.length,
         originalFrameCount: frames.length,
       })
     })
@@ -114,7 +104,7 @@ export async function optimizeGif(
   })
 }
 
-function removeDuplicateFrames(frames: Array<{ patch?: Uint8ClampedArray }>): Array<{ patch?: Uint8ClampedArray }> {
+function removeDuplicateFrames<T extends { patch?: Uint8ClampedArray }>(frames: T[]): T[] {
   if (frames.length <= 1) return frames
 
   const uniqueFrames = [frames[0]]
@@ -154,7 +144,7 @@ export function formatBytes(bytes: number): string {
 
 export async function getImageDimensions(file: File): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
-    const img = new Image()
+    const img = new window.Image()
     img.onload = () => {
       resolve({ width: img.naturalWidth, height: img.naturalHeight })
       URL.revokeObjectURL(img.src)

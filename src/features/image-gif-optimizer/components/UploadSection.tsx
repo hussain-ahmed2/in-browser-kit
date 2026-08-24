@@ -1,6 +1,5 @@
 'use client'
 
-import { useCallback } from 'react'
 import { FileDropzone } from '@/components/FileDropzone'
 
 interface UploadSectionProps {

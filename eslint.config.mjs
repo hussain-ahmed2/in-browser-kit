@@ -16,6 +16,7 @@ const eslintConfig = defineConfig([
     "public/qpdf/**",
     "public/pdf.worker.min.mjs",
     "public/ffmpeg/**",
+    "public/gif.worker.js",
   ]),
 ]);
 

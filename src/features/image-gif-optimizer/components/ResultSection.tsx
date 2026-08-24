@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Download, RotateCcw, Trash2 } from 'lucide-react'
+import { ArrowRight, Download, RotateCcw, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatBytes } from '../lib/imageGifOptimizer'
 import type { OptimizeResult } from '../lib/imageGifOptimizer'
@@ -25,12 +25,15 @@ export function ResultSection({ result, onDownload, onClear }: ResultSectionProp
             className="w-full max-h-96 object-contain"
           />
         </div>
-        <button
-          className="absolute top-2 right-2 p-2 rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        <Button
+          variant="destructive"
+          size="icon"
+          className="absolute top-2 right-2"
           onClick={onClear}
+          aria-label="Remove image"
         >
-          ×
-        </button>
+          <X />
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 gap-4 text-sm">
@@ -48,28 +51,23 @@ export function ResultSection({ result, onDownload, onClear }: ResultSectionProp
         </div>
         <div className="p-3 rounded-lg bg-secondary/50 border border-border">
           <p className="text-xs text-muted-foreground">Frames</p>
-          <p className="font-medium">{result.originalFrameCount} → {result.frameCount}</p>
+          <p className="font-medium inline-flex items-center gap-1">
+            {result.originalFrameCount}
+            <ArrowRight className="size-3.5 text-muted-foreground" aria-hidden="true" />
+            {result.frameCount}
+          </p>
         </div>
       </div>
 
       <div className="flex gap-4">
-        <button
-          className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
-          onClick={() => {
-            const a = document.createElement('a')
-            a.href = result.objectUrl
-            a.download = result.file.name
-            a.click()
-          }}
-        >
+        <Button onClick={onDownload} className="flex-1">
+          <Download aria-hidden="true" />
           Download Optimized GIF
-        </button>
-        <button
-          className="flex-1 px-4 py-2 rounded-lg border border-border bg-background hover:bg-secondary"
-          onClick={onClear}
-        >
+        </Button>
+        <Button variant="outline" onClick={onClear} className="flex-1">
+          <RotateCcw aria-hidden="true" />
           Start Over
-        </button>
+        </Button>
       </div>
     </div>
   )
