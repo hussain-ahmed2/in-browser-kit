@@ -99,4 +99,25 @@ export const imageTools: ToolDefinition[] = [
     icon: "Info",
     category: "Images",
   },
+  {
+    slug: "image-gif-maker",
+    name: "GIF Maker",
+    tagline: "Create animated GIFs from a sequence of images.",
+    icon: "Film",
+    category: "Images",
+  },
+  {
+    slug: "image-gif-extractor",
+    name: "GIF Frame Extractor",
+    tagline: "Extract individual frames from animated GIFs as PNG images.",
+    icon: "Images",
+    category: "Images",
+  },
+  {
+    slug: "image-gif-optimizer",
+    name: "GIF Optimizer",
+    tagline: "Reduce GIF file size by optimizing colors and frames.",
+    icon: "Minimize2",
+    category: "Images",
+  },
 ];
