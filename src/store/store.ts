@@ -159,6 +159,26 @@ import ipLookupReducer from "@/features/ip-lookup/ipLookupSlice";
 import dnsLookupReducer from "@/features/dns-lookup/dnsLookupSlice";
 import httpHeadersReducer from "@/features/http-headers/httpHeadersSlice";
 import portScannerReducer from "@/features/port-scanner/portScannerSlice";
+import backgroundRemoverReducer, {
+  fileSelected as bgRemoverFileSelected,
+  resultSet as bgRemoverResultSet,
+  clearAll as bgRemoverClearAll,
+} from "@/features/background-remover/backgroundRemoverSlice";
+import screenCaptureReducer, {
+  captureStarted as screenCaptureStarted,
+  screenshotAdded as screenCaptureScreenshotAdded,
+  captureStopped as screenCaptureStopped,
+  clearAll as screenCaptureClearAll,
+} from "@/features/screen-capture/screenCaptureSlice";
+import audioRecorderReducer, {
+  recordingStarted as audioRecorderRecordingStarted,
+  recordingStopped as audioRecorderRecordingStopped,
+  clearAll as audioRecorderClearAll,
+} from "@/features/audio-recorder/audioRecorderSlice";
+import fakeDataReducer, {
+  resultsSet as fakeDataResultsSet,
+  clearResults as fakeDataClearResults,
+} from "@/features/fake-data/fakeDataSlice";
 
 export const store = configureStore({
   reducer: {
@@ -206,6 +226,10 @@ export const store = configureStore({
     dnsLookup: dnsLookupReducer,
     httpHeaders: httpHeadersReducer,
     portScanner: portScannerReducer,
+    backgroundRemover: backgroundRemoverReducer,
+    screenCapture: screenCaptureReducer,
+    audioRecorder: audioRecorderReducer,
+    fakeData: fakeDataReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -295,6 +319,18 @@ export const store = configureStore({
           colorPaletteFileSelected.type,
           colorPalettePaletteSet.type,
           colorPaletteClearAll.type,
+          bgRemoverFileSelected.type,
+          bgRemoverResultSet.type,
+          bgRemoverClearAll.type,
+          screenCaptureStarted.type,
+          screenCaptureScreenshotAdded.type,
+          screenCaptureStopped.type,
+          screenCaptureClearAll.type,
+          audioRecorderRecordingStarted.type,
+          audioRecorderRecordingStopped.type,
+          audioRecorderClearAll.type,
+          fakeDataResultsSet.type,
+          fakeDataClearResults.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",
@@ -350,6 +386,12 @@ export const store = configureStore({
           "imageHeicConverter.result",
           "imageColorPalette.item",
           "imageColorPalette.palette",
+          "backgroundRemover.item",
+          "backgroundRemover.result",
+          "screenCapture.stream",
+          "screenCapture.screenshots",
+          "audioRecorder.stream",
+          "audioRecorder.recordings",
         ],
       },
     }),

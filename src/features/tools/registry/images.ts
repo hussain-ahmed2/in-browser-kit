@@ -274,4 +274,11 @@ export const imageTools: ToolDefinition[] = [
     icon: "Palette",
     category: "Images",
   },
+  {
+    slug: "background-remover",
+    name: "AI Background Remover",
+    tagline: "Remove image backgrounds instantly using AI running in the browser.",
+    icon: "Scissors",
+    category: "Images",
+  },
 ];

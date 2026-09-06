@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { ToolPage } from '@/features/tools/components/ToolPage'
 import { XmlBeautifierPage } from '@/features/xml-beautifier/components/XmlBeautifierPage'
-import { toolMetadata } from '@/lib/site'
+import { toolMetadata, SITE_URL } from '@/lib/site'
 import { StructuredData } from '@/components/StructuredData'
 
 export const metadata: Metadata = toolMetadata('xml-beautifier')
@@ -12,7 +12,7 @@ export default function Page() {
       <StructuredData
         name="XML Formatter & Validator"
         description="Format, prettify, and validate XML documents locally."
-        url="https://inbrowserkit.netlify.app/tools/xml-beautifier"
+        url={`${SITE_URL}/tools/xml-beautifier`}
         category="Utilities"
       />
       <XmlBeautifierPage />

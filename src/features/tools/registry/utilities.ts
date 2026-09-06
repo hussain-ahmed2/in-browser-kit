@@ -169,4 +169,25 @@ export const utilityTools: ToolDefinition[] = [
     icon: "ScanLine",
     category: "Utilities",
   },
+  {
+    slug: "screen-capture",
+    name: "Screen Capture Tool",
+    tagline: "Capture screenshots of your screen directly in the browser.",
+    icon: "Monitor",
+    category: "Utilities",
+  },
+  {
+    slug: "audio-recorder",
+    name: "Audio Recorder",
+    tagline: "Record audio from your microphone with live waveform visualization.",
+    icon: "Mic",
+    category: "Utilities",
+  },
+  {
+    slug: "fake-data",
+    name: "Fake Data Generator",
+    tagline: "Generate realistic fake data for testing — names, emails, addresses, and more.",
+    icon: "Database",
+    category: "Utilities",
+  },
 ];

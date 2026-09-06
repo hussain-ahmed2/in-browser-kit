@@ -32,7 +32,7 @@ export function ToolPage({
   };
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <div className="mx-auto container">
         <Breadcrumbs items={[{ label: title ?? tool?.name ?? slug }]} />
       </div>

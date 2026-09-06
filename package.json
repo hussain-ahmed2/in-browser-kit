@@ -18,6 +18,7 @@
         "@ffmpeg/ffmpeg": "^0.12.15",
         "@ffmpeg/util": "^0.12.2",
         "@hookform/resolvers": "^5.7.1",
+        "@imgly/background-removal": "^1.7.0",
         "@reduxjs/toolkit": "^2.12.0",
         "browser-image-compression": "^2.0.2",
         "class-variance-authority": "^0.7.1",

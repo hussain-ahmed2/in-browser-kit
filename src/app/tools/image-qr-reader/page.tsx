@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { ToolPage } from '@/features/tools/components/ToolPage'
 import { ImageQrReaderPage } from '@/features/image-qr-reader/components/ImageQrReaderPage'
-import { toolMetadata } from '@/lib/site'
+import { toolMetadata, SITE_URL } from '@/lib/site'
 import { StructuredData } from '@/components/StructuredData'
 
 export const metadata: Metadata = toolMetadata('image-qr-reader')
@@ -12,7 +12,7 @@ export default function Page() {
       <StructuredData
         name="QR Code Reader"
         description="Upload an image to scan and decode QR codes instantly."
-        url="https://inbrowserkit.netlify.app/tools/image-qr-reader"
+        url={`${SITE_URL}/tools/image-qr-reader`}
         category="ImageEditing"
       />
       <ImageQrReaderPage />

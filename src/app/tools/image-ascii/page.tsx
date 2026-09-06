@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { ToolPage } from '@/features/tools/components/ToolPage'
 import { ImageAsciiPage } from '@/features/image-ascii/components/ImageAsciiPage'
-import { toolMetadata } from '@/lib/site'
+import { toolMetadata, SITE_URL } from '@/lib/site'
 import { StructuredData } from '@/components/StructuredData'
 
 export const metadata: Metadata = toolMetadata('image-ascii')
@@ -12,7 +12,7 @@ export default function Page() {
       <StructuredData
         name="Image to ASCII Art"
         description="Convert any image into text-based ASCII art."
-        url="https://inbrowserkit.netlify.app/tools/image-ascii"
+        url={`${SITE_URL}/tools/image-ascii`}
         category="ImageEditing"
       />
       <ImageAsciiPage />

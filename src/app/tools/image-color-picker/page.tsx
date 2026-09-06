@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { ToolPage } from '@/features/tools/components/ToolPage'
 import { ImageColorPickerPage } from '@/features/image-color-picker/components/ImageColorPickerPage'
-import { toolMetadata } from '@/lib/site'
+import { toolMetadata, SITE_URL } from '@/lib/site'
 import { StructuredData } from '@/components/StructuredData'
 
 export const metadata: Metadata = toolMetadata('image-color-picker')
@@ -12,7 +12,7 @@ export default function Page() {
       <StructuredData
         name="Color Picker"
         description="Pick any color from an image and get HEX, RGB, and HSL values."
-        url="https://inbrowserkit.netlify.app/tools/image-color-picker"
+        url={`${SITE_URL}/tools/image-color-picker`}
         category="ImageEditing"
       />
       <ImageColorPickerPage />

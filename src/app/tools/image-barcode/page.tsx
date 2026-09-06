@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { ToolPage } from '@/features/tools/components/ToolPage'
 import { ImageBarcodePage } from '@/features/image-barcode/components/ImageBarcodePage'
-import { toolMetadata } from '@/lib/site'
+import { toolMetadata, SITE_URL } from '@/lib/site'
 import { StructuredData } from '@/components/StructuredData'
 
 export const metadata: Metadata = toolMetadata('image-barcode')
@@ -12,7 +12,7 @@ export default function Page() {
       <StructuredData
         name="Barcode Generator"
         description="Generate barcodes in various formats from text input."
-        url="https://inbrowserkit.netlify.app/tools/image-barcode"
+        url={`${SITE_URL}/tools/image-barcode`}
         category="ImageEditing"
       />
       <ImageBarcodePage />

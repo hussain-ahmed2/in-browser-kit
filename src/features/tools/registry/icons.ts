@@ -61,6 +61,9 @@ import {
   FileCode,
   Clock,
   Palette,
+  Monitor,
+  Mic,
+  Database,
   type LucideIcon,
 } from "lucide-react";
 
@@ -128,7 +131,10 @@ export type ToolIconName =
   | "BookText"
   | "FileCode"
   | "Clock"
-  | "Palette";
+  | "Palette"
+  | "Monitor"
+  | "Mic"
+  | "Database";
 
 export const TOOL_ICON_MAP: Record<ToolIconName, LucideIcon> = {
   Image,
@@ -193,6 +199,9 @@ export const TOOL_ICON_MAP: Record<ToolIconName, LucideIcon> = {
   FileCode,
   Clock,
   Palette,
+  Monitor,
+  Mic,
+  Database,
 };
 
 export function getToolIcon(iconName: ToolIconName): LucideIcon {

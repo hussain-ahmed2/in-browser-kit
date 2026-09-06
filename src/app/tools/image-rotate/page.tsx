@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { ToolPage } from '@/features/tools/components/ToolPage'
 import { ImageRotatePage } from '@/features/image-rotate/components/ImageRotatePage'
-import { toolMetadata } from '@/lib/site'
+import { toolMetadata, SITE_URL } from '@/lib/site'
 import { StructuredData } from '@/components/StructuredData'
 
 export const metadata: Metadata = toolMetadata('image-rotate')
@@ -12,7 +12,7 @@ export default function Page() {
       <StructuredData
         name="Rotate & Flip"
         description="Rotate images by any angle and flip horizontally or vertically."
-        url="https://inbrowserkit.netlify.app/tools/image-rotate"
+        url={`${SITE_URL}/tools/image-rotate`}
         category="ImageEditing"
       />
       <ImageRotatePage />
