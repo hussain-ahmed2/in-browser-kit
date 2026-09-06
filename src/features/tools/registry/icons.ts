@@ -64,6 +64,11 @@ import {
   Monitor,
   Mic,
   Database,
+  Volume2,
+  Gauge,
+  Play,
+  VolumeX,
+  Music,
   type LucideIcon,
 } from "lucide-react";
 
@@ -134,7 +139,12 @@ export type ToolIconName =
   | "Palette"
   | "Monitor"
   | "Mic"
-  | "Database";
+  | "Database"
+  | "Play"
+  | "VolumeX"
+  | "Music"
+  | "Volume2"
+  | "Gauge";
 
 export const TOOL_ICON_MAP: Record<ToolIconName, LucideIcon> = {
   Image,
@@ -202,6 +212,11 @@ export const TOOL_ICON_MAP: Record<ToolIconName, LucideIcon> = {
   Monitor,
   Mic,
   Database,
+  Play,
+  VolumeX,
+  Music,
+  Volume2,
+  Gauge,
 };
 
 export function getToolIcon(iconName: ToolIconName): LucideIcon {

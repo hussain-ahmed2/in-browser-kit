@@ -179,6 +179,59 @@ import fakeDataReducer, {
   resultsSet as fakeDataResultsSet,
   clearResults as fakeDataClearResults,
 } from "@/features/fake-data/fakeDataSlice";
+import videoToGifReducer, {
+  fileSelected as videoToGifFileSelected,
+  resultSet as videoToGifResultSet,
+  clearAll as videoToGifClearAll,
+} from "@/features/video-to-gif/videoToGifSlice";
+import videoToImagesReducer, {
+  fileSelected as videoToImagesFileSelected,
+  resultSet as videoToImagesResultSet,
+  clearAll as videoToImagesClearAll,
+} from "@/features/video-to-images/videoToImagesSlice";
+import gifToVideoReducer, {
+  fileSelected as gifToVideoFileSelected,
+  resultSet as gifToVideoResultSet,
+  clearAll as gifToVideoClearAll,
+} from "@/features/gif-to-video/gifToVideoSlice";
+import videoRotatorReducer, {
+  fileSelected as videoRotatorFileSelected,
+  resultSet as videoRotatorResultSet,
+  clearAll as videoRotatorClearAll,
+} from "@/features/video-rotator/videoRotatorSlice";
+import videoMuteReducer, {
+  fileSelected as videoMuteFileSelected,
+  resultSet as videoMuteResultSet,
+  clearAll as videoMuteClearAll,
+} from "@/features/video-mute/videoMuteSlice";
+import videoResizerReducer, {
+  fileSelected as videoResizerFileSelected,
+  resultSet as videoResizerResultSet,
+  clearAll as videoResizerClearAll,
+} from "@/features/video-resizer/videoResizerSlice";
+import videoToAudioReducer, {
+  fileSelected as videoToAudioFileSelected,
+  resultSet as videoToAudioResultSet,
+  clearAll as videoToAudioClearAll,
+} from "@/features/video-to-audio/videoToAudioSlice";
+import wordToPdfReducer from "@/features/word-to-pdf/wordToPdfSlice";
+import htmlToPdfReducer from "@/features/html-to-pdf/htmlToPdfSlice";
+import csvToPdfReducer from "@/features/csv-to-pdf/csvToPdfSlice";
+import markdownToPdfReducer from "@/features/markdown-to-pdf/markdownToPdfSlice";
+import pdfToMarkdownReducer from "@/features/pdf-to-markdown/pdfToMarkdownSlice";
+import excelToPdfReducer from "@/features/excel-to-pdf/excelToPdfSlice";
+import textToSpeechReducer from "@/features/text-to-speech/textToSpeechSlice";
+import speechToTextReducer from "@/features/speech-to-text/speechToTextSlice";
+import audioTrimmerReducer from "@/features/audio-trimmer/audioTrimmerSlice";
+import audioConverterReducer from "@/features/audio-converter/audioConverterSlice";
+import audioSpeedReducer from "@/features/audio-speed/audioSpeedSlice";
+import htmlMinifierReducer from "@/features/html-minifier/htmlMinifierSlice";
+import jsMinifierReducer from "@/features/js-minifier/jsMinifierSlice";
+import jsonYamlReducer from "@/features/json-yaml/jsonYamlSlice";
+import cssGradientReducer from "@/features/css-gradient/cssGradientSlice";
+import boxShadowReducer from "@/features/box-shadow/boxShadowSlice";
+import svgToPngReducer from "@/features/svg-to-png/svgToPngSlice";
+import svgToJpgReducer from "@/features/svg-to-jpg/svgToJpgSlice";
 
 export const store = configureStore({
   reducer: {
@@ -230,6 +283,31 @@ export const store = configureStore({
     screenCapture: screenCaptureReducer,
     audioRecorder: audioRecorderReducer,
     fakeData: fakeDataReducer,
+    videoToGif: videoToGifReducer,
+    videoToImages: videoToImagesReducer,
+    gifToVideo: gifToVideoReducer,
+    videoRotator: videoRotatorReducer,
+    videoMute: videoMuteReducer,
+    videoResizer: videoResizerReducer,
+    videoToAudio: videoToAudioReducer,
+    wordToPdf: wordToPdfReducer,
+    htmlToPdf: htmlToPdfReducer,
+    csvToPdf: csvToPdfReducer,
+    markdownToPdf: markdownToPdfReducer,
+    pdfToMarkdown: pdfToMarkdownReducer,
+    excelToPdf: excelToPdfReducer,
+    textToSpeech: textToSpeechReducer,
+    speechToText: speechToTextReducer,
+    audioTrimmer: audioTrimmerReducer,
+    audioConverter: audioConverterReducer,
+    audioSpeed: audioSpeedReducer,
+    htmlMinifier: htmlMinifierReducer,
+    jsMinifier: jsMinifierReducer,
+    jsonYaml: jsonYamlReducer,
+    cssGradient: cssGradientReducer,
+    boxShadow: boxShadowReducer,
+    svgToPng: svgToPngReducer,
+    svgToJpg: svgToJpgReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -331,6 +409,27 @@ export const store = configureStore({
           audioRecorderClearAll.type,
           fakeDataResultsSet.type,
           fakeDataClearResults.type,
+          videoToGifFileSelected.type,
+          videoToGifResultSet.type,
+          videoToGifClearAll.type,
+          videoToImagesFileSelected.type,
+          videoToImagesResultSet.type,
+          videoToImagesClearAll.type,
+          gifToVideoFileSelected.type,
+          gifToVideoResultSet.type,
+          gifToVideoClearAll.type,
+          videoRotatorFileSelected.type,
+          videoRotatorResultSet.type,
+          videoRotatorClearAll.type,
+          videoMuteFileSelected.type,
+          videoMuteResultSet.type,
+          videoMuteClearAll.type,
+          videoResizerFileSelected.type,
+          videoResizerResultSet.type,
+          videoResizerClearAll.type,
+          videoToAudioFileSelected.type,
+          videoToAudioResultSet.type,
+          videoToAudioClearAll.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",
@@ -392,6 +491,20 @@ export const store = configureStore({
           "screenCapture.screenshots",
           "audioRecorder.stream",
           "audioRecorder.recordings",
+          "videoToGif.item",
+          "videoToGif.result",
+          "videoToImages.item",
+          "videoToImages.result",
+          "gifToVideo.item",
+          "gifToVideo.result",
+          "videoRotator.item",
+          "videoRotator.result",
+          "videoMute.item",
+          "videoMute.result",
+          "videoResizer.item",
+          "videoResizer.result",
+          "videoToAudio.item",
+          "videoToAudio.result",
         ],
       },
     }),

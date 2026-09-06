@@ -281,4 +281,18 @@ export const imageTools: ToolDefinition[] = [
     icon: "Scissors",
     category: "Images",
   },
+  {
+    slug: "svg-to-png",
+    name: "SVG to PNG",
+    tagline: "Convert SVG files or code to high-quality PNG images.",
+    icon: "Image",
+    category: "Images",
+  },
+  {
+    slug: "svg-to-jpg",
+    name: "SVG to JPG",
+    tagline: "Convert SVG files to JPG images with configurable background color.",
+    icon: "Image",
+    category: "Images",
+  },
 ];
