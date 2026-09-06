@@ -1,0 +1,11 @@
+# User Taste Profile
+- Prefers testing/validating all existing functionality before implementing new features. Confidence: 0.8
+- Prefers feature-based architectural testing patterns (testing by feature module boundaries). Confidence: 0.75
+- Prefers planning/design phase before implementation — wants plans created and approved before coding starts. Confidence: 0.85
+- Expects end-to-end verification (unit tests pass + production build clean) as a mandatory final step of each implementation cycle. Confidence: 0.8
+- Wants responsive UI that is lightweight and not heavy-feeling. Confidence: 0.85
+- Expects real-time user feedback (progress bars, status text) during long-running operations like model downloads and inference. Confidence: 0.9
+- Wants heavy assets (ML models, WASM modules) cached in the browser — check cache first, download only if missing. Confidence: 0.9
+- Requires production parity — features must work the same in production as in development (e.g., Cache API must work in deployed builds). Confidence: 0.85
+- Prefers Redux Toolkit (createSlice pattern) for state management in React/Next.js projects. Confidence: 0.9
+- Uses ultra-terse git/workflow commands (e.g., "commit push" as a two-word instruction) and expects the assistant to infer full intent without elaboration. Confidence: 0.85

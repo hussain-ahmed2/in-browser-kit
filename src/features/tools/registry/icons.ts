@@ -54,6 +54,7 @@ import {
   Terminal,
   EyeOff,
   Maximize,
+  Droplets,
   type LucideIcon,
 } from "lucide-react";
 
@@ -114,7 +115,8 @@ export type ToolIconName =
   | "CloudFog"
   | "Terminal"
   | "EyeOff"
-  | "Maximize";
+  | "Maximize"
+  | "Droplets";
 
 export const TOOL_ICON_MAP: Record<ToolIconName, LucideIcon> = {
   Image,
@@ -172,6 +174,7 @@ export const TOOL_ICON_MAP: Record<ToolIconName, LucideIcon> = {
   Terminal,
   EyeOff,
   Maximize,
+  Droplets,
 };
 
 export function getToolIcon(iconName: ToolIconName): LucideIcon {

@@ -3,6 +3,7 @@ import {
   type PayloadAction,
 } from '@reduxjs/toolkit'
 import type { CropArea, AspectRatio, CropResult } from './lib/imageCrop'
+import { ASPECT_RATIOS } from './lib/imageCrop'
 
 export interface CropState {
   item: { file: File; previewUrl: string } | null
@@ -55,6 +56,27 @@ const cropSlice = createSlice({
       state.aspectRatio = action.payload
       if (action.payload !== 'custom') {
         state.customRatio = ''
+      }
+      // Adjust crop area to fit within image bounds with the new aspect ratio
+      if (state.dims && state.cropArea) {
+        const ratio = ASPECT_RATIOS[action.payload]
+        if (ratio !== null) {
+          const { width: iw, height: ih } = state.dims
+          let w: number, h: number
+          if (iw / ih > ratio) {
+            h = ih
+            w = h * ratio
+          } else {
+            w = iw
+            h = w / ratio
+          }
+          state.cropArea = {
+            x: Math.max(0, Math.min(state.cropArea.x, iw - w)),
+            y: Math.max(0, Math.min(state.cropArea.y, ih - h)),
+            width: w,
+            height: h,
+          }
+        }
       }
     },
     customRatioSet(state, action: PayloadAction<string>) {

@@ -123,24 +123,40 @@ function applyResize(
 
   // Apply aspect ratio constraint if needed
   if (aspectRatio !== null && width > 0 && height > 0) {
+    // Compute the largest dimensions that fit BOTH the image bounds and the aspect ratio
+    const maxW = Math.min(dims.width, dims.height * aspectRatio);
+    const maxH = maxW / aspectRatio;
+
+    // Use the aspect-ratio-constrained dimension from the drag, clamped to max
     const currentRatio = width / height;
     if (currentRatio > aspectRatio) {
-      // Too wide - adjust height
+      // Drag made it too wide — derive height from clamped width
+      width = Math.min(width, maxW);
       height = width / aspectRatio;
-      // Recalculate ay based on which edge was fixed
-      if (mode.includes("n")) ay = fixedY - height;
     } else {
-      // Too tall - adjust width
+      // Drag made it too tall — derive width from clamped height
+      height = Math.min(height, maxH);
       width = height * aspectRatio;
-      if (mode.includes("w")) ax = fixedX - width;
     }
+
+    // Recalculate position based on which edge was fixed
+    if (mode.includes("n")) ay = fixedY - height;
+    if (mode.includes("w")) ax = fixedX - width;
+    if (mode === "resize-n" || mode === "resize-s") {
+      ax = fixedX - width / 2;
+    }
+    if (mode === "resize-w" || mode === "resize-e") {
+      ay = fixedY - height / 2;
+    }
+  } else {
+    // Free mode: clamp dimensions to image bounds
+    width = Math.min(width, dims.width);
+    height = Math.min(height, dims.height);
   }
 
   // Clamp to image bounds
   ax = Math.max(0, Math.min(ax, dims.width - width));
   ay = Math.max(0, Math.min(ay, dims.height - height));
-  width = Math.min(width, dims.width - ax);
-  height = Math.min(height, dims.height - ay);
 
   return { x: ax, y: ay, width, height };
 }
@@ -253,35 +269,37 @@ export function CropCanvas({
 
         // Apply aspect ratio constraint anchored at the initial click point
         if (aspectRatio !== null) {
+          // Compute max dimensions that fit the image with this ratio
+          const maxW = Math.min(dims.width, dims.height * aspectRatio);
+          const maxH = maxW / aspectRatio;
+
           const currentRatio = width / height;
           if (currentRatio > aspectRatio) {
             // Too wide - expand height, anchored at initial click
-            const newHeight = width / aspectRatio;
+            const clampedW = Math.min(width, maxW);
+            const newHeight = clampedW / aspectRatio;
             if (dragStart.imageY < currentImageY) {
-              // Dragging down - expand downward from click point
-              newArea = { x, y, width, height: newHeight };
+              newArea = { x, y, width: clampedW, height: newHeight };
             } else {
-              // Dragging up - expand upward from click point
-              newArea = { x, y: dragStart.imageY - newHeight, width, height: newHeight };
+              newArea = { x, y: dragStart.imageY - newHeight, width: clampedW, height: newHeight };
             }
           } else {
             // Too tall - expand width
-            const newWidth = height * aspectRatio;
+            const clampedH = Math.min(height, maxH);
+            const newWidth = clampedH * aspectRatio;
             if (dragStart.imageX < currentImageX) {
-              // Dragging right
-              newArea = { x, y, width: newWidth, height };
+              newArea = { x, y, width: newWidth, height: clampedH };
             } else {
-              // Dragging left
-              newArea = { x: dragStart.imageX - newWidth, y, width: newWidth, height };
+              newArea = { x: dragStart.imageX - newWidth, y, width: newWidth, height: clampedH };
             }
           }
         }
 
         // Clamp to image bounds
+        newArea.width = Math.min(newArea.width, dims.width);
+        newArea.height = Math.min(newArea.height, dims.height);
         newArea.x = Math.max(0, Math.min(newArea.x, dims.width - newArea.width));
         newArea.y = Math.max(0, Math.min(newArea.y, dims.height - newArea.height));
-        newArea.width = Math.min(newArea.width, dims.width - newArea.x);
-        newArea.height = Math.min(newArea.height, dims.height - newArea.y);
 
         onCropAreaChange(newArea);
       } else if (dragMode.startsWith("resize")) {

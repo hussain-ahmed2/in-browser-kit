@@ -34,16 +34,24 @@ export function constrainCropArea(
 ): CropArea {
   let { x, y, width, height } = area
 
-  width = Math.min(width, imageWidth)
-  height = Math.min(height, imageHeight)
-
   if (aspectRatio !== null) {
+    // Compute the largest dimensions that fit BOTH the image bounds and the aspect ratio
+    const maxW = Math.min(imageWidth, imageHeight * aspectRatio)
+    const maxH = maxW / aspectRatio
+
+    width = Math.min(width, maxW)
+    height = Math.min(height, maxH)
+
+    // Enforce ratio from the clamped dimension
     const currentRatio = width / height
     if (currentRatio > aspectRatio) {
-      width = height * aspectRatio
-    } else {
       height = width / aspectRatio
+    } else {
+      width = height * aspectRatio
     }
+  } else {
+    width = Math.min(width, imageWidth)
+    height = Math.min(height, imageHeight)
   }
 
   x = Math.max(0, Math.min(x, imageWidth - width))
