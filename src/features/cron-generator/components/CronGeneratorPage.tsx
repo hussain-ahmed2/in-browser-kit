@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { Clock, RotateCcw, Copy, Check, Zap } from 'lucide-react'
+import { Clock, RotateCcw, Copy, Check, Zap, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -29,6 +29,7 @@ import {
   type CronFields,
 } from '../lib/cronGenerator'
 import { expressionSet, descriptionSet, clearAll } from '../cronGeneratorSlice'
+import { copyShareableUrl, decodeToolConfig } from '@/lib/shareableUrl'
 
 const steps = [{ label: 'Configure' }, { label: 'Result' }]
 
@@ -51,6 +52,44 @@ export function CronGeneratorPage() {
   const [directInput, setDirectInput] = useState('')
   const [isCopied, setIsCopied] = useState(false)
   const [mode, setMode] = useState<'builder' | 'direct'>('builder')
+
+  // Load config from URL hash on mount
+  useEffect(() => {
+    const config = decodeToolConfig('cron-generator')
+    if (config) {
+      if (config.fields && typeof config.fields === 'object') {
+        setFields(config.fields as CronFields)
+      }
+      if (typeof config.directInput === 'string') {
+        setDirectInput(config.directInput)
+      }
+      if (config.mode === 'builder' || config.mode === 'direct') {
+        setMode(config.mode)
+      }
+      if (typeof config.expression === 'string' && config.expression) {
+        dispatch(expressionSet(config.expression))
+        if (Array.isArray(config.description)) {
+          dispatch(descriptionSet(config.description as string[]))
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleShare = async () => {
+    try {
+      await copyShareableUrl('cron-generator', {
+        fields,
+        directInput,
+        mode,
+        expression,
+        description,
+      })
+      toast.success('Link copied!')
+    } catch {
+      toast.error('Failed to copy link')
+    }
+  }
 
   const handleGenerate = () => {
     const cronExpr = generateCron(fields)
@@ -246,6 +285,9 @@ export function CronGeneratorPage() {
               className="bg-linear-to-r from-brand to-[color-mix(in_oklab,var(--brand)_60%,var(--glow))] text-brand-foreground hover:shadow-[0_0_28px_-6px] hover:shadow-brand/60"
             >
               <Clock /> {mode === 'builder' ? 'Generate' : 'Describe'}
+            </Button>
+            <Button variant="outline" onClick={handleShare}>
+              <Share2 /> Share
             </Button>
             <Button variant="outline" onClick={handleClear}>
               <RotateCcw /> Clear

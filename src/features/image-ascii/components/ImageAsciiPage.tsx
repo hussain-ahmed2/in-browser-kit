@@ -3,6 +3,7 @@
 import { useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { Loader2, Download, RotateCcw, Terminal, Copy } from 'lucide-react'
+import { ToolSkeleton } from '@/components/ToolSkeleton'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -105,14 +106,13 @@ export function ImageAsciiPage() {
                 <Button variant="destructive" size="icon" className="absolute top-2 right-2" onClick={() => dispatch(clearAll())}><RotateCcw /></Button>
               </div>
 
-              {/* Progress bar */}
+              {/* Skeleton loader while converting */}
               {isProcessing && (
-                <div className="space-y-2 animate-fade-in">
-                  <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
-                    <div className="h-full rounded-full bg-linear-to-r from-brand to-glow transition-all duration-300" style={{ width: `${progress}%` }} />
-                  </div>
-                  <p className="text-xs text-muted-foreground text-center">Converting... {Math.round(progress)}%</p>
-                </div>
+                <ToolSkeleton
+                  status="Converting to ASCII..."
+                  progress={progress}
+                  lines={4}
+                />
               )}
 
               {result ? (

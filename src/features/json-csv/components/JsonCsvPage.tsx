@@ -1,8 +1,8 @@
 'use client'
 
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { Table, RotateCcw, Copy, Check, Download, ArrowLeftRight, AlertCircle } from 'lucide-react'
-import { useState } from 'react'
+import { Table, RotateCcw, Copy, Check, Download, ArrowLeftRight, AlertCircle, Share2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { jsonToCsv, csvToJson } from '../lib/jsonCsv'
 import { inputSet, outputSet, errorSet, swapMode, clearAll } from '../jsonCsvSlice'
+import { copyShareableUrl, decodeToolConfig } from '@/lib/shareableUrl'
 
 const steps = [{ label: 'Input' }, { label: 'Output' }]
 
@@ -25,6 +26,30 @@ export function JsonCsvPage() {
   const dispatch = useAppDispatch()
   const { input, output, mode, error } = useAppSelector((s) => s.jsonCsv)
   const [isCopied, setIsCopied] = useState(false)
+
+  // Load config from URL hash on mount
+  useEffect(() => {
+    const config = decodeToolConfig('json-csv')
+    if (config) {
+      if (typeof config.input === 'string') {
+        dispatch(inputSet(config.input))
+      }
+      // Mode is restored via swapMode dispatches if needed
+      if (config.mode && config.mode !== mode) {
+        dispatch(swapMode())
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleShare = async () => {
+    try {
+      await copyShareableUrl('json-csv', { input, mode })
+      toast.success('Link copied!')
+    } catch {
+      toast.error('Failed to copy link')
+    }
+  }
 
   const handleConvert = () => {
     if (!input.trim()) {
@@ -116,6 +141,9 @@ export function JsonCsvPage() {
               className="bg-linear-to-r from-brand to-[color-mix(in_oklab,var(--brand)_60%,var(--glow))] text-brand-foreground hover:shadow-[0_0_28px_-6px] hover:shadow-brand/60"
             >
               <Table /> Convert
+            </Button>
+            <Button variant="outline" onClick={handleShare}>
+              <Share2 /> Share
             </Button>
             <Button variant="outline" onClick={handleClear} disabled={!input}>
               <RotateCcw /> Clear

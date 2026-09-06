@@ -141,4 +141,32 @@ export const utilityTools: ToolDefinition[] = [
     icon: "Table",
     category: "Utilities",
   },
+  {
+    slug: "ip-lookup",
+    name: "IP Address Lookup",
+    tagline: "Look up IP address details including location, ISP, timezone, and coordinates.",
+    icon: "Globe",
+    category: "Utilities",
+  },
+  {
+    slug: "dns-lookup",
+    name: "DNS Record Lookup",
+    tagline: "Query DNS records for any domain using Cloudflare DNS-over-HTTPS.",
+    icon: "Search",
+    category: "Utilities",
+  },
+  {
+    slug: "http-headers",
+    name: "HTTP Headers Checker",
+    tagline: "Inspect HTTP response headers, security headers, and connection timing for any URL.",
+    icon: "ScanSearch",
+    category: "Utilities",
+  },
+  {
+    slug: "port-scanner",
+    name: "Port Scanner",
+    tagline: "Check if common or custom ports are open on a host.",
+    icon: "ScanLine",
+    category: "Utilities",
+  },
 ];

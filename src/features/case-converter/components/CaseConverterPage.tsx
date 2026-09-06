@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { CaseSensitive, RotateCcw, Check } from 'lucide-react'
+import { CaseSensitive, RotateCcw, Check, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +18,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { convertCase, CASE_TYPES, type CaseType } from '../lib/caseConverter'
 import { textSet, convertedSet, clearAll } from '../caseConverterSlice'
+import { copyShareableUrl, decodeToolConfig } from '@/lib/shareableUrl'
 
 const steps = [{ label: 'Input' }, { label: 'Convert' }]
 
@@ -25,6 +26,24 @@ export function CaseConverterPage() {
   const dispatch = useAppDispatch()
   const { text, converted } = useAppSelector((s) => s.caseConverter)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
+
+  // Load config from URL hash on mount
+  useEffect(() => {
+    const config = decodeToolConfig('case-converter')
+    if (config && typeof config.text === 'string') {
+      dispatch(textSet(config.text))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleShare = async () => {
+    try {
+      await copyShareableUrl('case-converter', { text })
+      toast.success('Link copied!')
+    } catch {
+      toast.error('Failed to copy link')
+    }
+  }
 
   const handleConvert = (targetCase: CaseType) => {
     const result = convertCase(text, targetCase)
@@ -115,14 +134,24 @@ export function CaseConverterPage() {
             </div>
           )}
 
-          <Button
-            variant="outline"
-            onClick={handleClear}
-            disabled={!text}
-            className="w-full"
-          >
-            <RotateCcw /> Clear
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleShare}
+              disabled={!text}
+              className="flex-1"
+            >
+              <Share2 /> Share
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleClear}
+              disabled={!text}
+              className="flex-1"
+            >
+              <RotateCcw /> Clear
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </>

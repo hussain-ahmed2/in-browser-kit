@@ -1,8 +1,8 @@
 'use client'
 
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { Loader2, Download, RotateCcw, Droplet } from 'lucide-react'
+import { Loader2, Download, RotateCcw, Droplet, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +17,7 @@ import { SliderField } from '@/components/form/slider-field'
 import { applyDropShadow, getImageDimensions, formatBytes } from '../lib/imageDropShadow'
 import { dropShadowSchema, type DropShadowFormValues } from '../types'
 import { fileSelected, resultSet, processingSet, clearAll } from '../dropShadowSlice'
+import { encodeToolConfig, copyShareableUrl, decodeToolConfig } from '@/lib/shareableUrl'
 
 const steps = [{ label: 'Upload' }, { label: 'Configure' }, { label: 'Download' }]
 
@@ -28,6 +29,26 @@ export function ImageDropShadowPage() {
     resolver: zodResolver(dropShadowSchema),
     defaultValues: { offsetX: 4, offsetY: 4, blur: 10, color: '#000000', opacity: 50, spread: 0 },
   })
+
+  // Load config from URL hash on mount
+  useEffect(() => {
+    const config = decodeToolConfig('image-drop-shadow')
+    if (config) {
+      form.reset(config as Partial<DropShadowFormValues>)
+    }
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleShare = async () => {
+    const config = form.getValues()
+    try {
+      await copyShareableUrl('image-drop-shadow', config as unknown as Record<string, unknown>)
+      toast.success('Link copied!')
+    } catch {
+      toast.error('Failed to copy link')
+    }
+  }
 
   const handleFiles = useCallback(async (files: File[]) => {
     const selected = files[0]
@@ -95,6 +116,7 @@ export function ImageDropShadowPage() {
                   </div>
                   <div className="flex gap-4">
                     <Button onClick={() => { const a = document.createElement('a'); a.href = result.objectUrl; a.download = result.file.name; a.click() }} className="flex-1"><Download /> Download</Button>
+                    <Button variant="outline" onClick={handleShare} className="flex-1"><Share2 /> Share</Button>
                     <Button variant="outline" onClick={() => dispatch(clearAll())} className="flex-1"><RotateCcw /> Start Over</Button>
                   </div>
                 </div>

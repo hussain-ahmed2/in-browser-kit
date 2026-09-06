@@ -10,3 +10,4 @@
 - Prefers Redux Toolkit (createSlice pattern) for state management in React/Next.js projects. Confidence: 0.9
 - Uses ultra-terse git/workflow commands (e.g., "commit push" as a two-word instruction) and expects the assistant to infer full intent without elaboration. Confidence: 0.85
 - Wants feature prioritization guided by market research (web search for what's popular/in-demand) rather than building arbitrarily. Confidence: 0.8
+- Expects the assistant to proactively suggest next steps and propose a roadmap after completing a batch of work, rather than waiting passively for instructions. Confidence: 0.8

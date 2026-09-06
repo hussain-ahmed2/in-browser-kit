@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { Loader2, Download, RotateCcw, Maximize } from 'lucide-react'
+import { ToolSkeleton } from '@/components/ToolSkeleton'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -64,14 +65,13 @@ export function ImageAiUpscalerPage() {
             <FileDropzone onFiles={handleFiles} accept="image/*" multiple={false} />
           ) : (
             <div className="animate-fade-in space-y-6">
-              {/* Status + Progress bar */}
+              {/* Skeleton loader while processing */}
               {isProcessing && (
-                <div className="space-y-2 animate-fade-in">
-                  <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
-                    <div className="h-full rounded-full bg-linear-to-r from-brand to-glow transition-all duration-300" style={{ width: `${progress}%` }} />
-                  </div>
-                  <p className="text-xs text-muted-foreground text-center">{status || 'Processing...'} {Math.round(progress)}%</p>
-                </div>
+                <ToolSkeleton
+                  status={status || 'Upscaling...'}
+                  progress={progress}
+                  lines={3}
+                />
               )}
 
               {result ? (

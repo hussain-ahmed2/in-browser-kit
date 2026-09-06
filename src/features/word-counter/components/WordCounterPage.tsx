@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { Type, RotateCcw } from 'lucide-react'
+import { Type, RotateCcw, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { countStats } from '../lib/wordCounter'
 import { textSet, resultSet, clearAll } from '../wordCounterSlice'
+import { copyShareableUrl, decodeToolConfig } from '@/lib/shareableUrl'
 
 const steps = [{ label: 'Input' }, { label: 'Results' }]
 
@@ -38,6 +39,24 @@ export function WordCounterPage() {
     const r = countStats(text)
     dispatch(resultSet(r))
   }, [text, dispatch])
+
+  // Load config from URL hash on mount
+  useEffect(() => {
+    const config = decodeToolConfig('word-counter')
+    if (config && typeof config.text === 'string') {
+      dispatch(textSet(config.text))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleShare = async () => {
+    try {
+      await copyShareableUrl('word-counter', { text })
+      toast.success('Link copied!')
+    } catch {
+      toast.error('Failed to copy link')
+    }
+  }
 
   const handleClear = () => {
     dispatch(clearAll())
@@ -85,14 +104,24 @@ export function WordCounterPage() {
             </div>
           )}
 
-          <Button
-            variant="outline"
-            onClick={handleClear}
-            disabled={!text}
-            className="w-full"
-          >
-            <RotateCcw /> Clear
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleShare}
+              disabled={!text}
+              className="flex-1"
+            >
+              <Share2 /> Share
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleClear}
+              disabled={!text}
+              className="flex-1"
+            >
+              <RotateCcw /> Clear
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </>

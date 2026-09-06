@@ -155,6 +155,10 @@ import xmlBeautifierReducer from "@/features/xml-beautifier/xmlBeautifierSlice";
 import cssMinifierReducer from "@/features/css-minifier/cssMinifierSlice";
 import cronGeneratorReducer from "@/features/cron-generator/cronGeneratorSlice";
 import jsonCsvReducer from "@/features/json-csv/jsonCsvSlice";
+import ipLookupReducer from "@/features/ip-lookup/ipLookupSlice";
+import dnsLookupReducer from "@/features/dns-lookup/dnsLookupSlice";
+import httpHeadersReducer from "@/features/http-headers/httpHeadersSlice";
+import portScannerReducer from "@/features/port-scanner/portScannerSlice";
 
 export const store = configureStore({
   reducer: {
@@ -198,6 +202,10 @@ export const store = configureStore({
     cssMinifier: cssMinifierReducer,
     cronGenerator: cronGeneratorReducer,
     jsonCsv: jsonCsvReducer,
+    ipLookup: ipLookupReducer,
+    dnsLookup: dnsLookupReducer,
+    httpHeaders: httpHeadersReducer,
+    portScanner: portScannerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
