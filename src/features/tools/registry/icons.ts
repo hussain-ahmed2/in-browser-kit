@@ -55,6 +55,12 @@ import {
   EyeOff,
   Maximize,
   Droplets,
+  Type,
+  CaseSensitive,
+  BookText,
+  FileCode,
+  Clock,
+  Palette,
   type LucideIcon,
 } from "lucide-react";
 
@@ -116,7 +122,13 @@ export type ToolIconName =
   | "Terminal"
   | "EyeOff"
   | "Maximize"
-  | "Droplets";
+  | "Droplets"
+  | "Type"
+  | "CaseSensitive"
+  | "BookText"
+  | "FileCode"
+  | "Clock"
+  | "Palette";
 
 export const TOOL_ICON_MAP: Record<ToolIconName, LucideIcon> = {
   Image,
@@ -175,6 +187,12 @@ export const TOOL_ICON_MAP: Record<ToolIconName, LucideIcon> = {
   EyeOff,
   Maximize,
   Droplets,
+  Type,
+  CaseSensitive,
+  BookText,
+  FileCode,
+  Clock,
+  Palette,
 };
 
 export function getToolIcon(iconName: ToolIconName): LucideIcon {

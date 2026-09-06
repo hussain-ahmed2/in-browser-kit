@@ -260,4 +260,18 @@ export const imageTools: ToolDefinition[] = [
     icon: "Maximize",
     category: "Images",
   },
+  {
+    slug: "heic-converter",
+    name: "HEIC Converter",
+    tagline: "Convert HEIC/HEIF images (from iPhones) to JPG or PNG instantly in your browser.",
+    icon: "Image",
+    category: "Images",
+  },
+  {
+    slug: "color-palette",
+    name: "Color Palette Generator",
+    tagline: "Extract dominant colors from any image and get HEX, RGB, and HSL values.",
+    icon: "Palette",
+    category: "Images",
+  },
 ];

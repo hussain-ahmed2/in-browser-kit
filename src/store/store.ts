@@ -137,6 +137,24 @@ import aiUpscalerReducer, {
   resultSet as aiUpscalerResultSet,
   clearAll as aiUpscalerClearAll,
 } from "@/features/image-ai-upscaler/aiUpscalerSlice";
+import imageHeicConverterReducer, {
+  fileSelected as heicConverterFileSelected,
+  resultSet as heicConverterResultSet,
+  clearAll as heicConverterClearAll,
+} from "@/features/heic-converter/heicConverterSlice";
+import imageColorPaletteReducer, {
+  fileSelected as colorPaletteFileSelected,
+  paletteSet as colorPalettePaletteSet,
+  clearAll as colorPaletteClearAll,
+} from "@/features/color-palette/colorPaletteSlice";
+import wordCounterReducer from "@/features/word-counter/wordCounterSlice";
+import caseConverterReducer from "@/features/case-converter/caseConverterSlice";
+import loremIpsumReducer from "@/features/lorem-ipsum/loremIpsumSlice";
+import markdownPreviewReducer from "@/features/markdown-preview/markdownPreviewSlice";
+import xmlBeautifierReducer from "@/features/xml-beautifier/xmlBeautifierSlice";
+import cssMinifierReducer from "@/features/css-minifier/cssMinifierSlice";
+import cronGeneratorReducer from "@/features/cron-generator/cronGeneratorSlice";
+import jsonCsvReducer from "@/features/json-csv/jsonCsvSlice";
 
 export const store = configureStore({
   reducer: {
@@ -170,6 +188,16 @@ export const store = configureStore({
     steganography: steganographyReducer,
     ocr: ocrReducer,
     aiUpscaler: aiUpscalerReducer,
+    imageHeicConverter: imageHeicConverterReducer,
+    imageColorPalette: imageColorPaletteReducer,
+    wordCounter: wordCounterReducer,
+    caseConverter: caseConverterReducer,
+    loremIpsum: loremIpsumReducer,
+    markdownPreview: markdownPreviewReducer,
+    xmlBeautifier: xmlBeautifierReducer,
+    cssMinifier: cssMinifierReducer,
+    cronGenerator: cronGeneratorReducer,
+    jsonCsv: jsonCsvReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -253,6 +281,12 @@ export const store = configureStore({
           aiUpscalerFileSelected.type,
           aiUpscalerResultSet.type,
           aiUpscalerClearAll.type,
+          heicConverterFileSelected.type,
+          heicConverterResultSet.type,
+          heicConverterClearAll.type,
+          colorPaletteFileSelected.type,
+          colorPalettePaletteSet.type,
+          colorPaletteClearAll.type,
         ],
         ignoredPaths: [
           "pdfMerger.items",
@@ -304,6 +338,10 @@ export const store = configureStore({
           "ocr.result",
           "aiUpscaler.item",
           "aiUpscaler.result",
+          "imageHeicConverter.item",
+          "imageHeicConverter.result",
+          "imageColorPalette.item",
+          "imageColorPalette.palette",
         ],
       },
     }),
