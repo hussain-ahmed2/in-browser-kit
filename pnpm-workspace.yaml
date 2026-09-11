@@ -1,6 +1,6 @@
 allowBuilds:
   exifreader: true
-  protobufjs: set this to true or false
+  protobufjs: true
   sharp: false
-  tesseract.js: set this to true or false
+  tesseract.js: true
   unrs-resolver: false
