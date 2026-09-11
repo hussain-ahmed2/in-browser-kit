@@ -53,7 +53,7 @@ export function Header() {
 					<span className="hidden sm:inline font-bold text-foreground tracking-tight">InBrowser</span>
 				</Link>
 
-				<nav className="hidden md:flex md:flex-wrap items-center md:justify-center gap-1.5" aria-label="Tools">
+				<nav className="hidden lg:flex lg:flex-wrap lg:justify-center items-center gap-1.5" aria-label="Tools">
 					{CATEGORIES.map((category) => (
 						<CategoryDropdown key={category} category={category} />
 					))}
@@ -96,7 +96,7 @@ export function Header() {
 							)}
 						</Button>
 					)}
-					<div className="md:hidden">
+					<div className="lg:hidden">
 						<MobileMenu />
 					</div>
 				</div>
