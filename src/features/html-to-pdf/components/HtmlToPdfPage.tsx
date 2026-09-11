@@ -102,7 +102,7 @@ export function HtmlToPdfPage() {
                 {status === 'converting' ? (
                   <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Converting...</>
                 ) : (
-                  <><Globe className="w-4 h-4 mr-2" /> Convert to PDF</>
+                  <><Globe className="w-4 h-4 mr-2" /> Print / Save as PDF</>
                 )}
               </Button>
               <Button variant="outline" onClick={() => dispatch(clearAll())} disabled={!html}>

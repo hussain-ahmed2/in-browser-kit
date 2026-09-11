@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { Loader2, RotateCcw, BarChart3 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -42,10 +42,9 @@ function HistogramChart({ data, color, label }: { data: number[]; color: string;
     ctx.fillText(label, 4, 14)
   }, [data, color, label])
 
-  // Draw on mount via effect-like approach
-  if (typeof window !== 'undefined') {
-    requestAnimationFrame(draw)
-  }
+  useEffect(() => {
+    draw()
+  }, [draw])
 
   return <canvas ref={canvasRef} width={256} height={100} className="w-full rounded border border-border" />
 }

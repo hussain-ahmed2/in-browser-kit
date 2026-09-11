@@ -8,7 +8,7 @@ function mulberry32(seed: number) {
   }
 }
 
-let rng = mulberry32(Date.now())
+const rng = mulberry32(Date.now())
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(rng() * arr.length)]

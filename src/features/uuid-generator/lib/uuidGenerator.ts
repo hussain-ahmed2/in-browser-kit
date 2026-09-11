@@ -43,9 +43,9 @@ function generateV4(uppercase = false): string {
 
 function generateV1(uppercase = false): string {
     const now = Date.now()
-    const timeLow = (now & 0xffffffff).toString(16).padStart(8, '0')
-    const timeMid = ((now >> 32) & 0xffff).toString(16).padStart(4, '0')
-    const timeHiAndVersion = ((now >> 48) & 0x0fff | 0x1000).toString(16).padStart(4, '0')
+    const timeLow = ((now & 0xffffffff) >>> 0).toString(16).padStart(8, '0')
+    const timeMid = (Math.floor(now / 0x100000000) & 0xffff).toString(16).padStart(4, '0')
+    const timeHiAndVersion = (Math.floor(now / 0x1000000000000) & 0x0fff | 0x1000).toString(16).padStart(4, '0')
     const clockSeq = (0x8000 | (crypto.getRandomValues(new Uint16Array(1))[0] & 0x3fff)).toString(16).padStart(4, '0')
     const node = randomHex(12, uppercase)
     const uuid = [timeLow, timeMid, timeHiAndVersion, clockSeq, node].join('-')

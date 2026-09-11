@@ -58,13 +58,13 @@ export function CronGeneratorPage() {
     const config = decodeToolConfig('cron-generator')
     if (config) {
       if (config.fields && typeof config.fields === 'object') {
-        setFields(config.fields as CronFields)
+        setFields(config.fields as CronFields) // eslint-disable-line react-hooks/set-state-in-effect
       }
       if (typeof config.directInput === 'string') {
-        setDirectInput(config.directInput)
+        setDirectInput(config.directInput) // eslint-disable-line react-hooks/set-state-in-effect
       }
       if (config.mode === 'builder' || config.mode === 'direct') {
-        setMode(config.mode)
+        setMode(config.mode) // eslint-disable-line react-hooks/set-state-in-effect
       }
       if (typeof config.expression === 'string' && config.expression) {
         dispatch(expressionSet(config.expression))

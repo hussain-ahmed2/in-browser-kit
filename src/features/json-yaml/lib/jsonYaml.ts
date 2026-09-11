@@ -25,7 +25,7 @@ function jsonValueToYaml(value: unknown, level: number): string {
       /^[\d.e+-]+$/i.test(value) ||
       /^(true|false|null|yes|no)$/i.test(value)
     ) {
-      return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}"`
+      return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\t/g, '\\t').replace(/\r/g, '\\r')}"`
     }
     return value
   }
@@ -37,9 +37,13 @@ function jsonValueToYaml(value: unknown, level: number): string {
         const val = jsonValueToYaml(item, level + 1)
         if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
           // Object in array — first property on same line as -
-          return `${indent(level)}- ${val.split('\n').join('\n' + indent(level + 1))}`
+          const lines = val.split('\n').filter(l => l.trim())
+          if (lines.length === 0) return `${indent(level)}- {}`
+          const firstLine = lines[0].trimStart()
+          const rest = lines.slice(1).map(l => `${indent(level)}  ${l.trimStart()}`).join('\n')
+          return rest ? `${indent(level)}- ${firstLine}\n${rest}` : `${indent(level)}- ${firstLine}`
         }
-        return `${indent(level)}- ${val}`
+        return `${indent(level)}- ${val.trim()}`
       })
       .join('\n')
   }
@@ -84,6 +88,69 @@ function parseYamlValue(value: string): unknown {
 
 export function yamlToJson(yamlStr: string): string {
   const lines = yamlStr.split('\n')
+
+  // Detect if this is a top-level list
+  const firstNonEmptyLine = lines.find(l => l.trim() && !l.trim().startsWith('#'))
+  const isTopLevelList = firstNonEmptyLine?.trimStart().startsWith('- ')
+
+  if (isTopLevelList) {
+    // Parse as top-level array
+    const result: unknown[] = []
+    const stack: { arr: unknown[]; indent: number }[] = [{ arr: result, indent: -1 }]
+
+    for (const line of lines) {
+      if (!line.trim() || line.trim().startsWith('#')) continue
+
+      const match = line.match(/^(\s*)(- )?(.+?)(:\s*(.*))?$/)
+      if (!match) continue
+
+      const [, spaces, isListItem, key, , value] = match
+      const currentIndent = spaces.length
+
+      // Pop stack to find parent
+      while (stack.length > 1 && stack[stack.length - 1].indent >= currentIndent) {
+        stack.pop()
+      }
+
+      const parent = stack[stack.length - 1].arr
+
+      if (isListItem) {
+        const keyWithoutDash = key.trim()
+        if (value && value.trim()) {
+          // Simple value in array
+          parent.push(parseYamlValue(value))
+        } else if (keyWithoutDash.includes(':')) {
+          // Inline key: value pair in array item
+          const colonIdx = keyWithoutDash.indexOf(':')
+          const inlineKey = keyWithoutDash.slice(0, colonIdx).trim()
+          const inlineValue = keyWithoutDash.slice(colonIdx + 1).trim()
+          const obj: Record<string, unknown> = {}
+          obj[inlineKey] = parseYamlValue(inlineValue)
+          parent.push(obj)
+          stack.push({ arr: parent, indent: currentIndent + 2 })
+        } else {
+          // Nested object in array
+          const newObj: Record<string, unknown> = {}
+          parent.push(newObj)
+          stack.push({ arr: parent, indent: currentIndent + 2 })
+          // The key is actually a property of the new object
+          if (keyWithoutDash) {
+            newObj[keyWithoutDash] = value && value.trim() ? parseYamlValue(value) : {}
+          }
+        }
+      } else if (value && value.trim()) {
+        // Key-value pair (shouldn't happen at top level of array, but handle gracefully)
+        const lastObj = parent[parent.length - 1] as Record<string, unknown>
+        if (lastObj && typeof lastObj === 'object') {
+          lastObj[key] = parseYamlValue(value)
+        }
+      }
+    }
+
+    return JSON.stringify(result, null, 2)
+  }
+
+  // Parse as object (original logic)
   const result: Record<string, unknown> = {}
   const stack: { obj: Record<string, unknown>; indent: number }[] = [{ obj: result, indent: -1 }]
 

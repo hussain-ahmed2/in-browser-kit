@@ -218,7 +218,7 @@ export function ImageGifMakerPage() {
               </div>
 
               <FormProvider {...form}>
-                <div className="p-4 rounded-xl bg-secondary/30 border border-border space-y-4">
+                <form onSubmit={form.handleSubmit(handleCreate)} className="p-4 rounded-xl bg-secondary/30 border border-border space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <SliderField
                       name="frameDelay"
@@ -247,13 +247,12 @@ export function ImageGifMakerPage() {
                   </div>
 
                   <div className="flex gap-2 pt-4 border-t border-border">
-                    <Button variant="outline" onClick={handleClear} className="flex-1">
+                    <Button variant="outline" type="button" onClick={handleClear} className="flex-1">
                       <RotateCcw />
                       Clear All
                     </Button>
                     <Button
-                      type="button"
-                      onClick={() => form.handleSubmit(() => {})()}
+                      type="submit"
                       disabled={isProcessing}
                       className="flex-1 bg-linear-to-r from-brand to-[color-mix(in_oklab,var(--brand)_60%,var(--glow))] text-brand-foreground hover:shadow-[0_0_28px_-6px] hover:shadow-brand/60"
                     >
@@ -270,7 +269,7 @@ export function ImageGifMakerPage() {
                       )}
                     </Button>
                   </div>
-                </div>
+                </form>
               </FormProvider>
 
               {result && (

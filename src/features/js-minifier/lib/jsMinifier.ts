@@ -6,7 +6,7 @@
 export function minifyJs(js: string): string {
   if (!js.trim()) return ''
 
-  let result = js
+  const result = js
     // Remove single-line comments (// ...) — but not URLs with //
     .replace(/(?<!:)\/\/(?!\/).*$/gm, '')
     // Remove multi-line comments
@@ -15,12 +15,12 @@ export function minifyJs(js: string): string {
     .replace(/^\s+|\s+$/gm, '')
     // Collapse multiple whitespace characters
     .replace(/\s{2,}/g, ' ')
+    // Ensure keywords have a trailing space so they don't merge with next token
+    .replace(/\b(typeof|instanceof|in|of|new|delete|void|return|throw|case|yield)\b/g, '$1 ')
     // Remove spaces around operators (basic cases)
     .replace(/\s*([{}();,=:<>!&|?+\-*/%])\s*/g, '$1')
-    // Restore spaces where needed for keywords
-    .replace(/(typeof|instanceof|in|of|new|delete|void|return|throw|case|yield)\s*/g, '$1 ')
-    // Fix cases where keywords merge with identifiers
-    .replace(/(\w)(typeof|instanceof|new|return)/g, '$1 $2')
+    // Fix cases where keywords merged with identifiers (e.g. "returnx" → "return x")
+    .replace(/\b(typeof|instanceof|in|of|new|delete|void|return|throw|case|yield)(\w)/g, '$1 $2')
     // Remove trailing semicolons before closing braces
     .replace(/;}/g, '}')
     // Remove newlines

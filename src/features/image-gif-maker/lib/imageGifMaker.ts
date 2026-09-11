@@ -1,4 +1,5 @@
-import GIF from 'gif.js'
+// @ts-expect-error gif.js has no proper ESM/types — load the UMD dist bundle
+import GIF from 'gif.js/dist/gif.js'
 
 export interface GifMakerOptions {
   frames: File[]
@@ -66,28 +67,8 @@ export async function createGif(options: GifMakerOptions): Promise<GifMakerResul
     gif.addFrame(ctx, { delay: frameDelay, copy: true })
   }
 
-  // Set loop count
-  gif.on('finished', (blob: Blob) => {
-    const resultFile = new File([blob], 'animation.gif', {
-      type: 'image/gif',
-      lastModified: Date.now(),
-    })
-    const objectUrl = URL.createObjectURL(resultFile)
-    
-    return {
-      file: resultFile,
-      objectUrl,
-      width: canvasWidth,
-      height: canvasHeight,
-      frameCount: images.length,
-      totalDuration: images.length * frameDelay,
-    }
-  })
-
-  gif.render()
-
-  // Wait for rendering to complete
-  return new Promise((resolve, reject) => {
+  // Wait for rendering to complete — register handler BEFORE calling render()
+  return new Promise<GifMakerResult>((resolve, reject) => {
     gif.on('finished', (blob: Blob) => {
       const resultFile = new File([blob], 'animation.gif', {
         type: 'image/gif',
@@ -104,6 +85,7 @@ export async function createGif(options: GifMakerOptions): Promise<GifMakerResul
       })
     })
     gif.on('error', reject)
+    gif.render()
   })
 }
 

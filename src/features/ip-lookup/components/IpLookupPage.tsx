@@ -31,13 +31,6 @@ export function IpLookupPage() {
   const [manualIp, setManualIp] = useState('')
   const [copied, setCopied] = useState(false)
 
-  useEffect(() => {
-    if (!ipInfo && !isProcessing && !error) {
-      handleLookup('')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const handleLookup = async (ip: string) => {
     dispatch(processingStarted())
     try {
@@ -49,6 +42,13 @@ export function IpLookupPage() {
       toast.error('Failed to lookup IP')
     }
   }
+
+  useEffect(() => {
+    if (!ipInfo && !isProcessing && !error) {
+      handleLookup('')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleCopyIp = () => {
     if (ipInfo?.ip) {

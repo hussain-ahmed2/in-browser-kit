@@ -23,7 +23,8 @@ export async function extractMarkdownFromPdf(pdfDoc: PDFDocumentProxy): Promise<
       const fontSize = item.transform[0] || height
 
       // Detect heading-level text (larger font size)
-      const isHeading = fontSize > 14 && fontSize > lastFontSize * 1.2
+      // Only use relative size check when we have a previous font size to compare against
+      const isHeading = fontSize > 14 && (lastFontSize === 0 ? fontSize > 16 : fontSize > lastFontSize * 1.2)
       const isNewParagraph = lastY !== undefined && Math.abs(lastY - y) > height * 0.8
 
       if (isNewParagraph) {
