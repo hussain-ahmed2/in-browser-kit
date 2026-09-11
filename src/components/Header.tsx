@@ -53,13 +53,16 @@ export function Header() {
 					<span className="hidden sm:inline font-bold text-foreground tracking-tight">InBrowser</span>
 				</Link>
 
-				<nav className="hidden lg:flex lg:flex-wrap lg:justify-center items-center gap-1.5" aria-label="Tools">
+				<nav
+					className="hidden lg:flex lg:flex-wrap lg:justify-center items-center gap-1.5 lg:flex-1"
+					aria-label="Tools"
+				>
 					{CATEGORIES.map((category) => (
 						<CategoryDropdown key={category} category={category} />
 					))}
 				</nav>
 
-				<div className="flex flex-1 items-center justify-end gap-1">
+				<div className="flex items-center justify-end gap-1 max-lg:flex-1">
 					<Button
 						variant="outline"
 						className="hidden md:flex relative items-center gap-2 mr-2 text-muted-foreground w-18 justify-start rounded-full shadow-none"

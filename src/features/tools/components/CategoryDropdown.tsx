@@ -68,8 +68,8 @@ export function CategoryDropdown({ category }: CategoryDropdownProps) {
                             {CATEGORY_LABELS[category]}
                         </span>
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="z-50">
-                        <ul className="grid w-100 gap-2 p-1 md:w-125 md:grid-cols-2 lg:w-200 lg:grid-cols-3 max-h-[70vh] overflow-y-auto">
+                    <NavigationMenuContent className="z-50 min-w-100 max-w-[calc(100vw-3rem)]">
+                        <ul className="grid w-full gap-2 p-1 md:grid-cols-2 max-h-[70vh] overflow-y-auto">
                             {categoryTools.map((tool) => {
                                 const href = `/tools/${tool.slug}`
 
